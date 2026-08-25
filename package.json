@@ -1,0 +1,9 @@
+{
+  "name": "project-skeleton",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ]
+}
