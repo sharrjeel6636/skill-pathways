@@ -1,27 +1,37 @@
 from fastapi import FastAPI, Depends, HTTPException, Header
-from fastapi.middleware.cors import CORSMiddleware
-import os
+from pydantic import BaseModel
+from typing import List, Dict
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Placeholder for recommendation engine
+def get_recommendation(answers: Dict[str, str]):
+    # Simplified logic mapping answers to pathway titles
+    # In a real app, this would use a more complex rule-based engine
+    if "coding" in str(answers).lower():
+        return {"title": "Web Dev", "match": 90}
+    elif "data" in str(answers).lower():
+        return {"title": "Data Analytics", "match": 85}
+    return None
 
-def get_current_user(authorization: str = Header(...)):
-    # Simple placeholder: In production, verify JWT using Supabase public key
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=403, detail="Invalid token")
-    return {"user_id": "mock-user-id"}
+class QuizSubmission(BaseModel):
+    user_id: str
+    answers: Dict[str, str]
 
-@app.get("/api/profile")
-async def get_profile(user: dict = Depends(get_current_user)):
-    return {"message": "Empty dashboard placeholder", "user": user}
+@app.post("/api/quiz/submit")
+async def submit_quiz(submission: QuizSubmission):
+    # Store answers in DB here (omitted for brevity)
+    recommendation = get_recommendation(submission.answers)
+    if not recommendation:
+        return {"message": "No recommendation found", "fallback": True}
+    return {"message": "Quiz submitted", "recommendation": recommendation}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/api/pathways/{pathway_id}/roadmap")
+async def get_roadmap(pathway_id: int):
+    # Fetch nodes for the pathway from DB
+    return {"nodes": []}
+
+@app.post("/api/roadmap/nodes/{node_id}/complete")
+async def complete_node(node_id: int):
+    # Mark node as mastered, unlock next node in the pathway
+    return {"message": "Node completed, next unlocked"}
