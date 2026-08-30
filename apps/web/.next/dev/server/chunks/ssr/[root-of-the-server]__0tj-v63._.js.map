@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Sharjeel/Desktop/Skiils_Pathwaays/apps/web/app/page.tsx"],"sourcesContent":["import Dashboard from '../components/Dashboard';\nimport BottomNav from '../components/BottomNav';\n\nexport default async function Page() {\n  // In a real app, fetch from backend:\n  // const res = await fetch('http://localhost:8000/api/dashboard/stats', { ... })\n  const stats = {\n    active_pathway: { title: \"Web Dev\", progress: 65 },\n    saved_resources: 12,\n    upcoming_deadlines: 2\n  };\n\n  return (\n    <div>\n      <Dashboard stats={stats} />\n      <BottomNav />\n    </div>\n  );\n}\n"],"names":["Page","stats","active_pathway","title","progress","saved_resources","upcoming_deadlines","Dashboard","BottomNav"],"mappings":";;;;;;;;;;;;;;;;;;AAGe,eAAeA;IAC5B,qCAAqC;IACrC,gFAAgF;IAChF,MAAMC,QAAQ;QACZC,gBAAgB;YAAEC,OAAO;YAAWC,UAAU;QAAG;QACjDC,iBAAiB;QACjBC,oBAAoB;IACtB;IAEA,qBACE,8OAAC;;0BACC,8OAACC;gBAAUN,OAAOA;;;;;;0BAClB,8OAACO;;;;;;;;;;;AAGP"}}]
+}

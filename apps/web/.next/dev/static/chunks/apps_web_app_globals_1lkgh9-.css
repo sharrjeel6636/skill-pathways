@@ -1,0 +1,90 @@
+/* [project]/apps/web/app/globals.css [app-client] (css) */
+body {
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.dashboard {
+  padding: 20px;
+}
+
+.progress-card {
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 15px;
+  box-shadow: 0 2px 4px #0000001a;
+}
+
+.quick-stats {
+  gap: 20px;
+  display: flex;
+}
+
+.bottom-nav {
+  background: #fff;
+  border-top: 1px solid #ddd;
+  justify-content: space-around;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+}
+
+.roadmap-container {
+  padding: 20px;
+}
+
+.roadmap-tree {
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+}
+
+.node-item {
+  background: #fff;
+  border-radius: 8px;
+  align-items: center;
+  width: 300px;
+  margin: 10px 0;
+  padding: 15px;
+  display: flex;
+  box-shadow: 0 2px 4px #0000001a;
+}
+
+.node-circle {
+  background: #eee;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  display: flex;
+}
+
+.mastered .node-circle {
+  color: #fff;
+  background: #4caf50;
+}
+
+.active .node-circle {
+  color: #fff;
+  background: #2196f3;
+}
+
+.locked .node-circle {
+  background: #ccc;
+}
+
+.connector {
+  background: #ddd;
+  width: 2px;
+  height: 20px;
+  margin: 5px 0;
+}
+
+/*# sourceMappingURL=apps_web_app_globals_1lkgh9-.css.map*/

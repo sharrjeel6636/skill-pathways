@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Sharjeel/Desktop/Skiils_Pathwaays/apps/web/middleware.ts"],"sourcesContent":["import type { NextRequest } from 'next/server'\nimport { NextResponse } from 'next/server'\n\nexport function middleware(request: NextRequest) {\n  // Simple placeholder: Check for auth cookie/session\n  return NextResponse.next()\n}\n"],"names":["middleware","request","next"],"mappings":";;;;AACA;AAAA;;AAEO,SAASA,WAAWC,OAAoB;IAC7C,oDAAoD;IACpD,OAAO,6MAAY,CAACC,IAAI;AAC1B"}}]
+}

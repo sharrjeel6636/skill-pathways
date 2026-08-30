@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'theme.dart';
+import 'dashboard_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +20,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Project Skeleton',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const Scaffold(body: Center(child: Text('Dashboard Placeholder'))),
+      title: 'SkillPathways',
+      theme: appTheme,
+      home: const DashboardScreen(),
     );
   }
 }

@@ -8,9 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "latest",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "@supabase/supabase-js": "latest"
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "26.3.0",
+    "@types/react": "19.2.18",
+    "typescript": "7.0.2"
   }
 }

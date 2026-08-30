@@ -1,0 +1,77 @@
+body {
+  font-family: sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard {
+  padding: 20px;
+}
+
+.progress-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.quick-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.roadmap-container {
+  padding: 20px;
+}
+
+.roadmap-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.node-item {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.node-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #eee;
+  margin-right: 15px;
+}
+
+.mastered .node-circle { background: #4caf50; color: white; }
+.active .node-circle { background: #2196f3; color: white; }
+.locked .node-circle { background: #ccc; }
+
+.connector {
+  height: 20px;
+  width: 2px;
+  background: #ddd;
+  margin: 5px 0;
+}
