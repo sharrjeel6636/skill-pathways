@@ -5,3 +5,12 @@ build/
 services/api/.env 
 __pycache__/ 
 *.pyc 
+.next/
+out/
+build/
+dist/
+__pycache__/
+*.py[cod]
+node_modules/
+.env*.local
+.env

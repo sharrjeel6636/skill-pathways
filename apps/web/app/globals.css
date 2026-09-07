@@ -1,77 +1,67 @@
-body {
-  font-family: sans-serif;
-  background-color: #f4f4f9;
-  margin: 0;
-  padding: 0;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-manrope), sans-serif;
+  --font-serif: var(--font-fraunces), serif;
+  --font-urdu: var(--font-noto-urdu), serif;
+
+  --color-paper: #F5F2E9;
+  --color-ink: #1E2A22;
+  --color-teal: #164B3C;
+  --color-teal-2: #0E362A;
+  --color-amber: #E8A33D;
+  --color-rust: #B5502F;
+  --color-sage: #8FAE86;
+  --color-sage-soft: #DCE7D3;
+  --color-card: #FFFFFF;
 }
 
-.dashboard {
-  padding: 20px;
+@layer base {
+  body {
+    @apply font-sans bg-paper text-ink m-0 p-0 min-h-screen;
+    background:
+      radial-gradient(1200px 500px at 15% -10%, rgba(232,163,61,0.15), transparent 60%),
+      radial-gradient(1000px 600px at 100% 0%, rgba(22,75,60,0.10), transparent 55%),
+      #F5F2E9;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-ink;
+  }
 }
 
-.progress-card {
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-}
+/* Custom design system utility classes */
+@layer components {
+  .btn-primary {
+    @apply bg-amber text-teal-2 border-none rounded-[100px] px-[22px] py-4 font-extrabold text-[14.5px] flex items-center justify-between cursor-pointer transition-transform active:scale-[0.98];
+  }
 
-.quick-stats {
-  display: flex;
-  gap: 20px;
-}
+  .ring-card {
+    @apply bg-teal text-paper rounded-[20px] p-5 flex items-center gap-4 mb-[18px] shadow-[0_3px_10px_rgba(0,0,0,0.05)];
+  }
 
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  background: white;
-  padding: 10px;
-  border-top: 1px solid #ddd;
-}
+  .mini-card {
+    @apply bg-card rounded-[16px] p-3.5 shadow-[0_3px_10px_rgba(0,0,0,0.05)];
+  }
 
-.roadmap-container {
-  padding: 20px;
-}
+  .list-row {
+    @apply flex items-center gap-3 bg-card rounded-[14px] px-3.5 py-3 mb-2.5 shadow-[0_2px_6px_rgba(0,0,0,0.04)];
+  }
 
-.roadmap-tree {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+  .navbar {
+    @apply fixed bottom-0 left-0 right-0 flex justify-around bg-card border-t border-[rgba(30,42,34,0.12)] px-2 py-3.5 z-50;
+  }
 
-.node-item {
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  width: 300px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+  .urdu {
+    @apply font-urdu text-[26px] text-rust;
+    direction: rtl;
+  }
 
-.node-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #eee;
-  margin-right: 15px;
-}
+  .ni {
+    @apply flex flex-col items-center gap-1 text-[9.5px] font-bold text-[rgba(30,42,34,0.4)] uppercase tracking-wide;
+  }
 
-.mastered .node-circle { background: #4caf50; color: white; }
-.active .node-circle { background: #2196f3; color: white; }
-.locked .node-circle { background: #ccc; }
-
-.connector {
-  height: 20px;
-  width: 2px;
-  background: #ddd;
-  margin: 5px 0;
+  .ni.active {
+    @apply text-teal;
+  }
 }
