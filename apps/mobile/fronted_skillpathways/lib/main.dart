@@ -90,10 +90,17 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
     switch (_currentScreen) {
       case 'onboarding': return OnboardingScreen(onLanguageConfirmed: _navigateToAuth);
       case 'auth': return AuthScreen(onSuccess: _navigateToDiscovery);
-      case 'discovery': return DiscoveryScreen(onBack: () => setState(() => _currentScreen = 'auth'));
+      case 'discovery': return DiscoveryScreen(
+        onBack: () => setState(() => _currentScreen = 'auth'),
+        onContinue: _navigateToHome,
+      );
+      case 'home': return const HomeScreen();
       default: return OnboardingScreen(onLanguageConfirmed: _navigateToAuth);
     }
   }
+
+  // Add this to update navigation in DiscoveryScreen or other screens later
+  void _navigateToHome() => setState(() => _currentScreen = 'home');
 
   Widget _buildStatusBar() {
     final isDark = _currentScreen == 'onboarding';
@@ -405,31 +412,40 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildHeader(),
-        Expanded(child: _buildBody()),
-        _buildBottomSection(context),
-      ],
+    return Container(
+      color: const Color(0xFFF5F1E8), // Cream background
+      child: Column(
+        children: [
+          _buildHeader(),
+          Expanded(child: _buildBody(context)),
+          _buildBottomSection(context),
+        ],
+      ),
     );
   }
 
   Widget _buildHeader() => Container(
-    padding: const EdgeInsets.only(top: 64, bottom: 24, left: 24, right: 24),
-    color: const Color(0xFF0B766F),
+    padding: const EdgeInsets.only(top: 64, bottom: 40, left: 24, right: 24),
+    decoration: const BoxDecoration(
+      color: Color(0xFF1B6F63), // Dark teal
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(32),
+        bottomRight: Radius.circular(32),
+      ),
+    ),
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           width: 32, height: 32,
-          decoration: const BoxDecoration(color: Color(0xFFF5A20B), shape: BoxShape.circle),
+          decoration: const BoxDecoration(color: Color(0xFFFF9800), shape: BoxShape.circle), // Solid orange
         ),
         const SizedBox(width: 12),
         Text(
-          "Skill Pathway", 
-          style: GoogleFonts.inter(
-            color: Colors.white, 
-            fontWeight: FontWeight.bold, 
+          "Skill Pathway",
+          style: GoogleFonts.sansSerif( // Rounded sans-serif
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
             fontSize: 20,
             letterSpacing: -0.5,
           ),
@@ -438,27 +454,26 @@ class OnboardingScreen extends StatelessWidget {
     ),
   );
 
-  Widget _buildBody() => Container(
-    color: const Color(0xFFF8F5F0), // Warm cream background
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+  Widget _buildBody(BuildContext context) => SingleChildScrollView(
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text.rich(
           TextSpan(
-            text: "Every path ",
-            style: GoogleFonts.merriweather(
-              fontSize: 34, 
+            text: "Every path\n",
+            style: GoogleFonts.merriweather( // Serif
+              fontSize: 34,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF1B3022), // Dark forest green
+              color: const Color(0xFF1B3022), // Dark green
               height: 1.15,
             ),
             children: [
               TextSpan(
                 text: "should be visible.",
                 style: GoogleFonts.merriweather(
-                  fontSize: 34, 
-                  color: const Color(0xFF1B3022), 
+                  fontSize: 34,
+                  color: const Color(0xFF1B3022),
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w500,
                 ),
@@ -466,149 +481,375 @@ class OnboardingScreen extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 20),
-        Text(
-          "ہر راستہ صاف نظر آنا چاہیے", 
-          style: GoogleFonts.notoNastaliqUrdu(
-            fontSize: 22, 
-            color: const Color(0xFFC45C3E), // Warm rust terracotta
-            height: 1.8,
-          ),
-        ),
-        const SizedBox(height: 52),
+        const SizedBox(height: 16),
         Center(
-          child: SizedBox(
-            width: 220,
-            height: 220,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Translucent circles
-                Positioned(
-                  left: 20, top: 10,
-                  child: Container(
-                    width: 130, height: 130,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0B766F).withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 15, bottom: 35,
-                  child: Container(
-                    width: 120, height: 120,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF8B9467).withOpacity(0.12), // Dusty olive
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: 45, bottom: 5,
-                  child: Container(
-                    width: 110, height: 110,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFC45C3E).withOpacity(0.08),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                // Clean white document icon
-                Container(
-                  width: 76, height: 76,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(color: Colors.black12, blurRadius: 24, offset: Offset(0, 12))
-                    ],
-                  ),
-                  child: const Icon(Icons.description_outlined, size: 34, color: Color(0xFF0B766F)),
-                ),
-              ],
+          child: Text(
+            "ہر راستہ صاف نظر آنا چاہیے",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.notoNastaliqUrdu( // Decorative script
+              fontSize: 18,
+              color: const Color(0xFFC45C3E), // Reddish-orange
+              height: 2.2,
             ),
           ),
         ),
-        const SizedBox(height: 52),
-        Text(
-          "A career-guidance companion for students who feel lost between too much advice and not enough proof. The design's one job: turn \"I don't know what path to take\" into a path you can see, trust, and walk — one unlocked step at a time.",
-          style: GoogleFonts.inter(
-            color: const Color(0xFF4A4A4A), // Soft charcoal gray
-            fontSize: 15, 
-            height: 1.7,
-            letterSpacing: -0.1,
+        const SizedBox(height: 32),
+        _buildIllustration(),
+        const SizedBox(height: 32),
+        Center(
+          child: Container(
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
+            child: Text(
+              "A career-guidance companion for students who feel lost between too much advice and not enough proof. The design's one job: turn 'I don't know what path to take' into a path you can see, trust, and walk — one unlocked step at a time.",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                color: const Color(0xFF7E8A87), // Grey color
+                fontSize: 13.5,
+                height: 1.6,
+              ),
+            ),
           ),
         ),
       ],
     ),
   );
 
+  Widget _buildIllustration() => Center(
+    child: SizedBox(
+      width: 220,
+      height: 180,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Circles cluster
+          Positioned(left: 30, top: 0, child: _circle(100, const Color(0xFF1B6F63).withOpacity(0.15))),
+          Positioned(right: 30, top: 20, child: _circle(90, const Color(0xFFC4A43E).withOpacity(0.15))),
+          Positioned(left: 50, bottom: 0, child: _circle(110, const Color(0xFFE47A6E).withOpacity(0.12))),
+          Positioned(right: 70, top: 40, child: _circle(40, const Color(0xFFFF9800).withOpacity(0.2))),
+
+          // White Document Icon centered on top of circles
+          Container(
+            width: 72, height: 72,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(color: Colors.black12, blurRadius: 15, offset: Offset(0, 8))
+              ],
+            ),
+            child: Center(
+              child: Stack(
+                children: [
+                  const Icon(Icons.insert_drive_file_outlined, size: 36, color: Color(0xFF1B6F63)),
+                  Positioned(right: 8, top: 12, child: Container(width: 16, height: 2, color: const Color(0xFF1B6F63).withOpacity(0.3))),
+                  Positioned(right: 8, top: 18, child: Container(width: 16, height: 2, color: const Color(0xFF1B6F63).withOpacity(0.3))),
+                  Positioned(right: 8, top: 24, child: Container(width: 12, height: 2, color: const Color(0xFF1B6F63).withOpacity(0.3))),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
   Widget _buildBottomSection(BuildContext context) => Container(
-    color: const Color(0xFFF8F5F0),
     padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Choose your language", 
+          "Choose your language",
           style: GoogleFonts.inter(
-            fontWeight: FontWeight.bold, 
-            fontSize: 17, 
-            color: const Color(0xFF1E2022),
-            letterSpacing: -0.5,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.black,
           ),
         ),
         const SizedBox(height: 20),
-        _buildLanguageCard("English", "Dark", () => onLanguageConfirmed("English")),
+        _buildLanguageCard("English", isEnglish: true, () => onLanguageConfirmed("English")),
         const SizedBox(height: 16),
-        _buildLanguageCard("اردو", "Nastaliq", () => onLanguageConfirmed("Urdu")),
+        _buildLanguageCard("اردو", isEnglish: false, () => onLanguageConfirmed("Urdu")),
       ],
     ),
   );
 
-  Widget _buildLanguageCard(String language, String fontType, VoidCallback onTap) => GestureDetector(
+  Widget _buildLanguageCard(String language, VoidCallback onTap, {required bool isEnglish}) => GestureDetector(
     onTap: onTap,
     child: Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(40), // pill shape
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04), 
-            blurRadius: 16, 
-            offset: const Offset(0, 8),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Text(
-        language,
-        textAlign: fontType == "Nastaliq" ? TextAlign.right : TextAlign.left,
-        style: fontType == "Nastaliq"
-            ? GoogleFonts.notoNastaliqUrdu(
-                color: const Color(0xFFC45C3E), 
-                fontSize: 20, 
-                fontWeight: FontWeight.bold,
-              )
-            : GoogleFonts.inter(
-                color: const Color(0xFF1E2022), 
-                fontSize: 17, 
-                fontWeight: FontWeight.w600,
-              ),
+      child: Center(
+        child: Text(
+          language,
+          style: isEnglish
+              ? GoogleFonts.inter(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                )
+              : GoogleFonts.notoNastaliqUrdu(
+                  color: const Color(0xFFC45C3E),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+        ),
       ),
     ),
   );
 }
 
+
 // ============================================================================
-// DISCOVERY SCREEN (COMPLETED)
+// HOME SCREEN
 // ============================================================================
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F5F0), // Warm cream background
+      body: Column(
+        children: [
+          _buildHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildQuizCard(),
+                  const SizedBox(height: 24),
+                  _buildSectionTitle("Your Roadmap"),
+                  const SizedBox(height: 16),
+                  _buildRoadmap(),
+                  const SizedBox(height: 24),
+                  _buildParentsCard(),
+                  const SizedBox(height: 24),
+                  _buildSectionTitle("Success Stories"),
+                  const SizedBox(height: 16),
+                  _buildTestimonialCard(),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+          _buildBottomNavBar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() => Container(
+    padding: const EdgeInsets.fromLTRB(24, 64, 24, 24),
+    decoration: const BoxDecoration(
+      color: Color(0xFF0B766F), // Deep teal
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(32),
+        bottomRight: Radius.circular(32),
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Assalam-o-Alaikum, Sharjeel",
+          style: GoogleFonts.inter(
+            color: const Color(0xFFE0F2F1), // Soft light teal
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "Class 10 · Science Group",
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildQuizCard() => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF5A20B), // Orange Quiz Card
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Take your Aptitude Quiz",
+          style: GoogleFonts.inter(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF1E2022),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "Find out if Science, Arts or Commerce fits you best — 5 mins",
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: const Color(0xFF1E2022).withOpacity(0.8),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E2022), // Dark charcoal
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            "Start Quiz Now →",
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildSectionTitle(String title) => Text(
+    title,
+    style: GoogleFonts.inter(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: const Color(0xFF1E2022),
+    ),
+  );
+
+  Widget _buildRoadmap() => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: const Color(0xFFE8E7E3)),
+    ),
+    child: Column(
+      children: [
+        _buildRoadmapStep("Aptitude test completed", "Result: Pre-Engineering fit", isCompleted: true),
+        _buildRoadmapStep("Strengthen Math & Physics", "", isLocked: true),
+        _buildRoadmapStep("Explore Intermediate options", "", isLocked: true),
+      ],
+    ),
+  );
+
+  Widget _buildRoadmapStep(String title, String subtitle, {bool isCompleted = false, bool isLocked = false}) => Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: Row(
+      children: [
+        Container(
+          width: 30, height: 30,
+          decoration: BoxDecoration(
+            color: isCompleted ? const Color(0xFF0B766F) : (isLocked ? const Color(0xFFE8E7E3) : Colors.transparent),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            isCompleted ? Icons.check : (isLocked ? Icons.lock_outline : Icons.circle_outlined),
+            color: isCompleted ? Colors.white : const Color(0xFF7E8A87),
+            size: 18,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+            if (subtitle.isNotEmpty) Text(subtitle, style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF7E8A87))),
+          ],
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildParentsCard() => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: const Color(0xFFE0F2F1), // Soft light teal
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.people_outline, color: Color(0xFF0B766F)),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            "Share progress report with parents",
+            style: GoogleFonts.inter(
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0B766F),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildTestimonialCard() => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: const Color(0xFFE8E7E3)),
+    ),
+    child: Text(
+      "\"Skill Pathway helped me realize that I am better suited for Computer Science than Pre-Medical. Highly recommended!\"\n- Ahmed, Class 10",
+      style: GoogleFonts.merriweather(fontStyle: FontStyle.italic, color: const Color(0xFF1E2022)),
+    ),
+  );
+
+  Widget _buildBottomNavBar() => Container(
+    color: Colors.white,
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    decoration: const BoxDecoration(
+      border: Border(top: BorderSide(color: Color(0xFFE8E7E3))),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _navItem(Icons.home, "Home", isActive: true),
+        _navItem(Icons.map_outlined, "Roadmap"),
+        _navItem(Icons.chat_bubble_outline, "Chatbot"),
+        _navItem(Icons.person_outline, "Profile"),
+      ],
+    ),
+  );
+
+  Widget _navItem(IconData icon, String label, {bool isActive = false}) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, color: isActive ? const Color(0xFF0B766F) : const Color(0xFF7E8A87)),
+      const SizedBox(height: 4),
+      Text(label, style: GoogleFonts.inter(fontSize: 10, color: isActive ? const Color(0xFF0B766F) : const Color(0xFF7E8A87))),
+    ],
+  );
+}
 
 class DiscoveryScreen extends StatefulWidget {
   final VoidCallback onBack;
-  const DiscoveryScreen({super.key, required this.onBack});
+  final VoidCallback onContinue;
+  const DiscoveryScreen({super.key, required this.onBack, required this.onContinue});
 
   @override
   State<DiscoveryScreen> createState() => _DiscoveryScreenState();
@@ -803,7 +1044,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   );
 
   Widget _buildContinueButton() => GestureDetector(
-    onTap: () {},
+    onTap: widget.onContinue,
     child: Container(
       width: double.infinity, height: 56,
       decoration: BoxDecoration(
