@@ -78,7 +78,6 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
                 transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
                 child: _renderCurrentScreen(),
               ),
-              Positioned(top: 0, left: 0, right: 0, child: _buildStatusBar()),
             ],
           ),
         ),
@@ -414,18 +413,22 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFFF5F1E8), // Cream background
-      child: Column(
-        children: [
-          _buildHeader(),
-          Expanded(child: _buildBody(context)),
-          _buildBottomSection(context),
-        ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            Expanded(flex: 22, child: _buildHeader()),
+            Expanded(flex: 18, child: _buildHeadingBlock()),
+            Expanded(flex: 20, child: _buildIllustration()),
+            Expanded(flex: 14, child: _buildParagraph()),
+            Expanded(flex: 26, child: _buildLanguageBlock(context)),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader() => Container(
-    padding: const EdgeInsets.only(top: 64, bottom: 40, left: 24, right: 24),
+    padding: const EdgeInsets.symmetric(horizontal: 24),
     decoration: const BoxDecoration(
       color: Color(0xFF1B6F63), // Dark teal
       borderRadius: BorderRadius.only(
@@ -443,7 +446,7 @@ class OnboardingScreen extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           "Skill Pathway",
-          style: GoogleFonts.sansSerif( // Rounded sans-serif
+          style: GoogleFonts.inter(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -454,62 +457,104 @@ class OnboardingScreen extends StatelessWidget {
     ),
   );
 
-  Widget _buildBody(BuildContext context) => SingleChildScrollView(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+  Widget _buildHeadingBlock() => Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text.rich(
+        TextSpan(
+          text: "Every path\n",
+          style: GoogleFonts.merriweather(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF1B3022),
+            height: 1.1,
+          ),
+          children: [
+            TextSpan(
+              text: "should be visible.",
+              style: GoogleFonts.merriweather(
+                fontSize: 28,
+                color: const Color(0xFF1B3022),
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(height: 8),
+      Text(
+        "ہر راستہ صاف نظر آنا چاہیے",
+        textAlign: TextAlign.center,
+        style: GoogleFonts.notoNastaliqUrdu(
+          fontSize: 16,
+          color: const Color(0xFFC45C3E),
+        ),
+      ),
+    ],
+  );
+
+  Widget _buildIllustration() => Center(
+    child: SizedBox(
+      height: 100, // Max height
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(left: 30, child: _circle(70, const Color(0xFF1B6F63).withOpacity(0.15))),
+          Positioned(right: 30, child: _circle(60, const Color(0xFFC4A43E).withOpacity(0.15))),
+          Positioned(left: 60, child: _circle(70, const Color(0xFFE47A6E).withOpacity(0.12))),
+
+          Container(
+            width: 60, height: 60,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4))],
+            ),
+            child: const Center(
+              child: Icon(Icons.insert_drive_file_outlined, size: 28, color: Color(0xFF1B6F63)),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildParagraph() => Center(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Text(
+        "A career-guidance companion for students who feel lost between too much advice and not enough proof.",
+        textAlign: TextAlign.center,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.inter(
+          color: const Color(0xFF7E8A87),
+          fontSize: 12,
+          height: 1.4,
+        ),
+      ),
+    ),
+  );
+
+  Widget _buildLanguageBlock(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text.rich(
-          TextSpan(
-            text: "Every path\n",
-            style: GoogleFonts.merriweather( // Serif
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF1B3022), // Dark green
-              height: 1.15,
-            ),
-            children: [
-              TextSpan(
-                text: "should be visible.",
-                style: GoogleFonts.merriweather(
-                  fontSize: 34,
-                  color: const Color(0xFF1B3022),
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+        Text(
+          "Choose your language",
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.black,
           ),
         ),
         const SizedBox(height: 16),
-        Center(
-          child: Text(
-            "ہر راستہ صاف نظر آنا چاہیے",
-            textAlign: TextAlign.center,
-            style: GoogleFonts.notoNastaliqUrdu( // Decorative script
-              fontSize: 18,
-              color: const Color(0xFFC45C3E), // Reddish-orange
-              height: 2.2,
-            ),
-          ),
-        ),
-        const SizedBox(height: 32),
-        _buildIllustration(),
-        const SizedBox(height: 32),
-        Center(
-          child: Container(
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
-            child: Text(
-              "A career-guidance companion for students who feel lost between too much advice and not enough proof. The design's one job: turn 'I don't know what path to take' into a path you can see, trust, and walk — one unlocked step at a time.",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                color: const Color(0xFF7E8A87), // Grey color
-                fontSize: 13.5,
-                height: 1.6,
-              ),
-            ),
-          ),
-        ),
+        _buildLanguageCard("English", isEnglish: true, () => onLanguageConfirmed("English")),
+        const SizedBox(height: 12),
+        _buildLanguageCard("اردو", isEnglish: false, () => onLanguageConfirmed("Urdu")),
       ],
     ),
   );
@@ -551,6 +596,11 @@ class OnboardingScreen extends StatelessWidget {
         ],
       ),
     ),
+  );
+
+  Widget _circle(double size, Color color) => Container(
+    width: size, height: size,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
   );
 
   Widget _buildBottomSection(BuildContext context) => Container(
