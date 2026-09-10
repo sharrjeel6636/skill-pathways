@@ -411,19 +411,28 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFF5F1E8), // Cream background
-      child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(flex: 22, child: _buildHeader()),
-            Expanded(flex: 18, child: _buildHeadingBlock()),
-            Expanded(flex: 20, child: _buildIllustration()),
-            Expanded(flex: 14, child: _buildParagraph()),
-            Expanded(flex: 26, child: _buildLanguageBlock(context)),
-          ],
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Container(
+              color: const Color(0xFFF5F1E8), // Cream background
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    _buildHeadingBlock(),
+                    _buildIllustration(),
+                    _buildParagraph(),
+                    _buildLanguageBlock(context),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -460,6 +469,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget _buildHeadingBlock() => Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
+      const SizedBox(height: 10), // Adjust spacing
       Text.rich(
         TextSpan(
           text: "Every path\n",
@@ -492,12 +502,13 @@ class OnboardingScreen extends StatelessWidget {
           color: const Color(0xFFC45C3E),
         ),
       ),
+      const SizedBox(height: 10), // Adjust spacing
     ],
   );
 
   Widget _buildIllustration() => Center(
     child: SizedBox(
-      height: 100, // Max height
+      height: 85, // Reduced from 100
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -523,7 +534,7 @@ class OnboardingScreen extends StatelessWidget {
 
   Widget _buildParagraph() => Center(
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 20), // Adjusted vertical padding
       child: Text(
         "A career-guidance companion for students who feel lost between too much advice and not enough proof.",
         textAlign: TextAlign.center,
@@ -539,7 +550,7 @@ class OnboardingScreen extends StatelessWidget {
   );
 
   Widget _buildLanguageBlock(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    padding: const EdgeInsets.fromLTRB(24, 10, 24, 30), // Adjusted vertical padding, more bottom padding
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -551,50 +562,11 @@ class OnboardingScreen extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 10), // Reduced from 16
         _buildLanguageCard("English", isEnglish: true, () => onLanguageConfirmed("English")),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10), // Reduced from 12
         _buildLanguageCard("اردو", isEnglish: false, () => onLanguageConfirmed("Urdu")),
       ],
-    ),
-  );
-
-  Widget _buildIllustration() => Center(
-    child: SizedBox(
-      width: 220,
-      height: 180,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Circles cluster
-          Positioned(left: 30, top: 0, child: _circle(100, const Color(0xFF1B6F63).withOpacity(0.15))),
-          Positioned(right: 30, top: 20, child: _circle(90, const Color(0xFFC4A43E).withOpacity(0.15))),
-          Positioned(left: 50, bottom: 0, child: _circle(110, const Color(0xFFE47A6E).withOpacity(0.12))),
-          Positioned(right: 70, top: 40, child: _circle(40, const Color(0xFFFF9800).withOpacity(0.2))),
-
-          // White Document Icon centered on top of circles
-          Container(
-            width: 72, height: 72,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 15, offset: Offset(0, 8))
-              ],
-            ),
-            child: Center(
-              child: Stack(
-                children: [
-                  const Icon(Icons.insert_drive_file_outlined, size: 36, color: Color(0xFF1B6F63)),
-                  Positioned(right: 8, top: 12, child: Container(width: 16, height: 2, color: const Color(0xFF1B6F63).withOpacity(0.3))),
-                  Positioned(right: 8, top: 18, child: Container(width: 16, height: 2, color: const Color(0xFF1B6F63).withOpacity(0.3))),
-                  Positioned(right: 8, top: 24, child: Container(width: 12, height: 2, color: const Color(0xFF1B6F63).withOpacity(0.3))),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     ),
   );
 
@@ -603,32 +575,11 @@ class OnboardingScreen extends StatelessWidget {
     decoration: BoxDecoration(color: color, shape: BoxShape.circle),
   );
 
-  Widget _buildBottomSection(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Choose your language",
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(height: 20),
-        _buildLanguageCard("English", isEnglish: true, () => onLanguageConfirmed("English")),
-        const SizedBox(height: 16),
-        _buildLanguageCard("اردو", isEnglish: false, () => onLanguageConfirmed("Urdu")),
-      ],
-    ),
-  );
-
   Widget _buildLanguageCard(String language, VoidCallback onTap, {required bool isEnglish}) => GestureDetector(
     onTap: onTap,
     child: Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15), // Reduced from 20
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(40), // pill shape
