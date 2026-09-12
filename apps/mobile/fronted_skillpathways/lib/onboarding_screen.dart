@@ -12,11 +12,15 @@ class OnboardingScreen extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            Expanded(flex: 22, child: _buildHeader()),
-            Expanded(flex: 18, child: _buildHeadingBlock()),
-            Expanded(flex: 20, child: _buildIllustration()),
-            Expanded(flex: 14, child: _buildParagraph()),
-            Expanded(flex: 26, child: _buildLanguageBlock()),
+            _buildHeader(),
+            const SizedBox(height: 10),
+            _buildHeadingBlock(),
+            const SizedBox(height: 10),
+            _buildIllustration(),
+            const SizedBox(height: 10),
+            _buildParagraph(),
+            const Spacer(),
+            _buildLanguageBlock(),
           ],
         ),
       ),
@@ -92,22 +96,22 @@ class OnboardingScreen extends StatelessWidget {
 
   Widget _buildIllustration() => Center(
     child: SizedBox(
-      height: 100,
+      height: 80, // Reduced from 100
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Positioned(left: 30, child: _circle(70, const Color(0xFF1B6F63).withOpacity(0.15))),
-          Positioned(right: 30, child: _circle(60, const Color(0xFFC4A43E).withOpacity(0.15))),
-          Positioned(left: 60, child: _circle(70, const Color(0xFFE47A6E).withOpacity(0.12))),
+          Positioned(left: 30, child: _circle(60, const Color(0xFF1B6F63).withOpacity(0.15))), // Reduced size
+          Positioned(right: 30, child: _circle(50, const Color(0xFFC4A43E).withOpacity(0.15))), // Reduced size
+          Positioned(left: 60, child: _circle(60, const Color(0xFFE47A6E).withOpacity(0.12))), // Reduced size
           Container(
-            width: 60, height: 60,
+            width: 50, height: 50, // Reduced from 60
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
               boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 4))],
             ),
             child: const Center(
-              child: Icon(Icons.insert_drive_file_outlined, size: 28, color: Color(0xFF1B6F63)),
+              child: Icon(Icons.insert_drive_file_outlined, size: 24, color: Color(0xFF1B6F63)), // Reduced size
             ),
           ),
         ],
@@ -138,7 +142,7 @@ class OnboardingScreen extends StatelessWidget {
   );
 
   Widget _buildLanguageBlock() => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8), // Reduced vertical from 16
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -150,9 +154,9 @@ class OnboardingScreen extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8), // Reduced from 16
         _buildLanguageCard("English", isEnglish: true, () => onLanguageConfirmed("English")),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8), // Reduced from 12
         _buildLanguageCard("اردو", isEnglish: false, () => onLanguageConfirmed("Urdu")),
       ],
     ),
@@ -162,7 +166,7 @@ class OnboardingScreen extends StatelessWidget {
     onTap: onTap,
     child: Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Reduced vertical from 20 to reduce height
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(40),
