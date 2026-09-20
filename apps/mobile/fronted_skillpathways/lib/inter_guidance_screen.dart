@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'quiz_model.dart';
 import 'field_selection_screen.dart';
+import 'university_shortlist_screen.dart';
 
 class EntryTest {
   final String name;
@@ -159,9 +160,12 @@ class InterGuidanceScreen extends StatelessWidget {
 
   Widget _buildUniversityBanner(BuildContext context) => GestureDetector(
         onTap: () {
-          // Placeholder for UniversityShortlistScreen
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("UniversityShortlistScreen not built yet")));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UniversityShortlistScreen(initialFilterField: QuizState.fieldOfInterest),
+            ),
+          );
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
