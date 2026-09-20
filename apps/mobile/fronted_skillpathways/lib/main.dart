@@ -7,6 +7,7 @@ import 'chatbot_screen.dart';
 import 'role_selection_screen.dart';
 import 'parent_dashboard_screen.dart';
 import 'profile_screen.dart';
+import 'field_selection_screen.dart';
 
 void main() {
   runApp(const SkillPathwayApp());
@@ -121,10 +122,10 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
 
   ParentDashboardData _mockParentData() => ParentDashboardData(
     childName: "Sharjeel",
-    fieldOfInterest: "Computer Science",
+    fieldOfInterest: QuizState.fieldOfInterest ?? "Not selected",
     summaryText: "Based on aptitude quiz results, your child shows strong interest in Math, Physics and problem-solving. Recommended path: FSc Pre-Engineering leading to Engineering or CS degrees.",
     roadmapProgressPercent: 45,
-    quizCompleted: true,
+    quizCompleted: QuizState.completedResult != null,
     nextMilestoneLabel: "Explore Intermediate options",
   );
 
@@ -291,10 +292,19 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool isCompleted = result != null;
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const RoadmapScreen()),
-        );
+        if (isCompleted && QuizState.fieldOfInterest == null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FieldSelectionScreen(recommendedField: result.topField),
+            ),
+          ).then((_) => setState(() {}));
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RoadmapScreen()),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(20),

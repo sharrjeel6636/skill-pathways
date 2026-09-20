@@ -30,6 +30,7 @@ class QuizResult {
 
 class QuizState {
   static QuizResult? completedResult;
+  static String? fieldOfInterest;
 }
 
 enum StageStatus { done, active, locked }

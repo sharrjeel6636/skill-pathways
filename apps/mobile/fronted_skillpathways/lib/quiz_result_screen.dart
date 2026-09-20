@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'quiz_model.dart';
 import 'roadmap_screen.dart';
+import 'field_selection_screen.dart';
 
 class QuizResultScreen extends StatelessWidget {
   final QuizResult result;
@@ -230,7 +231,9 @@ class QuizResultScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const RoadmapScreen(),
+                builder: (context) => FieldSelectionScreen(
+                  recommendedField: result.topField,
+                ),
               ),
             );
           },
