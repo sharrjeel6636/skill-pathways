@@ -28,7 +28,7 @@ class ParentDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAF9),
+      backgroundColor: RoadmapColors.bgLight,
       body: Column(
         children: [
           _buildHeader(),
@@ -42,7 +42,13 @@ class ParentDashboardScreen extends StatelessWidget {
                   const SizedBox(height: 18),
                   _buildStatsCard(),
                   const SizedBox(height: 18),
-                  Text("Ask a Question", style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF1C1917))),
+                  Text("Ask a Question",
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: RoadmapColors.textDark
+                    )
+                  ),
                   const SizedBox(height: 12),
                   _buildChatbotCard(context),
                 ],
@@ -58,13 +64,25 @@ class ParentDashboardScreen extends StatelessWidget {
     height: 110,
     width: double.infinity,
     padding: const EdgeInsets.fromLTRB(24, 56, 24, 20),
-    decoration: const BoxDecoration(color: Color(0xFF0F766E)),
+    decoration: const BoxDecoration(color: RoadmapColors.primaryTeal),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Parent Dashboard", style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFFD9EDEA))),
-        Text("${data.childName}'s Progress", style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+        Text("Parent Dashboard",
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            color: const Color(0xFFD9EDEA)
+          )
+        ),
+        const SizedBox(height: 4),
+        Text("${data.childName}'s Progress",
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: RoadmapColors.surfaceWhite
+          )
+        ),
       ],
     ),
   );
@@ -72,16 +90,28 @@ class ParentDashboardScreen extends StatelessWidget {
   Widget _buildSummaryCard() => Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: RoadmapColors.surfaceWhite,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: const Color(0xFFE7E5E4)),
+      border: Border.all(color: RoadmapColors.borderLight),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Field of Interest: ${data.fieldOfInterest}", style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: const Color(0xFF1C1917))),
+        Text("Field of Interest: ${data.fieldOfInterest}",
+          style: GoogleFonts.inter(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: RoadmapColors.textDark
+          )
+        ),
         const SizedBox(height: 8),
-        Text(data.summaryText, style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF6B7280))),
+        Text(data.summaryText,
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            color: RoadmapColors.textMuted,
+            height: 1.5
+          )
+        ),
       ],
     ),
   );
@@ -89,9 +119,9 @@ class ParentDashboardScreen extends StatelessWidget {
   Widget _buildStatsCard() => Container(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: RoadmapColors.surfaceWhite,
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: const Color(0xFFE7E5E4)),
+      border: Border.all(color: RoadmapColors.borderLight),
     ),
     child: Column(
       children: [
@@ -107,8 +137,8 @@ class ParentDashboardScreen extends StatelessWidget {
   Widget _buildStatRow(String label, String value) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(label, style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF6B7280))),
-      Text(value, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF1C1917))),
+      Text(label, style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)),
+      Text(value, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: RoadmapColors.textDark)),
     ],
   );
 
@@ -117,21 +147,21 @@ class ParentDashboardScreen extends StatelessWidget {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatbotScreen(isParentMode: true)));
     },
     child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: const Color(0xFFE9F5F3), borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(color: RoadmapColors.lightTeal, borderRadius: BorderRadius.circular(16)),
       child: Row(
         children: [
           Container(
             width: 36,
             height: 36,
-            decoration: const BoxDecoration(color: Color(0xFF0F766E), shape: BoxShape.circle),
+            decoration: const BoxDecoration(color: RoadmapColors.primaryTeal, shape: BoxShape.circle),
             child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               "Confused about entry tests? Ask our Guidance Chatbot — simple answers, no jargon",
-              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: const Color(0xFF1C1917)),
+              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: RoadmapColors.textDark),
             ),
           ),
         ],

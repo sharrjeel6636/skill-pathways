@@ -4,10 +4,17 @@ import 'auth_screen.dart';
 import 'quiz_screen.dart';
 import 'quiz_model.dart';
 import 'chatbot_screen.dart';
+import 'role_selection_screen.dart';
+import 'parent_dashboard_screen.dart';
+import 'profile_screen.dart';
 
 void main() {
   runApp(const SkillPathwayApp());
 }
+
+import 'splash_screen.dart';
+
+// ...
 
 class SkillPathwayApp extends StatelessWidget {
   const SkillPathwayApp({super.key});
@@ -21,7 +28,7 @@ class SkillPathwayApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF1E2022),
       ),
-      home: const OnboardingPresenter(),
+      home: const SplashScreen(),
     );
   }
 }
@@ -38,8 +45,16 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
   String _selectedLanguage = 'English';
 
   void _navigateToAuth(String language) => setState(() { _selectedLanguage = language; _currentScreen = 'auth'; });
-  void _navigateToDiscovery() => setState(() => _currentScreen = 'discovery');
+  void _navigateToRoleSelection() => setState(() => _currentScreen = 'role_selection');
   void _navigateToOnboarding() => setState(() => _currentScreen = 'onboarding');
+
+  void _handleRoleSelection(UserRole role) {
+    if (role == UserRole.student) {
+      setState(() => _currentScreen = 'discovery');
+    } else {
+      setState(() => _currentScreen = 'parent_dashboard');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,15 +107,26 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
   Widget _renderCurrentScreen() {
     switch (_currentScreen) {
       case 'onboarding': return OnboardingScreen(onLanguageConfirmed: _navigateToAuth);
-      case 'auth': return AuthScreen(onSuccess: _navigateToDiscovery);
+      case 'auth': return AuthScreen(onSuccess: _navigateToRoleSelection);
+      case 'role_selection': return RoleSelectionScreen(onContinue: _handleRoleSelection);
       case 'discovery': return DiscoveryScreen(
-        onBack: () => setState(() => _currentScreen = 'auth'),
+        onBack: () => setState(() => _currentScreen = 'role_selection'),
         onContinue: _navigateToHome,
       );
+      case 'parent_dashboard': return ParentDashboardScreen(data: _mockParentData());
       case 'home': return const HomeScreen();
       default: return OnboardingScreen(onLanguageConfirmed: _navigateToAuth);
     }
   }
+
+  ParentDashboardData _mockParentData() => ParentDashboardData(
+    childName: "Sharjeel",
+    fieldOfInterest: "Computer Science",
+    summaryText: "Based on aptitude quiz results, your child shows strong interest in Math, Physics and problem-solving. Recommended path: FSc Pre-Engineering leading to Engineering or CS degrees.",
+    roadmapProgressPercent: 45,
+    quizCompleted: true,
+    nextMilestoneLabel: "Explore Intermediate options",
+  );
 
   void _navigateToHome() => setState(() => _currentScreen = 'home');
 }

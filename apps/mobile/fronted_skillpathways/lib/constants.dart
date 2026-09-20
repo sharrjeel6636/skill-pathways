@@ -19,5 +19,6 @@ class RoadmapColors {
   static const Color textMuted = Color(0xFF6B7280);
   static const Color borderLight = Color(0xFFE7E5E4);
   static const Color lockedGray = Color(0xFFD9D9D6);
+  static const Color lightTeal = Color(0xFFE9F5F3);
 }
 
