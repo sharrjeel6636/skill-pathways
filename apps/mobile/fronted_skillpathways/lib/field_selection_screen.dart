@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'quiz_model.dart';
-import 'roadmap_screen.dart';
+import 'inter_guidance_screen.dart';
 
 class FieldOption {
   final String name;
@@ -191,10 +191,10 @@ class _FieldSelectionScreenState extends State<FieldSelectionScreen> {
         // Persist selection
         QuizState.fieldOfInterest = _options[_selectedFieldIndex].name;
         
-        // Route to RoadmapScreen for now
+        // Route to InterGuidanceScreen
         Navigator.pushReplacement(
           context, 
-          MaterialPageRoute(builder: (context) => const RoadmapScreen())
+          MaterialPageRoute(builder: (context) => const InterGuidanceScreen())
         );
       },
       child: Container(
