@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'onboarding_screen.dart';
+import 'auth_screen.dart';
+import 'quiz_screen.dart';
+import 'quiz_model.dart';
+import 'chatbot_screen.dart';
 
 void main() {
   runApp(const SkillPathwayApp());
@@ -99,320 +102,31 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
     }
   }
 
-  // Add this to update navigation in DiscoveryScreen or other screens later
   void _navigateToHome() => setState(() => _currentScreen = 'home');
-
-  Widget _buildStatusBar() {
-    final isDark = _currentScreen == 'onboarding';
-    return Container(
-      height: 44,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      color: isDark ? const Color(0xFF0B766F) : const Color(0xFFF8F5F0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("09:41", style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w600, fontSize: 13)),
-          Container(width: 85, height: 20, decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10))),
-          Icon(Icons.battery_5_bar, color: isDark ? Colors.white : Colors.black, size: 15),
-        ],
-      ),
-    );
-  }
 }
 
 // ============================================================================
-// AUTH SCREEN (LOGIN & SIGN UP)
+// END OF AUTH SCREEN (LOGIN & SIGN UP)
 // ============================================================================
-
-class AuthScreen extends StatefulWidget {
-  final VoidCallback onSuccess;
-  const AuthScreen({super.key, required this.onSuccess});
-
-  @override
-  State<AuthScreen> createState() => _AuthScreenState();
-}
-
-class _AuthScreenState extends State<AuthScreen> {
-  bool _isLogin = true;
-  bool _obscurePassword = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F5F0),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          children: [
-            const SizedBox(height: 80),
-            _buildTopHeader(),
-            const SizedBox(height: 40),
-            _buildToggleTabs(),
-            const SizedBox(height: 40),
-            _buildHeadline(),
-            const SizedBox(height: 32),
-            _buildForm(),
-            const SizedBox(height: 32),
-            _buildPrimaryButton(),
-            if (_isLogin) _buildForgotPassword(),
-            const SizedBox(height: 32),
-            _buildSocialSection(),
-            const SizedBox(height: 40),
-            _buildFooterToggle(),
-            const SizedBox(height: 40),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTopHeader() => Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 32, height: 32,
-            decoration: const BoxDecoration(
-              color: Color(0xFF0B766F),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Container(
-                width: 12, height: 12,
-                decoration: const BoxDecoration(color: Color(0xFFF5A20B), shape: BoxShape.circle),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            "Skill Pathway",
-            style: GoogleFonts.inter(
-              color: const Color(0xFF1E2022),
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 8),
-      Text(
-        "Matric se career tak, guided rasta",
-        style: GoogleFonts.inter(
-          color: const Color(0xFF7E8A87),
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildToggleTabs() => Container(
-    height: 52,
-    padding: const EdgeInsets.all(4),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
-      ],
-    ),
-    child: Row(
-      children: [
-        _buildTab("Login", _isLogin),
-        _buildTab("Sign Up", !_isLogin),
-      ],
-    ),
-  );
-
-  Widget _buildTab(String title, bool isActive) => Expanded(
-    child: GestureDetector(
-      onTap: () => setState(() => _isLogin = title == "Login"),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: isActive ? const Color(0xFF0B766F) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: GoogleFonts.inter(
-              color: isActive ? Colors.white : const Color(0xFF7E8A87),
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  Widget _buildHeadline() => Align(
-    alignment: Alignment.centerLeft,
-    child: Text(
-      _isLogin ? "Welcome back" : "Create your account",
-      style: GoogleFonts.merriweather(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: const Color(0xFF1E2022),
-      ),
-    ),
-  );
-
-  Widget _buildForm() => Column(
-    children: [
-      if (!_isLogin) ...[
-        _buildInputField("Full Name", Icons.person_outline),
-        const SizedBox(height: 16),
-      ],
-      _buildInputField("Email or Phone number", Icons.mail_outline),
-      const SizedBox(height: 16),
-      _buildInputField(
-        "Password", 
-        Icons.lock_outline, 
-        isPassword: true,
-        suffix: IconButton(
-          icon: Icon(
-            _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-            color: const Color(0xFF7E8A87),
-            size: 20,
-          ),
-          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-        ),
-      ),
-      if (!_isLogin) ...[
-        const SizedBox(height: 16),
-        _buildInputField("Confirm Password", Icons.lock_outline, isPassword: true),
-      ],
-    ],
-  );
-
-  Widget _buildInputField(String hint, IconData icon, {bool isPassword = false, Widget? suffix}) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: const Color(0xFFE8E7E3), width: 1.5),
-    ),
-    child: TextField(
-      obscureText: isPassword && _obscurePassword,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: GoogleFonts.inter(color: const Color(0xFF7E8A87), fontSize: 14),
-        prefixIcon: Icon(icon, color: const Color(0xFF0B766F), size: 20),
-        suffixIcon: suffix,
-        border: InputBorder.none,
-      ),
-    ),
-  );
-
-  Widget _buildPrimaryButton() => GestureDetector(
-    onTap: widget.onSuccess,
-    child: Container(
-      width: double.infinity,
-      height: 56,
-      decoration: BoxDecoration(
-        color: const Color(0xFF0B766F),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: const Color(0xFF0B766F).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10)),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          _isLogin ? "Login" : "Create Account",
-          style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ),
-    ),
-  );
-
-  Widget _buildForgotPassword() => Padding(
-    padding: const EdgeInsets.only(top: 16),
-    child: Text(
-      "Forgot Password?",
-      style: GoogleFonts.inter(
-        color: const Color(0xFF0B766F),
-        fontWeight: FontWeight.w600,
-        fontSize: 14,
-      ),
-    ),
-  );
-
-  Widget _buildSocialSection() => Column(
-    children: [
-      Row(
-        children: [
-          Expanded(child: Divider(color: const Color(0xFFE8E7E3), thickness: 1.5)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "or continue with",
-              style: GoogleFonts.inter(color: const Color(0xFF7E8A87), fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Expanded(child: Divider(color: const Color(0xFFE8E7E3), thickness: 1.5)),
-        ],
-      ),
-      const SizedBox(height: 24),
-      Row(
-        children: [
-          _buildSocialButton("Google", Icons.g_mobiledata),
-          const SizedBox(width: 16),
-          _buildSocialButton("Apple", Icons.apple),
-        ],
-      ),
-    ],
-  );
-
-  Widget _buildSocialButton(String label, IconData icon) => Expanded(
-    child: Container(
-      height: 56,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8E7E3), width: 1.5),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 24),
-          const SizedBox(width: 8),
-          Text(label, style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14)),
-        ],
-      ),
-    ),
-  );
-
-  Widget _buildFooterToggle() => GestureDetector(
-    onTap: () => setState(() => _isLogin = !_isLogin),
-    child: Text.rich(
-      TextSpan(
-        text: _isLogin ? "Don’t have an account? " : "Already have an account? ",
-        style: GoogleFonts.inter(color: const Color(0xFF7E8A87), fontSize: 14),
-        children: [
-          TextSpan(
-            text: _isLogin ? "Sign Up" : "Login",
-            style: GoogleFonts.inter(color: const Color(0xFF0B766F), fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
 // ============================================================================
 // HOME SCREEN
 // ============================================================================
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
+    final result = QuizState.completedResult;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F5F0), // Warm cream background
+      backgroundColor: const Color(0xFFFAFAF7),
       body: Column(
         children: [
           _buildHeader(),
@@ -422,11 +136,11 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildQuizCard(),
+                  _buildQuizCard(context, result),
                   const SizedBox(height: 24),
                   _buildSectionTitle("Your Roadmap"),
                   const SizedBox(height: 16),
-                  _buildRoadmap(),
+                  _buildRoadmap(result),
                   const SizedBox(height: 24),
                   _buildParentsCard(),
                   const SizedBox(height: 24),
@@ -447,7 +161,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildHeader() => Container(
     padding: const EdgeInsets.fromLTRB(24, 64, 24, 24),
     decoration: const BoxDecoration(
-      color: Color(0xFF0B766F), // Deep teal
+      color: Color(0xFF0B766F),
       borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(32),
         bottomRight: Radius.circular(32),
@@ -459,7 +173,7 @@ class HomeScreen extends StatelessWidget {
         Text(
           "Assalam-o-Alaikum, Sharjeel",
           style: GoogleFonts.inter(
-            color: const Color(0xFFE0F2F1), // Soft light teal
+            color: const Color(0xFFE0F2F1),
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
@@ -477,49 +191,66 @@ class HomeScreen extends StatelessWidget {
     ),
   );
 
-  Widget _buildQuizCard() => Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: const Color(0xFFF5A20B), // Orange Quiz Card
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Take your Aptitude Quiz",
-          style: GoogleFonts.inter(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1E2022),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          "Find out if Science, Arts or Commerce fits you best — 5 mins",
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: const Color(0xFF1E2022).withOpacity(0.8),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E2022), // Dark charcoal
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            "Start Quiz Now →",
+  Widget _buildQuizCard(BuildContext context, QuizResult? result) {
+    final bool isCompleted = result != null;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5A20B),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            isCompleted ? "Assessment Completed!" : "Take your Aptitude Quiz",
             style: GoogleFonts.inter(
-              color: Colors.white,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: const Color(0xFF1E2022),
             ),
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(height: 8),
+          Text(
+            isCompleted 
+              ? "Your top field is ${result.topField}. Check your roadmap for next steps."
+              : "Find out if Science, Arts or Commerce fits you best — 5 mins",
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: const Color(0xFF1E2022).withOpacity(0.8),
+            ),
+          ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () {
+              if (isCompleted) {
+                // Optionally show results again
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const QuizScreen()),
+                ).then((_) => setState(() {})); // Refresh when coming back
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E2022),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                isCompleted ? "Results Viewed ✓" : "Start Quiz Now →",
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSectionTitle(String title) => Text(
     title,
@@ -530,21 +261,36 @@ class HomeScreen extends StatelessWidget {
     ),
   );
 
-  Widget _buildRoadmap() => Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: const Color(0xFFE8E7E3)),
-    ),
-    child: Column(
-      children: [
-        _buildRoadmapStep("Aptitude test completed", "Result: Pre-Engineering fit", isCompleted: true),
-        _buildRoadmapStep("Strengthen Math & Physics", "", isLocked: true),
-        _buildRoadmapStep("Explore Intermediate options", "", isLocked: true),
-      ],
-    ),
-  );
+  Widget _buildRoadmap(QuizResult? result) {
+    final bool isCompleted = result != null;
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RoadmapScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFFE8E7E3)),
+        ),
+        child: Column(
+          children: [
+            _buildRoadmapStep(
+              "Aptitude test completed",
+              isCompleted ? "Result: ${result.topField} fit" : "Identify your strengths",
+              isCompleted: isCompleted
+            ),
+            _buildRoadmapStep("Strengthen Math & Physics", "", isLocked: !isCompleted),
+            _buildRoadmapStep("Explore Intermediate options", "", isLocked: !isCompleted),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildRoadmapStep(String title, String subtitle, {bool isCompleted = false, bool isLocked = false}) => Padding(
     padding: const EdgeInsets.only(bottom: 16),
@@ -555,6 +301,7 @@ class HomeScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: isCompleted ? const Color(0xFF0B766F) : (isLocked ? const Color(0xFFE8E7E3) : Colors.transparent),
             shape: BoxShape.circle,
+            border: isCompleted ? null : Border.all(color: const Color(0xFFE8E7E3)),
           ),
           child: Icon(
             isCompleted ? Icons.check : (isLocked ? Icons.lock_outline : Icons.circle_outlined),
@@ -566,7 +313,7 @@ class HomeScreen extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+            Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: const Color(0xFF1E2022))),
             if (subtitle.isNotEmpty) Text(subtitle, style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF7E8A87))),
           ],
         ),
@@ -577,7 +324,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildParentsCard() => Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
-      color: const Color(0xFFE0F2F1), // Soft light teal
+      color: const Color(0xFFE9F5F3),
       borderRadius: BorderRadius.circular(20),
     ),
     child: Row(
@@ -606,7 +353,7 @@ class HomeScreen extends StatelessWidget {
     ),
     child: Text(
       "\"Skill Pathway helped me realize that I am better suited for Computer Science than Pre-Medical. Highly recommended!\"\n- Ahmed, Class 10",
-      style: GoogleFonts.merriweather(fontStyle: FontStyle.italic, color: const Color(0xFF1E2022)),
+      style: GoogleFonts.inter(fontStyle: FontStyle.italic, color: const Color(0xFF1E2022)),
     ),
   );
 
@@ -621,19 +368,26 @@ class HomeScreen extends StatelessWidget {
       children: [
         _navItem(Icons.home, "Home", isActive: true),
         _navItem(Icons.map_outlined, "Roadmap"),
-        _navItem(Icons.chat_bubble_outline, "Chatbot"),
-        _navItem(Icons.person_outline, "Profile"),
+        _navItem(Icons.chat_bubble_outline, "Chatbot", onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatbotScreen()));
+        }),
+        _navItem(Icons.person_outline, "Profile", onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+        }),
       ],
     ),
   );
 
-  Widget _navItem(IconData icon, String label, {bool isActive = false}) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, color: isActive ? const Color(0xFF0B766F) : const Color(0xFF7E8A87)),
-      const SizedBox(height: 4),
-      Text(label, style: GoogleFonts.inter(fontSize: 10, color: isActive ? const Color(0xFF0B766F) : const Color(0xFF7E8A87))),
-    ],
+  Widget _navItem(IconData icon, String label, {bool isActive = false, VoidCallback? onTap}) => GestureDetector(
+    onTap: onTap,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: isActive ? const Color(0xFF0B766F) : const Color(0xFF7E8A87)),
+        const SizedBox(height: 4),
+        Text(label, style: GoogleFonts.inter(fontSize: 10, color: isActive ? const Color(0xFF0B766F) : const Color(0xFF7E8A87))),
+      ],
+    ),
   );
 }
 
@@ -654,7 +408,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F5F0), // Warm cream background
+      backgroundColor: const Color(0xFFFAFAF7),
       body: Column(
         children: [
           _buildDiscoveryAppBar(),
@@ -794,7 +548,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFE6F2F1) : Colors.white,
+            color: isSelected ? const Color(0xFFE9F5F3) : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected ? const Color(0xFF0B766F).withOpacity(0.4) : const Color(0xFFE8E7E3), 

@@ -10,4 +10,14 @@ class QuizColors {
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color borderIdle = Color(0xFFE5E7EB);
   static const Color selectedBackground = Color(0xFFE8F5E9);
+class RoadmapColors {
+  static const Color primaryTeal = Color(0xFF0F766E);
+  static const Color accentAmber = Color(0xFFF59E0B);
+  static const Color bgLight = Color(0xFFFAFAF9);
+  static const Color surfaceWhite = Color(0xFFFFFFFF);
+  static const Color textDark = Color(0xFF1C1917);
+  static const Color textMuted = Color(0xFF6B7280);
+  static const Color borderLight = Color(0xFFE7E5E4);
+  static const Color lockedGray = Color(0xFFD9D9D6);
 }
+

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'constants.dart';
 import 'quiz_contract.dart';
 import 'quiz_model.dart';
 import 'quiz_presenter.dart';
+import 'quiz_result_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -29,17 +29,29 @@ class _QuizScreenState extends State<QuizScreen> implements QuizView {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentQuestion == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_currentQuestion == null) {
+      return const Scaffold(
+        backgroundColor: Color(0xFFFAFAF7),
+        body: Center(
+          child: CircularProgressIndicator(color: Color(0xFF0B766F)),
+        ),
+      );
+    }
 
     return Scaffold(
-      backgroundColor: QuizColors.background,
+      backgroundColor: const Color(0xFFFAFAF7),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildHeader(),
             _buildProgressBar(),
-            Expanded(flex: 3, child: _buildQuestionSection()),
-            Expanded(flex: 7, child: _buildOptionsSection()),
+            const SizedBox(height: 16),
+            _buildQuestionSection(),
+            const SizedBox(height: 16),
+            Expanded(
+              child: _buildOptionsSection(),
+            ),
             _buildBottomCTA(),
           ],
         ),
@@ -52,93 +64,190 @@ class _QuizScreenState extends State<QuizScreen> implements QuizView {
     padding: const EdgeInsets.symmetric(horizontal: 16),
     child: Row(
       children: [
-        IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)),
-        const Chip(label: Text("Interest Assessment")),
+        IconButton(
+          onPressed: () {
+            if (_currentIndex > 0) {
+              _presenter.previousQuestion();
+            } else {
+              Navigator.pop(context);
+            }
+          },
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E2022)),
+        ),
+        const Chip(
+          label: Text("Interest Assessment"),
+          backgroundColor: Color(0xFFE9F5F3),
+          labelStyle: TextStyle(
+            color: Color(0xFF0B766F),
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            fontFamily: 'Inter',
+          ),
+          side: BorderSide.none,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14))),
+        ),
         const Spacer(),
-        Text("Question ${_currentIndex + 1} of $_totalQuestions", style: GoogleFonts.poppins()),
+        Text(
+          "Question ${_currentIndex + 1} of $_totalQuestions",
+          style: GoogleFonts.inter(
+            color: const Color(0xFF7E8A87),
+            fontWeight: FontWeight.w500,
+            fontSize: 13,
+          ),
+        ),
       ],
     ),
   );
 
-  Widget _buildProgressBar() => LinearProgressIndicator(
-    value: _progress,
-    backgroundColor: QuizColors.borderIdle,
-    valueColor: const AlwaysStoppedAnimation(QuizColors.primaryDark),
+  Widget _buildProgressBar() => PreferredSize(
+    preferredSize: const Size.fromHeight(4),
+    child: LinearProgressIndicator(
+      value: _progress,
+      backgroundColor: const Color(0xFFE5E7EB),
+      valueColor: const AlwaysStoppedAnimation(Color(0xFF0B766F)),
+    ),
   );
 
   Widget _buildQuestionSection() => Container(
-    padding: const EdgeInsets.all(24),
-    child: Center(
-      child: Text(
-        _currentQuestion!.prompt,
-        style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600, color: QuizColors.textPrimary),
-        textAlign: TextAlign.center,
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+    alignment: Alignment.center,
+    child: Text(
+      _currentQuestion!.prompt,
+      style: GoogleFonts.inter(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: const Color(0xFF1E2022),
+        height: 1.3,
       ),
+      textAlign: TextAlign.center,
     ),
   );
 
-  Widget _buildOptionsSection() => ListView.separated(
+  Widget _buildOptionsSection() => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 24),
-    itemCount: _currentQuestion!.options.length,
-    separatorBuilder: (_, __) => const SizedBox(height: 12),
-    itemBuilder: (context, index) {
-      final isSelected = _selectedOptionIndex == index;
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedOptionIndex = index;
-            _presenter.selectOption(index);
-          });
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isSelected ? QuizColors.selectedBackground : QuizColors.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isSelected ? QuizColors.primaryDark : QuizColors.borderIdle,
-              width: isSelected ? 2 : 1.5,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: List.generate(_currentQuestion!.options.length, (index) {
+        final isSelected = _selectedOptionIndex == index;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedOptionIndex = index;
+                _presenter.selectOption(index);
+              });
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFE9F5F3) : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isSelected ? const Color(0xFF0B766F) : const Color(0xFFE5E7EB),
+                  width: isSelected ? 2 : 1.5,
+                ),
+                boxShadow: isSelected
+                    ? [BoxShadow(color: const Color(0xFF0B766F).withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))]
+                    : [BoxShadow(color: Colors.black.withOpacity(0.01), blurRadius: 4, offset: const Offset(0, 2))],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _currentQuestion!.options[index].text,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        color: const Color(0xFF1E2022),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildOptionCircle(isSelected),
+                ],
+              ),
             ),
           ),
-          child: Row(
-            children: [
-              Expanded(child: Text(_currentQuestion!.options[index].text, style: GoogleFonts.poppins())),
-              if (isSelected) const Icon(Icons.check_circle, color: QuizColors.primaryDark),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-
-  Widget _buildBottomCTA() => Container(
-    height: 80,
-    padding: const EdgeInsets.all(16),
-    child: ElevatedButton(
-      onPressed: _selectedOptionIndex == null ? null : () => _presenter.nextQuestion(),
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        backgroundColor: QuizColors.primaryDark,
-      ),
-      child: Text(_currentIndex == _totalQuestions - 1 ? "Finish" : "Next Question", style: GoogleFonts.poppins(color: Colors.white)),
+        );
+      }),
     ),
   );
 
+  Widget _buildOptionCircle(bool isSelected) {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isSelected ? const Color(0xFF0B766F) : const Color(0xFFE5E7EB),
+          width: 2,
+        ),
+        color: isSelected ? const Color(0xFF0B766F) : Colors.transparent,
+      ),
+      child: isSelected
+          ? const Center(
+              child: Icon(
+                Icons.check,
+                size: 14,
+                color: Colors.white,
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildBottomCTA() {
+    final isOptionPicked = _selectedOptionIndex != null;
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: GestureDetector(
+        onTap: isOptionPicked ? () => _presenter.nextQuestion() : null,
+        child: Container(
+          width: double.infinity,
+          height: 56,
+          decoration: BoxDecoration(
+            color: isOptionPicked ? const Color(0xFF0B766F) : const Color(0xFFE5E7EB),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: isOptionPicked
+                ? [BoxShadow(color: const Color(0xFF0B766F).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))]
+                : [],
+          ),
+          child: Center(
+            child: Text(
+              _currentIndex == _totalQuestions - 1 ? "Finish" : "Next Question",
+              style: GoogleFonts.inter(
+                color: isOptionPicked ? Colors.white : const Color(0xFF9CA3AF),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
-  void onQuestionUpdated(Question question, int currentIndex, int totalQuestions) {
+  void onQuestionUpdated(Question question, int currentIndex, int totalQuestions, int? selectedOptionIndex) {
     setState(() {
       _currentQuestion = question;
       _currentIndex = currentIndex;
       _totalQuestions = totalQuestions;
-      _selectedOptionIndex = null;
+      _selectedOptionIndex = selectedOptionIndex;
     });
   }
 
   @override
   void onQuizCompleted(QuizResult result) {
-    // Navigate to Result Screen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QuizResultScreen(result: result),
+      ),
+    );
   }
 
   @override
