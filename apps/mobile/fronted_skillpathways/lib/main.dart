@@ -611,9 +611,9 @@ class HomeScreen extends StatelessWidget {
   );
 
   Widget _buildBottomNavBar() => Container(
-    color: Colors.white,
     padding: const EdgeInsets.symmetric(vertical: 12),
     decoration: const BoxDecoration(
+      color: Colors.white,
       border: Border(top: BorderSide(color: Color(0xFFE8E7E3))),
     ),
     child: Row(
