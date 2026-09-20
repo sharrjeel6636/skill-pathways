@@ -72,11 +72,17 @@ class CourseDetail {
   final String title;
   final String platform;
   final String description;
+  final List<String> learningPoints;
+  final String externalUrl;
+  final String? imageUrl;
 
   CourseDetail({
     required this.title,
     required this.platform,
     required this.description,
+    required this.learningPoints,
+    required this.externalUrl,
+    this.imageUrl,
   });
 }
 
@@ -108,7 +114,13 @@ final List<CourseListing> allCourses = [
     durationLabel: "4 weeks",
     isFree: true,
     tags: ["Programming"],
-    detail: CourseDetail(title: "Python for Everybody", platform: "freeCodeCamp", description: "Learn Python from scratch."),
+    detail: CourseDetail(
+      title: "Python for Everybody",
+      platform: "freeCodeCamp",
+      description: "Learn Python from scratch.",
+      learningPoints: ["Variables", "Loops", "Functions"],
+      externalUrl: "https://www.freecodecamp.org",
+    ),
   ),
   CourseListing(
     platform: "Coursera",
@@ -117,7 +129,13 @@ final List<CourseListing> allCourses = [
     durationLabel: "6 weeks",
     isFree: false,
     tags: ["Programming"],
-    detail: CourseDetail(title: "Intro to Data Science", platform: "Coursera", description: "Deep dive into Data Science."),
+    detail: CourseDetail(
+      title: "Intro to Data Science",
+      platform: "Coursera",
+      description: "Deep dive into Data Science.",
+      learningPoints: ["Statistics", "Machine Learning", "Data Analysis"],
+      externalUrl: "https://www.coursera.org",
+    ),
   ),
   CourseListing(
     platform: "Local Bootcamp",
@@ -126,7 +144,13 @@ final List<CourseListing> allCourses = [
     durationLabel: "8 weeks",
     isFree: true,
     tags: ["Programming"],
-    detail: CourseDetail(title: "Web Development Basics", platform: "Local Bootcamp", description: "Master web fundamentals."),
+    detail: CourseDetail(
+      title: "Web Development Basics",
+      platform: "Local Bootcamp",
+      description: "Master web fundamentals.",
+      learningPoints: ["HTML", "CSS", "JS"],
+      externalUrl: "https://example.com",
+    ),
   ),
   CourseListing(
     platform: "LinkedIn Learning",
@@ -135,7 +159,13 @@ final List<CourseListing> allCourses = [
     durationLabel: "2 weeks",
     isFree: false,
     tags: ["Business"],
-    detail: CourseDetail(title: "Business Communication", platform: "LinkedIn Learning", description: "Improve your professional skills."),
+    detail: CourseDetail(
+      title: "Business Communication",
+      platform: "LinkedIn Learning",
+      description: "Improve your professional skills.",
+      learningPoints: ["Email writing", "Meetings", "Presentation"],
+      externalUrl: "https://www.linkedin.com/learning",
+    ),
   ),
 ];
 
