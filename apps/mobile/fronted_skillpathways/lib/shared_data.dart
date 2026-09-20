@@ -68,33 +68,74 @@ final Map<String, List<DegreeComparisonEntry>> fieldToDegreesMap = {
   ],
 };
 
-final List<UniversityListing> allUniversities = [
-  UniversityListing(
-    name: "NUST",
-    city: "Islamabad",
-    feePerSemester: "PKR 180k",
-    meritPercent: 88,
-    matchedFields: ["Pre-Engineering", "ICS (Computer Science)"],
-    detail: UniversityDetail(
-      name: "NUST",
-      city: "Islamabad",
-      overview: "Top-tier engineering university with a strong focus on research and innovation.",
-      feePerSemester: "PKR 180k",
-      meritPercent: 88,
-    ),
+class CourseDetail {
+  final String title;
+  final String platform;
+  final String description;
+
+  CourseDetail({
+    required this.title,
+    required this.platform,
+    required this.description,
+  });
+}
+
+class CourseListing {
+  final String platform;
+  final String title;
+  final String level;
+  final String durationLabel;
+  final bool isFree;
+  final List<String> tags; // e.g. ["Programming"], used for filter matching
+  final CourseDetail detail;
+
+  CourseListing({
+    required this.platform,
+    required this.title,
+    required this.level,
+    required this.durationLabel,
+    required this.isFree,
+    required this.tags,
+    required this.detail,
+  });
+}
+
+final List<CourseListing> allCourses = [
+  CourseListing(
+    platform: "freeCodeCamp",
+    title: "Python for Everybody",
+    level: "Beginner",
+    durationLabel: "4 weeks",
+    isFree: true,
+    tags: ["Programming"],
+    detail: CourseDetail(title: "Python for Everybody", platform: "freeCodeCamp", description: "Learn Python from scratch."),
   ),
-  UniversityListing(
-    name: "FAST-NUCES",
-    city: "Karachi",
-    feePerSemester: "PKR 150k",
-    meritPercent: 82,
-    matchedFields: ["Pre-Engineering", "ICS (Computer Science)"],
-    detail: UniversityDetail(
-      name: "FAST-NUCES",
-      city: "Karachi",
-      overview: "Renowned for its computing and software engineering programs.",
-      feePerSemester: "PKR 150k",
-      meritPercent: 82,
-    ),
+  CourseListing(
+    platform: "Coursera",
+    title: "Intro to Data Science",
+    level: "Intermediate",
+    durationLabel: "6 weeks",
+    isFree: false,
+    tags: ["Programming"],
+    detail: CourseDetail(title: "Intro to Data Science", platform: "Coursera", description: "Deep dive into Data Science."),
+  ),
+  CourseListing(
+    platform: "Local Bootcamp",
+    title: "Web Development Basics",
+    level: "Beginner",
+    durationLabel: "8 weeks",
+    isFree: true,
+    tags: ["Programming"],
+    detail: CourseDetail(title: "Web Development Basics", platform: "Local Bootcamp", description: "Master web fundamentals."),
+  ),
+  CourseListing(
+    platform: "LinkedIn Learning",
+    title: "Business Communication",
+    level: "All levels",
+    durationLabel: "2 weeks",
+    isFree: false,
+    tags: ["Business"],
+    detail: CourseDetail(title: "Business Communication", platform: "LinkedIn Learning", description: "Improve your professional skills."),
   ),
 ];
+
