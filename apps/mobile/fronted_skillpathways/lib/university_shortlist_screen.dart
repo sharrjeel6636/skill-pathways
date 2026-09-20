@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'quiz_model.dart';
+import 'university_detail_screen.dart';
 
 class UniversityDetail {
   final String name;
@@ -103,6 +104,22 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
     }
   }
 
+  void _showFilterSheet(String filterType) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Filter by $filterType", style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold)),
+            // Add filtering options here
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final filteredList = _selectedFilter == "All" 
@@ -148,17 +165,16 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: ["All", "Pre-Engineering", "ICS (Computer Science)", "City ▾", "Fee ▾", "Merit ▾"].map((filter) {
+            children: ["All", "City ▾", "Fee ▾", "Merit ▾"].map((filter) {
               final isSelected = _selectedFilter == filter;
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: GestureDetector(
                   onTap: () {
-                    if (!filter.contains("▾")) {
-                      setState(() => _selectedFilter = filter);
-                    } else {
-                      // Bottom sheet filter logic would go here
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$filter filter not yet implemented")));
+                    if (filter == "All") {
+                      setState(() => _selectedFilter = "All");
+                    } else if (filter.contains("▾")) {
+                      _showFilterSheet(filter.replaceAll(" ▾", ""));
                     }
                   },
                   child: Container(
@@ -187,8 +203,12 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
 
   Widget _buildUniversityCard(UniversityListing uni) => GestureDetector(
     onTap: () {
-      // Navigate to UniversityDetailScreen
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("UniversityDetailScreen for ${uni.name} not built yet")));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UniversityDetailScreen(university: uni.detail),
+        ),
+      );
     },
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
