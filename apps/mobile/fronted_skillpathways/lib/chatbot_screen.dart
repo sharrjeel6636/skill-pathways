@@ -12,7 +12,8 @@ class ChatMessage {
 }
 class ChatbotScreen extends StatefulWidget {
   final bool isParentMode;
-  const ChatbotScreen({super.key, this.isParentMode = false});
+  final bool isMockInterview;
+  const ChatbotScreen({super.key, this.isParentMode = false, this.isMockInterview = false});
 
   @override
   State<ChatbotScreen> createState() => _ChatbotScreenState();
@@ -37,6 +38,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       greeting = _isUrdu
           ? "السلام علیکم! میں آپ کے بچے کی رہنمائی میں آپ کی مدد کے لیے حاضر ہوں۔ کوئی سوال ہو تو پوچھیں۔"
           : "Assalam-o-Alaikum! I'm here to support you in guiding your child. Feel free to ask any questions.";
+    } else if (widget.isMockInterview) {
+      greeting = "Assalam-o-Alaikum! I'm your mock interviewer. Let's start! Please tell me about yourself.";
     } else {
       greeting = _isUrdu
           ? "السلام علیکم! میں آپ کی رہنمائی کے لیے حاضر ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟"
