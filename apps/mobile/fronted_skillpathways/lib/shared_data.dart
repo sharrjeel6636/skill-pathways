@@ -169,3 +169,32 @@ final List<CourseListing> allCourses = [
   ),
 ];
 
+enum CertStatus { completed, inProgress, notStarted }
+
+class CertificationEntry {
+  final String courseName;
+  final CertStatus status;
+  final String courseId;
+
+  CertificationEntry({
+    required this.courseName,
+    required this.status,
+    required this.courseId,
+  });
+}
+
+class CertificationsTracker {
+  static final Map<String, CertStatus> _progress = {
+    "Python for Everybody": CertStatus.completed,
+    "Web Development Basics": CertStatus.completed,
+    "Intro to Data Science": CertStatus.inProgress,
+    "Business Communication": CertStatus.notStarted,
+    "Resume Writing Workshop": CertStatus.notStarted,
+  };
+
+  static Map<String, CertStatus> get progress => _progress;
+
+  static void markInProgress(String courseName) {
+    _progress[courseName] = CertStatus.inProgress;
+  }
+}
