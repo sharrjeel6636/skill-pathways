@@ -205,11 +205,21 @@ class JobDetail {
   final String title;
   final String description;
   final String requirements;
+  final String entryPath;
+  final String requiredDegree;
+  final String startingSalary;
+  final String jobSecurityLevel;
+  final List<String> preparationSteps;
 
   JobDetail({
     required this.title,
     required this.description,
     required this.requirements,
+    required this.entryPath,
+    required this.requiredDegree,
+    required this.startingSalary,
+    required this.jobSecurityLevel,
+    required this.preparationSteps,
   });
 }
 
@@ -235,27 +245,31 @@ final List<JobListing> allJobs = [
     sector: JobSector.private_,
     city: "Karachi",
     salaryRange: "PKR 80k-150k",
-    detail: JobDetail(title: "Software Engineer", description: "Develop scalable software solutions.", requirements: "2+ years experience"),
+    detail: JobDetail(
+      title: "Software Engineer",
+      description: "Develop scalable software solutions.",
+      requirements: "2+ years experience",
+      entryPath: "Direct application",
+      requiredDegree: "BS Computer Science",
+      startingSalary: "PKR 80k-150k",
+      jobSecurityLevel: "High",
+      preparationSteps: ["Build a strong portfolio", "Master data structures", "Prepare for coding interviews"],
+    ),
   ),
   JobListing(
     title: "Assistant Director (BS-17)",
     sector: JobSector.govt,
     city: "Lahore",
     salaryRange: "PKR 60k-90k",
-    detail: JobDetail(title: "Assistant Director", description: "Manage administrative operations.", requirements: "Masters degree"),
-  ),
-  JobListing(
-    title: "Freelance Web Developer",
-    sector: JobSector.remote,
-    city: "Anywhere",
-    salaryRange: "Varies",
-    detail: JobDetail(title: "Freelance Web Developer", description: "Client-based development projects.", requirements: "Portfolio required"),
-  ),
-  JobListing(
-    title: "Business Development Exec",
-    sector: JobSector.corporate,
-    city: "Islamabad",
-    salaryRange: "PKR 50k-100k",
-    detail: JobDetail(title: "Business Development Exec", description: "Drive business growth.", requirements: "Strong communication skills"),
+    detail: JobDetail(
+      title: "Assistant Director",
+      description: "Manage administrative operations.",
+      requirements: "Masters degree",
+      entryPath: "PPSC Exam",
+      requiredDegree: "Masters in any discipline",
+      startingSalary: "PKR 60k-90k",
+      jobSecurityLevel: "Very High",
+      preparationSteps: ["Complete your Bachelor's degree (16 years)", "Apply for CSS or PPSC when eligible", "Prepare with past papers & current affairs"],
+    ),
   ),
 ];
