@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'quiz_model.dart';
+import 'matric_guidance_screen.dart';
 
 class RoadmapScreen extends StatelessWidget {
   const RoadmapScreen({super.key});
@@ -69,7 +70,12 @@ class RoadmapScreen extends StatelessWidget {
   Widget _buildStageNode(BuildContext context, RoadmapStage stage, bool isLast) => GestureDetector(
     onTap: () {
       if (stage.status != StageStatus.locked) {
-        // Navigate to RoadmapDetailScreen
+        if (stage.title.contains("Matric")) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MatricGuidanceScreen()),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Complete previous stages first")),
