@@ -215,6 +215,46 @@ class PrepTool {
   });
 }
 
+enum JobSector { private_, govt, remote, corporate }
+
+class JobDetail {
+  final String title;
+  final String description;
+  final String requirements;
+  final String entryPath;
+  final String requiredDegree;
+  final String startingSalary;
+  final String jobSecurityLevel;
+  final List<String> preparationSteps;
+
+  JobDetail({
+    required this.title,
+    required this.description,
+    required this.requirements,
+    required this.entryPath,
+    required this.requiredDegree,
+    required this.startingSalary,
+    required this.jobSecurityLevel,
+    required this.preparationSteps,
+  });
+}
+
+class JobListing {
+  final String title;
+  final JobSector sector;
+  final String city;
+  final String salaryRange;
+  final JobDetail detail;
+
+  JobListing({
+    required this.title,
+    required this.sector,
+    required this.city,
+    required this.salaryRange,
+    required this.detail,
+  });
+}
+
 final List<JobListing> allJobs = [
   JobListing(
     title: "Software Engineer",
@@ -249,3 +289,26 @@ final List<JobListing> allJobs = [
     ),
   ),
 ];
+
+enum GrowthLevelStatus { active, next, locked }
+
+class CareerGrowthLevel {
+  final String title;
+  final String subtitle;
+  final GrowthLevelStatus status;
+
+  CareerGrowthLevel({
+    required this.title,
+    required this.subtitle,
+    required this.status,
+  });
+}
+
+final Map<String, List<CareerGrowthLevel>> roleToGrowthMap = {
+  "Software Engineer": [
+    CareerGrowthLevel(title: "Software Engineer", subtitle: "You are here · 0-2 yrs", status: GrowthLevelStatus.active),
+    CareerGrowthLevel(title: "Senior Software Engineer", subtitle: "Skill: System design, mentoring", status: GrowthLevelStatus.next),
+    CareerGrowthLevel(title: "Tech Lead / Engineering Manager", subtitle: "Skill: Leadership, architecture", status: GrowthLevelStatus.locked),
+    CareerGrowthLevel(title: "Switch path: Product / Freelance", subtitle: "Alternative growth options", status: GrowthLevelStatus.locked),
+  ],
+};
