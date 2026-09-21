@@ -12,7 +12,7 @@ class JobSectorDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Color headerColor;
     String sectorLabel;
-    
+
     switch (job.sector) {
       case JobSector.private_:
         headerColor = RoadmapColors.primaryTeal;
@@ -51,23 +51,7 @@ class JobSectorDetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           color: RoadmapColors.textDark)),
                   const SizedBox(height: 16),
-                  ...job.detail.preparationSteps.map((step) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Row(
-                          children: [
-                            Container(
-                                width: 24,
-                                height: 24,
-                                decoration: const BoxDecoration(
-                                    color: RoadmapColors.lightTeal, shape: BoxShape.circle)),
-                            const SizedBox(width: 12),
-                            Expanded(
-                                child: Text(step,
-                                    style: GoogleFonts.inter(
-                                        fontSize: 13, color: RoadmapColors.textDark))),
-                          ],
-                        ),
-                      )),
+                  _buildPreparationSteps(),
                 ],
               ),
             ),
@@ -87,46 +71,82 @@ class JobSectorDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                  color: color == RoadmapColors.accentAmber ? const Color(0xFF1C1917) : RoadmapColors.accentAmber,
+                  color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(10)),
               child: Text(label,
                   style: GoogleFonts.inter(
-                      fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
             ),
             const SizedBox(height: 8),
-            Text(job.title,
+            Text(job.detail.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
-                    fontSize: 19, fontWeight: FontWeight.bold, color: Colors.white),
-                maxLines: 2),
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)),
           ],
         ),
       );
 
   Widget _buildInfoCard() => Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         decoration: BoxDecoration(
-          color: RoadmapColors.surfaceWhite,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: RoadmapColors.borderLight),
-        ),
+            color: RoadmapColors.surfaceWhite,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: RoadmapColors.borderLight)),
         child: Column(
           children: [
             _buildInfoRow("Entry path", job.detail.entryPath),
+            const SizedBox(height: 14),
             _buildInfoRow("Required degree", job.detail.requiredDegree),
+            const SizedBox(height: 14),
             _buildInfoRow("Starting salary", job.detail.startingSalary),
+            const SizedBox(height: 14),
             _buildInfoRow("Job security", job.detail.jobSecurityLevel),
           ],
         ),
       );
 
-  Widget _buildInfoRow(String label, String value) => Padding(
-        padding: const EdgeInsets.only(bottom: 14),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)),
-            Text(value, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: RoadmapColors.textDark)),
-          ],
-        ),
+  Widget _buildInfoRow(String label, String value) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: GoogleFonts.inter(
+                  fontSize: 13, color: RoadmapColors.textMuted)),
+          Text(value,
+              style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: RoadmapColors.textDark)),
+        ],
+      );
+
+  Widget _buildPreparationSteps() => Column(
+        children: job.detail.preparationSteps
+            .map((step) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: RoadmapColors.lightTeal),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(step,
+                            style: GoogleFonts.inter(
+                                fontSize: 13, color: RoadmapColors.textDark)),
+                      ),
+                    ],
+                  ),
+                ))
+            .toList(),
       );
 }
