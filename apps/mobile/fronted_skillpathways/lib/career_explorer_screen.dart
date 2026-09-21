@@ -38,6 +38,7 @@ class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
             if (_selectedSector == "Govt") return j.sector == JobSector.govt;
             if (_selectedSector == "Remote") return j.sector == JobSector.remote;
             if (_selectedSector == "Corporate") return j.sector == JobSector.corporate;
+            if (_selectedSector == "Trade/Skilled") return j.sector == JobSector.trade;
             return true;
           }).toList();
 
@@ -96,7 +97,7 @@ class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: ["All", "Private", "Govt", "Remote", "Corporate"].map((sector) {
+                children: ["All", "Private", "Govt", "Remote", "Corporate", "Trade/Skilled"].map((sector) {
                   final isSelected = _selectedSector == sector;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -144,6 +145,10 @@ class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
       case JobSector.corporate:
         sectorColor = RoadmapColors.primaryTeal;
         sectorLabel = "Corporate";
+        break;
+      case JobSector.trade:
+        sectorColor = RoadmapColors.accentAmber;
+        sectorLabel = "Trade/Skilled";
         break;
     }
 

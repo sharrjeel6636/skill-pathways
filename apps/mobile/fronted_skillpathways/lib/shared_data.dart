@@ -215,7 +215,7 @@ class PrepTool {
   });
 }
 
-enum JobSector { private_, govt, remote, corporate }
+enum JobSector { private_, govt, remote, corporate, trade }
 
 class JobDetail {
   final String title;
@@ -286,6 +286,22 @@ final List<JobListing> allJobs = [
       startingSalary: "PKR 60k-90k",
       jobSecurityLevel: "Very High",
       preparationSteps: ["Complete your Bachelor's degree (16 years)", "Apply for CSS or PPSC when eligible", "Prepare with past papers & current affairs"],
+    ),
+  ),
+  JobListing(
+    title: "Licensed Electrician",
+    sector: JobSector.trade,
+    city: "Karachi",
+    salaryRange: "PKR 40k-70k",
+    detail: JobDetail(
+      title: "Licensed Electrician",
+      description: "Install and maintain electrical systems.",
+      requirements: "Trade certification",
+      entryPath: "Vocational Training",
+      requiredDegree: "Matric + Trade Cert",
+      startingSalary: "PKR 40k-70k",
+      jobSecurityLevel: "High",
+      preparationSteps: ["Complete Matric", "Enroll in a trade school", "Get licensed"],
     ),
   ),
 ];

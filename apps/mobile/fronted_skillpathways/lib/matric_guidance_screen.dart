@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'field_selection_screen.dart';
+import 'vocational_path_screen.dart';
 
 class MatricGuideEntry {
   final String groupName;
   final Color accentColor;
   final List<String> bulletPoints;
+  final bool isVocational;
 
   MatricGuideEntry({
     required this.groupName,
     required this.accentColor,
     required this.bulletPoints,
+    this.isVocational = false,
   });
 }
 
@@ -42,6 +45,15 @@ class MatricGuidanceScreen extends StatelessWidget {
         "Focus on Accounting, Economics, Business Studies",
         "Opens doors to BBA, ACCA, Banking, Finance"
       ],
+    ),
+    MatricGuideEntry(
+      groupName: "If you don't want to continue to Intermediate",
+      accentColor: RoadmapColors.accentAmber,
+      bulletPoints: [
+        "Learn a skilled trade directly after Matric",
+        "Many trades need only 6 months to 2 years of training"
+      ],
+      isVocational: true,
     ),
   ];
 
@@ -100,13 +112,16 @@ class MatricGuidanceScreen extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: 16),
     child: GestureDetector(
       onTap: () {
-        // Navigate to FieldSelectionScreen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FieldSelectionScreen(recommendedField: entry.groupName.replaceAll("If you choose ", "")),
-          ),
-        );
+        if (entry.isVocational) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const VocationalPathScreen()));
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FieldSelectionScreen(recommendedField: entry.groupName.replaceAll("If you choose ", "")),
+            ),
+          );
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
@@ -129,12 +144,14 @@ class MatricGuidanceScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  entry.groupName,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: RoadmapColors.textDark,
+                Expanded(
+                  child: Text(
+                    entry.groupName,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: RoadmapColors.textDark,
+                    ),
                   ),
                 ),
               ],

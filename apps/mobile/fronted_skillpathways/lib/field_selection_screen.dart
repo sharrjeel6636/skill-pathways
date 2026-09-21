@@ -36,13 +36,14 @@ class _FieldSelectionScreenState extends State<FieldSelectionScreen> {
   void initState() {
     super.initState();
     
-    // Define the 5 fields
+    // Define the 5 fields + 1 Vocational
     final fields = [
       {"name": "Pre-Engineering", "careers": "Engineering, Computer Science, Architecture", "match": "Science"},
       {"name": "Pre-Medical", "careers": "MBBS, Pharm-D, Nursing, Allied Health", "match": "Medicine"}, // Or Science
       {"name": "ICS (Computer Science)", "careers": "BSCS, Software Engineering, IT", "match": "ICS"}, // Or Science
       {"name": "Commerce", "careers": "BBA, ACCA, Banking, Business", "match": "Commerce"},
       {"name": "Arts / Humanities", "careers": "Law, Media, Psychology, Design", "match": "Arts"},
+      {"name": "Vocational / Technical Training", "careers": "Leads to: Electrician, Plumbing, HVAC, Automotive, Tailoring, IT Support, Beautician and more — skilled trade certifications", "match": "Vocational"},
     ];
 
     _options = fields.map((f) {
@@ -191,11 +192,18 @@ class _FieldSelectionScreenState extends State<FieldSelectionScreen> {
         // Persist selection
         QuizState.fieldOfInterest = _options[_selectedFieldIndex].name;
         
-        // Route to InterGuidanceScreen
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => const InterGuidanceScreen())
-        );
+        // Route to correct screen
+        if (_options[_selectedFieldIndex].name == "Vocational / Technical Training") {
+          Navigator.pushReplacement(
+            context, 
+            MaterialPageRoute(builder: (context) => const VocationalPathScreen())
+          );
+        } else {
+          Navigator.pushReplacement(
+            context, 
+            MaterialPageRoute(builder: (context) => const InterGuidanceScreen())
+          );
+        }
       },
       child: Container(
         width: double.infinity,
