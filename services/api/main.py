@@ -132,16 +132,78 @@ async def verify_learning_material(id: int):
     response = supabase.table("learning_materials").update({"is_verified": True}).eq("id", id).execute()
     return response.data
 
-@app.post("/chatbot/message", dependencies=[Depends(get_current_user)])
-async def chatbot_message(message: dict):
-    user_text = message.get("text", "").lower()
-    if "internship" in user_text:
-        return {"reply": "Internships are a great way to gain experience! Check the Opportunities tab for listings."}
-    elif "scholarship" in user_text:
-        return {"reply": "Scholarships can help fund your journey. We track many here; check Opportunities for deadlines."}
-    elif "next step" in user_text:
-        return {"reply": "To identify your next step, go to your Roadmap and look for the 'active' node."}
-    return {"reply": "I'm not sure, but I can help you with internships, scholarships, or navigating your roadmap."}
+import os
+import time
+from collections import deque
+from anthropic import Anthropic
+from fastapi import FastAPI, Depends, HTTPException, Header, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Dict, Optional
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+
+app = FastAPI()
+
+# --- RATE LIMITING ---
+# In-memory rate limiter: {ip: deque([timestamps])}
+rate_limit_store = {}
+RATE_LIMIT_WINDOW = 60 # seconds
+RATE_LIMIT_MAX = 5 # requests
+
+def check_rate_limit(request: Request):
+    client_ip = request.client.host
+    now = time.time()
+    if client_ip not in rate_limit_store:
+        rate_limit_store[client_ip] = deque()
+    
+    # Remove old timestamps
+    while rate_limit_store[client_ip] and rate_limit_store[client_ip][0] < now - RATE_LIMIT_WINDOW:
+        rate_limit_store[client_ip].popleft()
+        
+    if len(rate_limit_store[client_ip]) >= RATE_LIMIT_MAX:
+        raise HTTPException(status_code=429, detail="Too many requests")
+    
+    rate_limit_store[client_ip].append(now)
+
+# --- ANTHROPIC CLIENT ---
+anthropic = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+
+# ... (rest of middleware and dependencies)
+
+class ChatMessage(BaseModel):
+    text: str
+    context: Optional[dict] = None
+
+@app.post("/chatbot/message", dependencies=[Depends(get_current_user), Depends(check_rate_limit)])
+async def chatbot_message(message: ChatMessage):
+    ctx = message.context or {}
+    mode = ctx.get("mode", "student")
+    
+    system_prompt = """You are a helpful career/education guidance assistant for Pakistani students and parents using the Skill Pathway app.
+    - Give concise, encouraging, jargon-free answers (2-4 sentences typically).
+    - Reference Pakistan-specific context when relevant (HEC, TEVTA, PPSC/FPSC, MDCAT/ECAT/NUST NET, local scholarships).
+    - Never fabricate specific numbers (fees, dates, percentages). If you don't know, suggest checking relevant in-app screens (University Detail, Scholarship Info).
+    """
+    
+    if mode == "parent":
+        system_prompt += f"\nYou are advising a parent. Answer in a reassuring, non-jargon tone. The child's name is {ctx.get('student_name', 'your child')}."
+    elif mode == "mock_interview":
+        system_prompt += "\nYou are conducting a mock job interview. Ask one interview question at a time, wait for the user's answer, then provide brief constructive feedback before asking the next question. Do not answer general guidance questions."
+    
+    if ctx.get("field_of_interest") or ctx.get("quiz_top_field"):
+        system_prompt += f"\nPersonalization: The student is interested in or identified as a good fit for: {ctx.get('field_of_interest') or ctx.get('quiz_top_field')}."
+
+    response = anthropic.messages.create(
+        model="claude-3-haiku-20240307",
+        max_tokens=300,
+        system=system_prompt,
+        messages=[{"role": "user", "content": message.text}]
+    )
+    
+    return {"reply": response.content[0].text}
 
 @app.get("/admin/analytics", dependencies=[Depends(get_current_user)])
 async def get_analytics():

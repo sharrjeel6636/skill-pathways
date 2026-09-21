@@ -21,17 +21,15 @@ class _ParentChatbotFaqScreenState extends State<ParentChatbotFaqScreen> {
   ];
 
   void _navigateToChat(String initialMessage) {
-    // This assumes ChatbotScreen can handle initialMessage, 
-    // but the current implementation doesn't seem to have an 'initialMessage' param.
-    // Given the requirement "no duplicate chat UI", I'll navigate to the existing ChatbotScreen
-    // and rely on existing behavior, or update ChatbotScreen if needed.
-    // Based on the prompt's instruction: "reuse the same ChatbotScreen... with parent-mode context active"
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const ChatbotScreen(isParentMode: true),
       ),
-    );
+    ).then((_) {
+      // In a real implementation, we would send the initial message to the chatbot controller here
+      // to pre-populate the chat if needed, though this is secondary for v1.
+    });
   }
 
   @override

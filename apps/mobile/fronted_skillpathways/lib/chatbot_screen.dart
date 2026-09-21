@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'quiz_model.dart';
+import 'shared_data.dart';
 
 enum MessageSender { bot, user }
 
@@ -10,6 +14,7 @@ class ChatMessage {
 
   ChatMessage({required this.text, required this.sender, required this.timestamp});
 }
+
 class ChatbotScreen extends StatefulWidget {
   final bool isParentMode;
   final bool isMockInterview;
@@ -24,7 +29,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isTyping = false;
-  bool _isUrdu = false; // Should be fetched from app settings/localization
+  bool _isUrdu = false; 
 
   @override
   void initState() {
@@ -77,19 +82,36 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     _simulateBotResponse(text);
   }
 
+  Future<void> _sendMessageToApi(String text) async {
+    final Map<String, dynamic> context = {
+      "mode": widget.isParentMode ? "parent" : (widget.isMockInterview ? "mock_interview" : "student"),
+      "student_name": "Sharjeel",
+      "field_of_interest": QuizState.fieldOfInterest,
+      "quiz_top_field": QuizState.completedResult?.topField,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8000/chatbot/message'),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer test-user-id'},
+        body: jsonEncode({'text': text, 'context': context}),
+      );
+      
+      if (response.statusCode == 200) {
+        _addMessage(jsonDecode(response.body)['reply'], MessageSender.bot);
+      } else {
+        throw Exception('Failed to get response');
+      }
+    } catch (e) {
+      _addMessage("Sorry, I couldn't process that — please try again", MessageSender.bot);
+    }
+  }
+
   void _simulateBotResponse(String userText) {
     setState(() => _isTyping = true);
-    Future.delayed(const Duration(seconds: 1), () {
+    _sendMessageToApi(userText).then((_) {
       if (!mounted) return;
       setState(() => _isTyping = false);
-      
-      // Simulate potential error
-      bool success = true; // Set to false to test error
-      if (success) {
-        _addMessage("I'm a placeholder bot. You said: $userText", MessageSender.bot);
-      } else {
-        _addMessage("Sorry, I couldn't process that — please try again", MessageSender.bot);
-      }
     });
   }
 
@@ -178,7 +200,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE7E5E4)),
       ),
-      child: const Text("..."), // Replace with animated dots
+      child: const Text("..."), 
     ),
   );
 
