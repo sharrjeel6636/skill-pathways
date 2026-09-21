@@ -30,20 +30,31 @@ class _AuthScreenState extends State<AuthScreen> {
     });
   }
 
-  void _validateAndSubmit() {
+  void _validateAndSubmit() async {
     setState(() {
       _errors.clear();
       if (_formState.identifier.isEmpty) _errors['identifier'] = 'Required';
       if (_formState.password.length < 6) _errors['password'] = 'Min 6 characters';
-      if (_formState.mode == AuthMode.signup) {
-        if (_formState.fullName.isEmpty) _errors['fullName'] = 'Required';
-        if (_formState.confirmPassword != _formState.password) _errors['confirmPassword'] = 'Passwords do not match';
-      }
     });
 
-    if (_errors.isEmpty) {
-      // TODO: Perform actual authentication
-      print("Submitting: ${_formState.mode}");
+    if (_errors.isNotEmpty) return;
+
+    try {
+      final client = Supabase.instance.client;
+      if (_formState.mode == AuthMode.signup) {
+        await client.auth.signUp(
+          email: _formState.identifier,
+          password: _formState.password,
+        );
+      } else {
+        await client.auth.signInWithPassword(
+          email: _formState.identifier,
+          password: _formState.password,
+        );
+      }
+      if (mounted) context.go('/role-selection');
+    } catch (e) {
+      setState(() => _errors['global'] = e.toString());
     }
   }
 

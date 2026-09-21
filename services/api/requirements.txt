@@ -4,3 +4,4 @@ supabase
 pydantic
 sqlalchemy
 python-dotenv
+google-genai
