@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'constants.dart';
-import 'shared_data.dart';
+import 'providers/JobProvider.dart';
 import 'job_sector_detail_screen.dart';
 import 'widgets/async_state_view.dart';
 
@@ -31,6 +32,7 @@ class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final allJobs = context.watch<JobProvider>().allJobs;
     final filteredJobs = _selectedSector == "All"
         ? allJobs
         : allJobs.where((j) {

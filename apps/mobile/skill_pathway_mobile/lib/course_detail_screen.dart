@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'constants.dart';
 import 'shared_data.dart';
+import 'providers/CertificationProvider.dart';
 
 class CourseDetailScreen extends StatelessWidget {
   final CourseDetail course;
@@ -72,8 +74,7 @@ class CourseDetailScreen extends StatelessWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: RoadmapColors.primaryTeal, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                 onPressed: () async {
-                  // Mark as in progress (stub)
-                  // CertificationsTracker.markInProgress(course.title); 
+                  Provider.of<CertificationProvider>(context, listen: false).markInProgress(course.title);
                   
                   final Uri url = Uri.parse(course.externalUrl);
                   if (await canLaunchUrl(url)) {

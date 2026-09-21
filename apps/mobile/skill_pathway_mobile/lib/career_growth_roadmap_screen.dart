@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'constants.dart';
-import 'shared_data.dart';
+import 'providers/RoadmapProvider.dart';
 
 class CareerGrowthRoadmapScreen extends StatelessWidget {
   final String role;
@@ -10,30 +11,34 @@ class CareerGrowthRoadmapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final levels = roleToGrowthMap[role] ?? [];
-    
-    // Header subtitle
-    String subtitle = "";
-    if (levels.isNotEmpty) {
-      subtitle = levels.map((l) => l.title).join(" → ");
-    }
+    return Consumer<RoadmapProvider>(
+      builder: (context, provider, child) {
+        final levels = provider.roleToGrowthMap[role] ?? [];
+        
+        // Header subtitle
+        String subtitle = "";
+        if (levels.isNotEmpty) {
+          subtitle = levels.map((l) => l.title).join(" → ");
+        }
 
-    return Scaffold(
-      backgroundColor: RoadmapColors.bgLight,
-      body: Column(
-        children: [
-          _buildHeader(subtitle),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-              itemCount: levels.length,
-              separatorBuilder: (ctx, index) => const SizedBox(height: 0),
-              itemBuilder: (ctx, index) => _buildTimelineRow(
-                  levels[index], index == levels.length - 1),
-            ),
+        return Scaffold(
+          backgroundColor: RoadmapColors.bgLight,
+          body: Column(
+            children: [
+              _buildHeader(subtitle),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                  itemCount: levels.length,
+                  separatorBuilder: (ctx, index) => const SizedBox(height: 0),
+                  itemBuilder: (ctx, index) => _buildTimelineRow(
+                      levels[index], index == levels.length - 1),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'shared_data.dart';
 import 'course_detail_screen.dart';
 import 'widgets/async_state_view.dart';
+import 'providers/CourseProvider.dart';
 
 class CourseListingScreen extends StatefulWidget {
   const CourseListingScreen({super.key});
@@ -14,54 +16,46 @@ class CourseListingScreen extends StatefulWidget {
 
 class _CourseListingScreenState extends State<CourseListingScreen> {
   String _selectedFilter = "All";
-  AsyncViewState _state = AsyncViewState.loading;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
-
-  Future<void> _fetchData() async {
-    setState(() => _state = AsyncViewState.loading);
-    // Simulate API fetch
-    await Future.delayed(const Duration(milliseconds: 500));
-    setState(() => _state = AsyncViewState.data);
-  }
+  AsyncViewState _state = AsyncViewState.data; // Use data directly from provider
 
   @override
   Widget build(BuildContext context) {
-    final filteredCourses = _selectedFilter == "All"
-        ? allCourses
-        : allCourses.where((c) {
-            if (_selectedFilter == "Free") return c.isFree;
-            if (_selectedFilter == "Beginner") return c.level == "Beginner";
-            return c.tags.contains(_selectedFilter);
-          }).toList();
+    return Consumer<CourseProvider>(
+      builder: (context, provider, child) {
+        final allCourses = provider.courses;
+        final filteredCourses = _selectedFilter == "All"
+            ? allCourses
+            : allCourses.where((c) {
+                if (_selectedFilter == "Free") return c.isFree;
+                if (_selectedFilter == "Beginner") return c.level == "Beginner";
+                return c.tags.contains(_selectedFilter);
+              }).toList();
 
-    return Scaffold(
-      backgroundColor: RoadmapColors.bgLight,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: AsyncStateView(
-                state: filteredCourses.isEmpty ? AsyncViewState.empty : _state,
-                onRetry: _fetchData,
-                emptyMessage: "No courses match your filter.",
-                errorMessage: "Failed to load courses.",
-                child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-                  itemCount: filteredCourses.length,
-                  separatorBuilder: (ctx, index) => const SizedBox(height: 14),
-                  itemBuilder: (ctx, index) => _buildCourseCard(context, filteredCourses[index]),
+        return Scaffold(
+          backgroundColor: RoadmapColors.bgLight,
+          body: SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: AsyncStateView(
+                    state: filteredCourses.isEmpty ? AsyncViewState.empty : _state,
+                    onRetry: () {},
+                    emptyMessage: "No courses match your filter.",
+                    errorMessage: "Failed to load courses.",
+                    child: ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                      itemCount: filteredCourses.length,
+                      separatorBuilder: (ctx, index) => const SizedBox(height: 14),
+                      itemBuilder: (ctx, index) => _buildCourseCard(context, filteredCourses[index]),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

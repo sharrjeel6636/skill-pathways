@@ -10,6 +10,8 @@ class QuizColors {
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color borderIdle = Color(0xFFE5E7EB);
   static const Color selectedBackground = Color(0xFFE8F5E9);
+}
+
 class RoadmapColors {
   static const Color primaryTeal = Color(0xFF0F766E);
   static const Color accentAmber = Color(0xFFF59E0B);

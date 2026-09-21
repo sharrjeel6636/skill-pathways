@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'quiz_model.dart';
-import 'shared_data.dart';
+import 'providers/QuizStateProvider.dart';
 
 enum MessageSender { bot, user }
 
@@ -83,18 +84,19 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Future<void> _sendMessageToApi(String text) async {
-    final Map<String, dynamic> context = {
+    final quizProvider = Provider.of<QuizStateProvider>(context, listen: false);
+    final Map<String, dynamic> contextData = {
       "mode": widget.isParentMode ? "parent" : (widget.isMockInterview ? "mock_interview" : "student"),
       "student_name": "Sharjeel",
-      "field_of_interest": QuizState.fieldOfInterest,
-      "quiz_top_field": QuizState.completedResult?.topField,
+      "field_of_interest": quizProvider.fieldOfInterest,
+      "quiz_top_field": quizProvider.completedResult?.topField,
     };
 
     try {
       final response = await http.post(
         Uri.parse('http://localhost:8000/chatbot/message'),
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer test-user-id'},
-        body: jsonEncode({'text': text, 'context': context}),
+        body: jsonEncode({'text': text, 'context': contextData}),
       );
       
       if (response.statusCode == 200) {
