@@ -7,8 +7,8 @@ Future<void> main() async {
 
   // Initialize Supabase (add your actual URL and Anon Key here)
   await Supabase.initialize(
-    url: 'https://your-project.supabase.co',
-    anonKey: 'your-anon-key',
+    url: const String.fromEnvironment('SUPABASE_URL', defaultValue: ''),
+    anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: ''),
   );
 
   runApp(const SkillPathwayApp());

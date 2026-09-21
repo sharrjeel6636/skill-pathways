@@ -48,7 +48,12 @@ gemini_client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 async def get_current_user(authorization: Optional[str] = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Unauthorized")
-    return "test-user-id" # Placeholder
+    token = authorization.split(" ")[1]
+    try:
+        user = supabase.auth.get_user(token)
+        return user.user.id
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 async def verify_user_access(user_id: str, current_user: str = Depends(get_current_user)):
     if current_user != user_id:

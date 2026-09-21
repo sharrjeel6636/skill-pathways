@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:convert';
 import 'chatbot_screen.dart';
+import 'widgets/async_state_view.dart';
+import 'services/api_client.dart';
+import 'constants.dart';
 
 class ParentDashboardData {
   final String childName;
@@ -18,47 +23,95 @@ class ParentDashboardData {
     required this.quizCompleted,
     required this.nextMilestoneLabel,
   });
+
+  factory ParentDashboardData.fromJson(Map<String, dynamic> json) {
+    return ParentDashboardData(
+      childName: "Child",
+      fieldOfInterest: json['pathway_title'] ?? 'N/A',
+      summaryText: "Progress analysis",
+      roadmapProgressPercent: (json['progress_percent'] ?? 0).toInt(),
+      quizCompleted: (json['steps_done'] ?? 0) > 0,
+      nextMilestoneLabel: json['next_step'] ?? 'N/A',
+    );
+  }
 }
 
-class ParentDashboardScreen extends StatelessWidget {
-  final ParentDashboardData data;
+class ParentDashboardScreen extends StatefulWidget {
+  const ParentDashboardScreen({super.key});
 
-  const ParentDashboardScreen({super.key, required this.data});
+  @override
+  State<ParentDashboardScreen> createState() => _ParentDashboardScreenState();
+}
+
+class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
+  AsyncViewState _state = AsyncViewState.loading;
+  ParentDashboardData? _data;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) throw Exception("User not logged in");
+      final response = await ApiClient.get('/dashboard/$userId');
+      if (response.statusCode == 200) {
+        setState(() {
+          _data = ParentDashboardData.fromJson(jsonDecode(response.body));
+          _state = AsyncViewState.data;
+        });
+      } else {
+        setState(() => _state = AsyncViewState.error);
+      }
+    } catch (e) {
+      setState(() => _state = AsyncViewState.error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: RoadmapColors.bgLight,
-      body: Column(
-        children: [
-          _buildHeader(),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSummaryCard(),
-                  const SizedBox(height: 18),
-                  _buildStatsCard(),
-                  const SizedBox(height: 18),
-                  Text("Ask a Question",
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: RoadmapColors.textDark
-                    )
-                  ),
-                  const SizedBox(height: 12),
-                  _buildChatbotCard(context),
-                ],
-              ),
-            ),
-          ),
-        ],
+      body: AsyncStateView(
+        state: _state,
+        onRetry: _fetchData,
+        child: _data == null ? const SizedBox() : _buildContent(),
       ),
     );
   }
+
+  Widget _buildContent() => Column(
+    children: [
+      _buildHeader(),
+      Expanded(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSummaryCard(),
+              const SizedBox(height: 18),
+              _buildStatsCard(),
+              const SizedBox(height: 18),
+              Text("Ask a Question",
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: RoadmapColors.textDark
+                )
+              ),
+              const SizedBox(height: 12),
+              _buildChatbotCard(context),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
 
   Widget _buildHeader() => Container(
     height: 110,
@@ -76,7 +129,7 @@ class ParentDashboardScreen extends StatelessWidget {
           )
         ),
         const SizedBox(height: 4),
-        Text("${data.childName}'s Progress",
+        Text("${_data!.childName}'s Progress",
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -97,7 +150,7 @@ class ParentDashboardScreen extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Field of Interest: ${data.fieldOfInterest}",
+        Text("Field of Interest: ${_data!.fieldOfInterest}",
           style: GoogleFonts.inter(
             fontSize: 15,
             fontWeight: FontWeight.w600,
@@ -105,7 +158,7 @@ class ParentDashboardScreen extends StatelessWidget {
           )
         ),
         const SizedBox(height: 8),
-        Text(data.summaryText,
+        Text(_data!.summaryText,
           style: GoogleFonts.inter(
             fontSize: 13,
             color: RoadmapColors.textMuted,
@@ -125,11 +178,11 @@ class ParentDashboardScreen extends StatelessWidget {
     ),
     child: Column(
       children: [
-        _buildStatRow("Roadmap progress", "${data.roadmapProgressPercent}%"),
+        _buildStatRow("Roadmap progress", "${_data!.roadmapProgressPercent}%"),
         const SizedBox(height: 14),
-        _buildStatRow("Quiz completed", data.quizCompleted ? "Yes" : "Not yet"),
+        _buildStatRow("Quiz completed", _data!.quizCompleted ? "Yes" : "Not yet"),
         const SizedBox(height: 14),
-        _buildStatRow("Next milestone", data.nextMilestoneLabel),
+        _buildStatRow("Next milestone", _data!.nextMilestoneLabel),
       ],
     ),
   );
