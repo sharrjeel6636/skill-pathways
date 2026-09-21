@@ -148,34 +148,61 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  AsyncViewState _state = AsyncViewState.loading;
+  QuizResult? _result;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    try {
+      // Simulate fetch
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() {
+        _result = QuizState.completedResult;
+        _state = AsyncViewState.data;
+      });
+    } catch (e) {
+      print(e);
+      setState(() => _state = AsyncViewState.error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final result = QuizState.completedResult;
-
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7),
       body: Column(
         children: [
           _buildHeader(),
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildQuizCard(context, result),
-                  const SizedBox(height: 24),
-                  _buildSectionTitle("Your Roadmap"),
-                  const SizedBox(height: 16),
-                  _buildRoadmap(result),
-                  const SizedBox(height: 24),
-                  _buildParentsCard(),
-                  const SizedBox(height: 24),
-                  _buildSectionTitle("Success Stories"),
-                  const SizedBox(height: 16),
-                  _buildTestimonialCard(),
-                  const SizedBox(height: 24),
-                ],
+            child: AsyncStateView(
+              state: _state,
+              onRetry: _fetchData,
+              errorMessage: "Couldn't load your dashboard.",
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildQuizCard(context, _result),
+                    const SizedBox(height: 24),
+                    _buildSectionTitle("Your Roadmap"),
+                    const SizedBox(height: 16),
+                    _buildRoadmap(_result),
+                    const SizedBox(height: 24),
+                    _buildParentsCard(),
+                    const SizedBox(height: 24),
+                    _buildSectionTitle("Success Stories"),
+                    const SizedBox(height: 16),
+                    _buildTestimonialCard(),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),

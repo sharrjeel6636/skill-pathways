@@ -82,7 +82,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() => _isTyping = false);
-      _addMessage("I'm a placeholder bot. You said: $userText", MessageSender.bot);
+      
+      // Simulate potential error
+      bool success = true; // Set to false to test error
+      if (success) {
+        _addMessage("I'm a placeholder bot. You said: $userText", MessageSender.bot);
+      } else {
+        _addMessage("Sorry, I couldn't process that — please try again", MessageSender.bot);
+      }
     });
   }
 

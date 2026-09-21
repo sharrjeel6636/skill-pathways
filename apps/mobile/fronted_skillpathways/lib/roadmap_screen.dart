@@ -4,21 +4,47 @@ import 'constants.dart';
 import 'quiz_model.dart';
 import 'matric_guidance_screen.dart';
 
-class RoadmapScreen extends StatelessWidget {
+class RoadmapScreen extends StatefulWidget {
   const RoadmapScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Demo data for now - will be driven by app state
-    final stages = [
-      RoadmapStage(title: "Matric (9th-10th)", subtitle: "Aptitude quiz completed", status: StageStatus.done),
-      RoadmapStage(title: "Intermediate", subtitle: "FSc Pre-Engineering in progress", status: StageStatus.active),
-      RoadmapStage(title: "University/Degree Selection", subtitle: "Locked until Inter results", status: StageStatus.locked),
-      RoadmapStage(title: "University Life & Skills", subtitle: "Certifications & internships", status: StageStatus.locked),
-      RoadmapStage(title: "Internship & Job Prep", subtitle: "Resume, interviews", status: StageStatus.locked),
-      RoadmapStage(title: "Job & Career Growth", subtitle: "Long-term path", status: StageStatus.locked),
-    ];
+  State<RoadmapScreen> createState() => _RoadmapScreenState();
+}
 
+class _RoadmapScreenState extends State<RoadmapScreen> {
+  AsyncViewState _state = AsyncViewState.loading;
+  List<RoadmapStage> _stages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    try {
+      // Simulate fetch
+      await Future.delayed(const Duration(seconds: 1));
+      setState(() {
+        _stages = [
+          RoadmapStage(title: "Matric (9th-10th)", subtitle: "Aptitude quiz completed", status: StageStatus.done),
+          RoadmapStage(title: "Intermediate", subtitle: "FSc Pre-Engineering in progress", status: StageStatus.active),
+          RoadmapStage(title: "University/Degree Selection", subtitle: "Locked until Inter results", status: StageStatus.locked),
+          RoadmapStage(title: "University Life & Skills", subtitle: "Certifications & internships", status: StageStatus.locked),
+          RoadmapStage(title: "Internship & Job Prep", subtitle: "Resume, interviews", status: StageStatus.locked),
+          RoadmapStage(title: "Job & Career Growth", subtitle: "Long-term path", status: StageStatus.locked),
+        ];
+        _state = _stages.isEmpty ? AsyncViewState.empty : AsyncViewState.data;
+      });
+    } catch (e) {
+      print(e);
+      setState(() => _state = AsyncViewState.error);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: RoadmapColors.bgLight,
       body: SafeArea(
@@ -26,11 +52,17 @@ class RoadmapScreen extends StatelessWidget {
           children: [
             _buildHeader(),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                itemCount: stages.length,
-                separatorBuilder: (ctx, index) => const SizedBox(height: 0),
-                itemBuilder: (ctx, index) => _buildStageNode(ctx, stages[index], index == stages.length - 1),
+              child: AsyncStateView(
+                state: _state,
+                onRetry: _fetchData,
+                emptyMessage: "No roadmap stages found.",
+                errorMessage: "Couldn't load your roadmap.",
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  itemCount: _stages.length,
+                  separatorBuilder: (ctx, index) => const SizedBox(height: 0),
+                  itemBuilder: (ctx, index) => _buildStageNode(ctx, _stages[index], index == _stages.length - 1),
+                ),
               ),
             ),
           ],
