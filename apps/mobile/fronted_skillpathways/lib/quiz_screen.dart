@@ -12,6 +12,21 @@ class QuizScreen extends StatefulWidget {
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'quiz_contract.dart';
+import 'quiz_model.dart';
+import 'quiz_presenter.dart';
+import 'quiz_result_screen.dart';
+import 'widgets/async_state_view.dart';
+
+class QuizScreen extends StatefulWidget {
+  const QuizScreen({super.key});
+
+  @override
+  State<QuizScreen> createState() => _QuizScreenState();
+}
+
 class _QuizScreenState extends State<QuizScreen> implements QuizView {
   late QuizPresenter _presenter;
   Question? _currentQuestion;
@@ -19,6 +34,7 @@ class _QuizScreenState extends State<QuizScreen> implements QuizView {
   int _totalQuestions = 0;
   double _progress = 0.0;
   int? _selectedOptionIndex;
+  AsyncViewState _state = AsyncViewState.loading;
 
   @override
   void initState() {
@@ -29,34 +45,37 @@ class _QuizScreenState extends State<QuizScreen> implements QuizView {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentQuestion == null) {
-      return const Scaffold(
-        backgroundColor: Color(0xFFFAFAF7),
-        body: Center(
-          child: CircularProgressIndicator(color: Color(0xFF0B766F)),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF7),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHeader(),
-            _buildProgressBar(),
-            const SizedBox(height: 16),
-            _buildQuestionSection(),
-            const SizedBox(height: 16),
-            Expanded(
-              child: _buildOptionsSection(),
-            ),
-            _buildBottomCTA(),
-          ],
+        child: AsyncStateView(
+          state: _state,
+          onRetry: _presenter.loadQuiz,
+          errorMessage: "Couldn't load quiz. Please try again.",
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildHeader(),
+              _buildProgressBar(),
+              const SizedBox(height: 16),
+              if (_currentQuestion != null) ...[
+                _buildQuestionSection(),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: _buildOptionsSection(),
+                ),
+                _buildBottomCTA(),
+              ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  @override
+  void onQuizError() {
+    setState(() => _state = AsyncViewState.error);
   }
 
   Widget _buildHeader() => Container(

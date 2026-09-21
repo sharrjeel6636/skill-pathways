@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'shared_data.dart';
 import 'course_detail_screen.dart';
+import 'widgets/async_state_view.dart';
 
 class CourseListingScreen extends StatefulWidget {
   const CourseListingScreen({super.key});
@@ -13,6 +14,20 @@ class CourseListingScreen extends StatefulWidget {
 
 class _CourseListingScreenState extends State<CourseListingScreen> {
   String _selectedFilter = "All";
+  AsyncViewState _state = AsyncViewState.loading;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    // Simulate API fetch
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() => _state = AsyncViewState.data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +46,17 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
           children: [
             _buildHeader(),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-                itemCount: filteredCourses.length,
-                separatorBuilder: (ctx, index) => const SizedBox(height: 14),
-                itemBuilder: (ctx, index) => _buildCourseCard(context, filteredCourses[index]),
+              child: AsyncStateView(
+                state: filteredCourses.isEmpty ? AsyncViewState.empty : _state,
+                onRetry: _fetchData,
+                emptyMessage: "No courses match your filter.",
+                errorMessage: "Failed to load courses.",
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                  itemCount: filteredCourses.length,
+                  separatorBuilder: (ctx, index) => const SizedBox(height: 14),
+                  itemBuilder: (ctx, index) => _buildCourseCard(context, filteredCourses[index]),
+                ),
               ),
             ),
           ],

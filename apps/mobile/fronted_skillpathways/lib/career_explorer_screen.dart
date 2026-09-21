@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'shared_data.dart';
 import 'job_sector_detail_screen.dart';
+import 'widgets/async_state_view.dart';
 
 class CareerExplorerScreen extends StatefulWidget {
   const CareerExplorerScreen({super.key});
@@ -13,6 +14,20 @@ class CareerExplorerScreen extends StatefulWidget {
 
 class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
   String _selectedSector = "All";
+  AsyncViewState _state = AsyncViewState.loading;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    // Simulate API fetch
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() => _state = AsyncViewState.data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +48,17 @@ class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
           children: [
             _buildHeader(),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-                itemCount: filteredJobs.length,
-                separatorBuilder: (ctx, index) => const SizedBox(height: 14),
-                itemBuilder: (ctx, index) => _buildJobCard(context, filteredJobs[index]),
+              child: AsyncStateView(
+                state: filteredJobs.isEmpty ? AsyncViewState.empty : _state,
+                onRetry: _fetchData,
+                emptyMessage: "No jobs match your filter. Try clearing filters.",
+                errorMessage: "Failed to load jobs.",
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                  itemCount: filteredJobs.length,
+                  separatorBuilder: (ctx, index) => const SizedBox(height: 14),
+                  itemBuilder: (ctx, index) => _buildJobCard(context, filteredJobs[index]),
+                ),
               ),
             ),
           ],

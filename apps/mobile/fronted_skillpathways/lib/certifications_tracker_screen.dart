@@ -4,6 +4,14 @@ import 'constants.dart';
 import 'shared_data.dart';
 import 'course_detail_screen.dart';
 
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'constants.dart';
+import 'shared_data.dart';
+import 'course_detail_screen.dart';
+import 'course_listing_screen.dart';
+import 'widgets/async_state_view.dart';
+
 class CertificationsTrackerScreen extends StatefulWidget {
   const CertificationsTrackerScreen({super.key});
 
@@ -12,11 +20,29 @@ class CertificationsTrackerScreen extends StatefulWidget {
 }
 
 class _CertificationsTrackerScreenState extends State<CertificationsTrackerScreen> {
+  AsyncViewState _state = AsyncViewState.loading;
+  Map<String, CertStatus> _progress = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    // Simulate API fetch
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {
+      _progress = CertificationsTracker.progress;
+      _state = _progress.isEmpty ? AsyncViewState.empty : AsyncViewState.data;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final progress = CertificationsTracker.progress;
-    final totalCount = progress.length;
-    final completedCount = progress.values.where((s) => s == CertStatus.completed).length;
+    final completedCount = _progress.values.where((s) => s == CertStatus.completed).length;
+    final totalCount = _progress.length;
     final progressPercentage = totalCount > 0 ? completedCount / totalCount : 0.0;
 
     return Scaffold(
@@ -26,14 +52,26 @@ class _CertificationsTrackerScreenState extends State<CertificationsTrackerScree
           children: [
             _buildHeader(),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-                child: Column(
-                  children: [
-                    _buildSummaryCard(completedCount, totalCount, progressPercentage),
-                    const SizedBox(height: 16),
-                    ...progress.entries.map((entry) => _buildCertificationRow(context, entry.key, entry.value)).toList(),
-                  ],
+              child: AsyncStateView(
+                state: _state,
+                onRetry: _fetchData,
+                emptyMessage: "You haven't started any courses yet.",
+                errorMessage: "Failed to load certifications.",
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                  child: Column(
+                    children: [
+                      _buildSummaryCard(completedCount, totalCount, progressPercentage),
+                      const SizedBox(height: 16),
+                      ..._progress.entries.map((entry) => _buildCertificationRow(context, entry.key, entry.value)).toList(),
+                      const SizedBox(height: 16),
+                      if (_state == AsyncViewState.empty)
+                        ElevatedButton(
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CourseListingScreen())),
+                          child: const Text("Browse Courses"),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -4,6 +4,7 @@ import 'constants.dart';
 import 'quiz_model.dart';
 import 'university_detail_screen.dart';
 import 'shared_data.dart';
+import 'widgets/async_state_view.dart';
 
 class UniversityShortlistScreen extends StatefulWidget {
   final String? initialFilterField;
@@ -16,6 +17,7 @@ class UniversityShortlistScreen extends StatefulWidget {
 
 class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
   String _selectedFilter = "All";
+  AsyncViewState _state = AsyncViewState.loading;
 
   @override
   void initState() {
@@ -23,6 +25,14 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
     if (widget.initialFilterField != null) {
       _selectedFilter = widget.initialFilterField!;
     }
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    // Simulate API fetch
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() => _state = AsyncViewState.data);
   }
 
   void _showFilterSheet(String filterType) {
@@ -54,11 +64,17 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
           children: [
             _buildHeader(),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-                itemCount: filteredList.length,
-                separatorBuilder: (ctx, index) => const SizedBox(height: 12),
-                itemBuilder: (ctx, index) => _buildUniversityCard(filteredList[index]),
+              child: AsyncStateView(
+                state: filteredList.isEmpty ? AsyncViewState.empty : _state,
+                onRetry: _fetchData,
+                emptyMessage: "No universities match your filter.",
+                errorMessage: "Failed to load universities.",
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                  itemCount: filteredList.length,
+                  separatorBuilder: (ctx, index) => const SizedBox(height: 12),
+                  itemBuilder: (ctx, index) => _buildUniversityCard(filteredList[index]),
+                ),
               ),
             ),
           ],

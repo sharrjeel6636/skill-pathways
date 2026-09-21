@@ -4,6 +4,7 @@ abstract class QuizView {
   void onQuestionUpdated(Question question, int currentIndex, int totalQuestions, int? selectedOptionIndex);
   void onQuizCompleted(QuizResult result);
   void updateProgress(double progress);
+  void onQuizError();
 }
 
 abstract class QuizPresenter {

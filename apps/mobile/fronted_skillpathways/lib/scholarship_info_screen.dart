@@ -53,15 +53,35 @@ final List<Scholarship> allScholarships = [
   ),
 ];
 
-class ScholarshipInfoScreen extends StatelessWidget {
+class ScholarshipInfoScreen extends StatefulWidget {
   final String? filterField;
 
   const ScholarshipInfoScreen({super.key, this.filterField});
 
   @override
+  State<ScholarshipInfoScreen> createState() => _ScholarshipInfoScreenState();
+}
+
+class _ScholarshipInfoScreenState extends State<ScholarshipInfoScreen> {
+  AsyncViewState _state = AsyncViewState.loading;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() => _state = AsyncViewState.loading);
+    // Simulate API fetch
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() => _state = AsyncViewState.data);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final filteredScholarships = filterField != null
-        ? allScholarships.where((s) => s.matchedFields.contains(filterField)).toList()
+    final filteredScholarships = widget.filterField != null
+        ? allScholarships.where((s) => s.matchedFields.contains(widget.filterField)).toList()
         : allScholarships;
 
     return Scaffold(
@@ -71,11 +91,17 @@ class ScholarshipInfoScreen extends StatelessWidget {
           children: [
             _buildHeader(),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-                itemCount: filteredScholarships.length,
-                separatorBuilder: (ctx, index) => const SizedBox(height: 14),
-                itemBuilder: (ctx, index) => _buildScholarshipCard(context, filteredScholarships[index]),
+              child: AsyncStateView(
+                state: filteredScholarships.isEmpty ? AsyncViewState.empty : _state,
+                onRetry: _fetchData,
+                emptyMessage: "No scholarships found for your criteria.",
+                errorMessage: "Failed to load scholarships.",
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+                  itemCount: filteredScholarships.length,
+                  separatorBuilder: (ctx, index) => const SizedBox(height: 14),
+                  itemBuilder: (ctx, index) => _buildScholarshipCard(context, filteredScholarships[index]),
+                ),
               ),
             ),
           ],
