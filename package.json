@@ -1,5 +1,6 @@
 {
-  "name": "project-skeleton",
+  "name": "skill-pathway",
+  "description": "Educational guidance platform for Pakistani students and parents.",
   "private": true,
   "workspaces": [
     "apps/*",
