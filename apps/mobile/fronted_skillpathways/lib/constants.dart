@@ -21,5 +21,6 @@ class RoadmapColors {
   static const Color lockedGray = Color(0xFFD9D9D6);
   static const Color lightTeal = Color(0xFFE9F5F3);
   static const Color errorRed = Color(0xFFDC2626);
+  static const Color textOnAmber = Color(0xFF1C1917);
 }
 
