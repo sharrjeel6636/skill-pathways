@@ -6,6 +6,7 @@ class UniversityDetail {
   final String overview;
   final String feePerSemester;
   final int meritPercent;
+  final DateTime applicationDeadline;
 
   UniversityDetail({
     required this.name,
@@ -13,6 +14,7 @@ class UniversityDetail {
     required this.overview,
     required this.feePerSemester,
     required this.meritPercent,
+    required this.applicationDeadline,
   });
 }
 

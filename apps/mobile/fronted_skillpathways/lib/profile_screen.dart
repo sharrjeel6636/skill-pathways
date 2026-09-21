@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'notifications_screen.dart';
 
 enum AppLanguage { english, urdu }
 
@@ -54,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildMenuItem("Link parent account"),
                   ]),
                   _buildMenuGroup("Preferences", [
-                    _buildMenuItem("Notifications"),
+                    _buildMenuItem("Notifications", onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen()))),
                     _buildMenuItem("City & budget settings"),
                   ]),
                   _buildMenuGroup("Support", [
@@ -118,14 +119,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ],
   );
 
-  Widget _buildMenuItem(String title, {bool isDestructive = false}) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: GoogleFonts.inter(fontSize: 14, color: isDestructive ? const Color(0xFFDC2626) : const Color(0xFF1C1917))),
-        const Icon(Icons.chevron_right, size: 16, color: Color(0xFFB3B3AC)),
-      ],
+  Widget _buildMenuItem(String title, {bool isDestructive = false, VoidCallback? onTap}) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: GoogleFonts.inter(fontSize: 14, color: isDestructive ? const Color(0xFFDC2626) : const Color(0xFF1C1917))),
+          const Icon(Icons.chevron_right, size: 16, color: Color(0xFFB3B3AC)),
+        ],
+      ),
     ),
   );
 }

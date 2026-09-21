@@ -4,30 +4,33 @@ import 'constants.dart';
 import 'quiz_model.dart';
 import 'field_selection_screen.dart';
 import 'university_shortlist_screen.dart';
+import 'widgets/reminder_toggle.dart';
 
 class EntryTest {
   final String name;
   final String description;
   final String dateLabel;
+  final DateTime eventDate;
 
   EntryTest({
     required this.name,
     required this.description,
     required this.dateLabel,
+    required this.eventDate,
   });
 }
 
 final Map<String, List<EntryTest>> fieldToTestsMap = {
   "Pre-Engineering": [
-    EntryTest(name: "ECAT", description: "Engineering College Admission Test for UETs", dateLabel: "June 2027"),
-    EntryTest(name: "NUST NET", description: "NUST Entry Test for engineering programs", dateLabel: "May 2027"),
+    EntryTest(name: "ECAT", description: "Engineering College Admission Test for UETs", dateLabel: "June 15, 2027", eventDate: DateTime(2027, 6, 15)),
+    EntryTest(name: "NUST NET", description: "NUST Entry Test for engineering programs", dateLabel: "May 10, 2027", eventDate: DateTime(2027, 5, 10)),
   ],
   "ICS (Computer Science)": [
-    EntryTest(name: "ECAT", description: "Engineering College Admission Test for UETs", dateLabel: "June 2027"),
-    EntryTest(name: "NUST NET", description: "NUST Entry Test for computing programs", dateLabel: "May 2027"),
+    EntryTest(name: "ECAT", description: "Engineering College Admission Test for UETs", dateLabel: "June 15, 2027", eventDate: DateTime(2027, 6, 15)),
+    EntryTest(name: "NUST NET", description: "NUST Entry Test for computing programs", dateLabel: "May 10, 2027", eventDate: DateTime(2027, 5, 10)),
   ],
   "Pre-Medical": [
-    EntryTest(name: "MDCAT", description: "Medical and Dental College Admission Test", dateLabel: "July 2027"),
+    EntryTest(name: "MDCAT", description: "Medical and Dental College Admission Test", dateLabel: "July 20, 2027", eventDate: DateTime(2027, 7, 20)),
   ],
 };
 
@@ -135,11 +138,21 @@ class InterGuidanceScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(test.dateLabel,
-                  style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: RoadmapColors.primaryTeal)),
+              Column(
+                children: [
+                  Text(test.dateLabel,
+                      style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: RoadmapColors.primaryTeal)),
+                  ReminderToggle(
+                    notificationId: test.name,
+                    title: "${test.name} test in 7 days",
+                    eventDate: test.eventDate,
+                    reminderOffsets: const [Duration(days: 7), Duration(days: 1)],
+                  ),
+                ],
+              ),
             ],
           ),
         ),
