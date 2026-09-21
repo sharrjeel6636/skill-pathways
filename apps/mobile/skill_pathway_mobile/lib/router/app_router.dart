@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../splash_screen.dart';
-import '../main.dart'; // HomeScreen
+import '../home_screen.dart';
 import '../auth_screen.dart';
 import '../role_selection_screen.dart';
 import '../chatbot_screen.dart';
@@ -31,7 +31,7 @@ final GoRouter appRouter = GoRouter(
       );
     }),
     GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
-    GoRoute(path: '/parent-dashboard', builder: (context, state) => const ParentDashboardScreen(data: null)), // Mock data handled internally or via provider
+    GoRoute(path: '/parent-dashboard', builder: (context, state) => const ParentDashboardScreen()),
     GoRoute(path: '/quiz', builder: (context, state) => const QuizScreen()),
     GoRoute(path: '/roadmap', builder: (context, state) => const RoadmapScreen()),
   ],
