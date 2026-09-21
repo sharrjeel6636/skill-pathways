@@ -20,18 +20,29 @@ app.add_middleware(
 
 supabase_url = os.environ.get("SUPABASE_URL") or "https://your-project.supabase.co"
 supabase_key = os.environ.get("SUPABASE_KEY") or "your-anon-key"
-print(f"DEBUG: SUPABASE_URL={supabase_url}")
 supabase: Client = create_client(supabase_url, supabase_key)
+
+# --- AUTH DEPS ---
+
+async def get_current_user(authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    token = authorization.split(" ")[1]
+    # In a real app, validate token with Supabase
+    # user = supabase.auth.get_user(token)
+    # return user.user.id
+    return "test-user-id" # Placeholder
+
+async def verify_user_access(user_id: str, current_user: str = Depends(get_current_user)):
+    if current_user != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return current_user
 
 # --- PATHWAYS & ROADMAP ---
 
 @app.get("/pathways")
 async def get_pathways():
-    try:
-        return supabase.table("pathways").select("*").execute().data
-    except Exception as e:
-        print(f"Error fetching pathways: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    return supabase.table("pathways").select("*").execute().data
 
 @app.get("/pathways/{pathway_id}/steps")
 async def get_pathway_steps(pathway_id: int, user_id: Optional[str] = None):
@@ -66,7 +77,7 @@ async def get_quiz_questions():
 class QuizSubmit(BaseModel):
     option_ids: List[int]
 
-@app.post("/quiz/submit")
+@app.post("/quiz/submit", dependencies=[Depends(get_current_user)])
 async def submit_quiz(submission: QuizSubmit):
     # Tally votes per pathway
     options = supabase.table("quiz_options").select("id, maps_to_pathway_id, weight").in_("id", submission.option_ids).execute().data
@@ -81,7 +92,7 @@ async def submit_quiz(submission: QuizSubmit):
 # --- DASHBOARD ---
 
 @app.get("/dashboard/{user_id}")
-async def get_dashboard(user_id: str):
+async def get_dashboard(user_id: str, _ = Depends(verify_user_access)):
     # Get active pathway
     up = supabase.table("user_pathways").select("*, pathways(title)").eq("user_id", user_id).execute().data
     if not up: return {"message": "No active pathway"}
@@ -104,24 +115,24 @@ async def get_dashboard(user_id: str):
 
 # --- EXISTING ENDPOINTS ---
 
-@app.get("/learning-material")
+@app.get("/learning-material", dependencies=[Depends(get_current_user)])
 async def get_learning_material(pathway_tag: Optional[str] = None):
     query = supabase.table("learning_materials").select("*")
     if pathway_tag:
         query = query.eq("pathway_tag", pathway_tag)
     return query.execute().data
 
-@app.post("/learning-material")
+@app.post("/learning-material", dependencies=[Depends(get_current_user)])
 async def create_learning_material(material: dict):
     response = supabase.table("learning_materials").insert(material).execute()
     return response.data
 
-@app.patch("/learning-material/{id}/verify")
+@app.patch("/learning-material/{id}/verify", dependencies=[Depends(get_current_user)])
 async def verify_learning_material(id: int):
     response = supabase.table("learning_materials").update({"is_verified": True}).eq("id", id).execute()
     return response.data
 
-@app.post("/chatbot/message")
+@app.post("/chatbot/message", dependencies=[Depends(get_current_user)])
 async def chatbot_message(message: dict):
     user_text = message.get("text", "").lower()
     if "internship" in user_text:
@@ -132,8 +143,9 @@ async def chatbot_message(message: dict):
         return {"reply": "To identify your next step, go to your Roadmap and look for the 'active' node."}
     return {"reply": "I'm not sure, but I can help you with internships, scholarships, or navigating your roadmap."}
 
-@app.get("/admin/analytics")
+@app.get("/admin/analytics", dependencies=[Depends(get_current_user)])
 async def get_analytics():
+    # In real app: verify if current_user is admin
     total_users = supabase.table("profiles").select("id", count='exact').execute().count
     pathways = supabase.table("user_pathways").select("pathway_id").execute().data
 
