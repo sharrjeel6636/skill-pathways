@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'providers/JobProvider.dart';
+import 'models/job_model.dart';
 import 'job_sector_detail_screen.dart';
 import 'widgets/async_state_view.dart';
 

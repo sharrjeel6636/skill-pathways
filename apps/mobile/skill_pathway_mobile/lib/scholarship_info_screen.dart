@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'constants.dart';
+import 'widgets/async_state_view.dart';
 
 class Scholarship {
   final String name;
