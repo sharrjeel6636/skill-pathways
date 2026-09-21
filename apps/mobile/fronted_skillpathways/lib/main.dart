@@ -52,8 +52,10 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
   void _handleRoleSelection(UserRole role) {
     if (role == UserRole.student) {
       setState(() => _currentScreen = 'discovery');
-    } else {
+    } else if (role == UserRole.parent) {
       setState(() => _currentScreen = 'parent_dashboard');
+    } else {
+      setState(() => _currentScreen = 'counselor_onboarding');
     }
   }
 
@@ -110,6 +112,7 @@ class _OnboardingPresenterState extends State<OnboardingPresenter> {
       case 'onboarding': return OnboardingScreen(onLanguageConfirmed: _navigateToAuth);
       case 'auth': return AuthScreen(onSuccess: _navigateToRoleSelection);
       case 'role_selection': return RoleSelectionScreen(onContinue: _handleRoleSelection);
+      case 'counselor_onboarding': return const CounselorOnboardingScreen();
       case 'discovery': return DiscoveryScreen(
         onBack: () => setState(() => _currentScreen = 'role_selection'),
         onContinue: _navigateToHome,
@@ -191,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     _buildQuizCard(context, _result),
                     const SizedBox(height: 24),
+                    _buildCounselorNoteCard(), // Add this
                     _buildSectionTitle("Your Roadmap"),
                     const SizedBox(height: 16),
                     _buildRoadmap(_result),
@@ -312,6 +316,25 @@ class _HomeScreenState extends State<HomeScreen> {
       fontSize: 18,
       fontWeight: FontWeight.bold,
       color: const Color(0xFF1E2022),
+    ),
+  );
+
+  Widget _buildCounselorNoteCard() => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: const Color(0xFFE8E7E3)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("From your counselor", style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF6B7280))),
+        const SizedBox(height: 8),
+        Text("Our school's ECAT prep classes start in March. Please ensure you register at the admin office.", style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: const Color(0xFF1C1917))),
+        const SizedBox(height: 8),
+        Text("2 days ago", style: GoogleFonts.inter(fontSize: 10, color: const Color(0xFF999999))),
+      ],
     ),
   );
 

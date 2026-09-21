@@ -53,6 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildMenuItem("Edit profile"),
                     _buildMenuItem("Change language (${_profile.language == AppLanguage.english ? 'English' : 'Urdu'})"),
                     _buildMenuItem("Link parent account"),
+                    _buildMenuItem("Link school counselor"),
                   ]),
                   _buildMenuGroup("Preferences", [
                     _buildMenuItem("Notifications", onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen()))),

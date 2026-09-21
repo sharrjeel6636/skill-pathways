@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-enum UserRole { student, parent }
+enum UserRole { student, parent, counselor }
 
 class RoleSelectionScreen extends StatefulWidget {
   final Function(UserRole) onContinue;
@@ -37,6 +37,12 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 role: UserRole.parent,
                 title: "I'm a Parent",
                 subtitle: "Track and support your child",
+              ),
+              const SizedBox(height: 16),
+              _buildRoleCard(
+                role: UserRole.counselor,
+                title: "I'm a Teacher/Counselor",
+                subtitle: "Support students at your school",
               ),
               const Spacer(),
               GestureDetector(
