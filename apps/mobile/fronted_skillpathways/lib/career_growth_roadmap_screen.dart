@@ -4,60 +4,98 @@ import 'constants.dart';
 import 'shared_data.dart';
 
 class CareerGrowthRoadmapScreen extends StatelessWidget {
-  final String currentRole;
-
-  const CareerGrowthRoadmapScreen({super.key, required this.currentRole});
+  final String role;
+  
+  const CareerGrowthRoadmapScreen({super.key, required this.role});
 
   @override
   Widget build(BuildContext context) {
-    final levels = roleToGrowthMap[currentRole] ?? [];
+    final levels = roleToGrowthMap[role] ?? [];
+    
+    // Header subtitle
+    String subtitle = "";
+    if (levels.isNotEmpty) {
+      subtitle = levels.map((l) => l.title).join(" → ");
+    }
 
     return Scaffold(
       backgroundColor: RoadmapColors.bgLight,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(levels),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
-                child: Column(
-                  children: levels.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final level = entry.value;
-                    return _buildTimelineRow(level, index == levels.length - 1);
-                  }).toList(),
-                ),
-              ),
+      body: Column(
+        children: [
+          _buildHeader(subtitle),
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.fromLTRB(24, 18, 24, 24),
+              itemCount: levels.length,
+              separatorBuilder: (ctx, index) => const SizedBox(height: 0),
+              itemBuilder: (ctx, index) => _buildTimelineRow(
+                  levels[index], index == levels.length - 1),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHeader(List<CareerGrowthLevel> levels) => Container(
-        width: double.infinity,
+  Widget _buildHeader(String subtitle) => Container(
         padding: const EdgeInsets.fromLTRB(24, 56, 24, 18),
         decoration: const BoxDecoration(color: RoadmapColors.surfaceWhite),
+        width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Career Growth Path",
                 style: GoogleFonts.inter(
-                    fontSize: 19, fontWeight: FontWeight.bold, color: RoadmapColors.textDark)),
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: RoadmapColors.textDark)),
             const SizedBox(height: 4),
-            Text(levels.map((l) => l.title.split("/").first.trim()).join(" → "),
-                style: GoogleFonts.inter(fontSize: 12, color: RoadmapColors.textMuted),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
+            Text(subtitle,
+                style: GoogleFonts.inter(
+                    fontSize: 12, color: RoadmapColors.textMuted)),
           ],
         ),
       );
 
-  Widget _buildTimelineRow(CareerGrowthLevel level, bool isLast) {
+  Widget _buildTimelineRow(CareerGrowthLevel level, bool isLast) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            children: [
+              _buildBadge(level.status),
+              if (!isLast)
+                Container(
+                  width: 3,
+                  height: 48,
+                  color: RoadmapColors.borderLight,
+                ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(level.title,
+                    style: GoogleFonts.inter(
+                        fontSize: level.status == GrowthLevelStatus.locked ? 14 : 15,
+                        fontWeight: level.status == GrowthLevelStatus.locked ? FontWeight.w500 : FontWeight.w600,
+                        color: level.status == GrowthLevelStatus.locked ? RoadmapColors.textMuted : RoadmapColors.textDark)),
+                const SizedBox(height: 4),
+                Text(level.subtitle,
+                    style: GoogleFonts.inter(
+                        fontSize: 11, color: RoadmapColors.textMuted)),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+        ],
+      );
+
+  Widget _buildBadge(GrowthLevelStatus status) {
     Color bgColor;
-    switch (level.status) {
+
+    switch (status) {
       case GrowthLevelStatus.active:
         bgColor = RoadmapColors.primaryTeal;
         break;
@@ -69,42 +107,13 @@ class CareerGrowthRoadmapScreen extends StatelessWidget {
         break;
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-            ),
-            if (!isLast)
-              Container(width: 3, height: 48, color: RoadmapColors.borderLight),
-          ],
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(level.title,
-                  style: GoogleFonts.inter(
-                      fontSize: level.status == GrowthLevelStatus.locked ? 14 : 15,
-                      fontWeight: level.status == GrowthLevelStatus.locked
-                          ? FontWeight.w500
-                          : FontWeight.w600,
-                      color: level.status == GrowthLevelStatus.locked
-                          ? RoadmapColors.textMuted
-                          : RoadmapColors.textDark)),
-              const SizedBox(height: 4),
-              Text(level.subtitle,
-                  style: GoogleFonts.inter(fontSize: 11, color: RoadmapColors.textMuted)),
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-      ],
+    return Container(
+      width: 24,
+      height: 24,
+      decoration: BoxDecoration(
+        color: bgColor,
+        shape: BoxShape.circle,
+      ),
     );
   }
 }
