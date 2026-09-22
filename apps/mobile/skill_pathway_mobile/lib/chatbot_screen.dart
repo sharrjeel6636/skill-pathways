@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'quiz_model.dart';
 import 'providers/QuizStateProvider.dart';
@@ -93,12 +92,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     };
 
     try {
-      final response = await http.post(
-        Uri.parse('http://localhost:8000/chatbot/message'),
-        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer test-user-id'},
-        body: jsonEncode({'text': text, 'context': contextData}),
-      );
-      
+      final response = await ApiClient.post('/chatbot/message', {
+        'text': text,
+        'context': contextData
+      });
+
       if (response.statusCode == 200) {
         _addMessage(jsonDecode(response.body)['reply'], MessageSender.bot);
       } else {
