@@ -1,6 +1,5 @@
 # Changelog
 
-## [0.1.0] - 2026-09-22
-- Navigation audit and refactoring.
-- Fixed orphaned screens: `ScholarshipInfoScreen`, `CareerGrowthRoadmapScreen`.
-- Added entry points for Scholarship and Roadmap screens.
+## [0.2.0] - 2026-09-22
+- Added rich Pakistan-specific content: career pathways, university data, and scholarship opportunities.
+- Replaced dummy seed data with realistic information.
