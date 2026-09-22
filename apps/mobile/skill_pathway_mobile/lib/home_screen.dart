@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'constants.dart';
+import 'theme/app_colors.dart';
+import 'theme/app_spacing.dart';
+import 'theme/app_text_styles.dart';
 import 'providers/QuizStateProvider.dart';
 import 'providers/RoadmapProvider.dart';
 
@@ -12,30 +14,36 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: RoadmapColors.bgLight,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.p24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.p24),
               _buildQuizCTA(context),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.p24),
+              _buildSectionLabel("Your Roadmap"),
+              const SizedBox(height: AppSpacing.p12),
               _buildRoadmapPreview(context),
-              const SizedBox(height: 24),
-              _buildScholarshipCTA(context),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.p24),
+              _buildSectionLabel("For Your Parents"),
+              const SizedBox(height: AppSpacing.p12),
               _buildParentCard(context),
+              const SizedBox(height: AppSpacing.p24),
+              _buildSectionLabel("Success Stories"),
+              const SizedBox(height: AppSpacing.p12),
+              _buildSuccessStoryCard(),
             ],
           ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: RoadmapColors.primaryTeal,
-        unselectedItemColor: RoadmapColors.textMuted,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
         currentIndex: 0,
         onTap: (index) {
           if (index == 1) context.go('/roadmap');
@@ -45,41 +53,39 @@ class HomeScreen extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Roadmap'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chat'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chatbot'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: const BoxDecoration(color: RoadmapColors.primaryTeal, borderRadius: BorderRadius.vertical(bottom: Radius.circular(16))),
-        child: Column(
-          children: [
-            Text("Assalam-o-Alaikum, Student", style: GoogleFonts.inter(fontSize: 16, color: RoadmapColors.surfaceWhite)),
-            const SizedBox(height: 4),
-            Text("Matric · Pre-Engineering", style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: RoadmapColors.surfaceWhite)),
-          ],
-        ),
+  Widget _buildHeader() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Assalam-o-Alaikum, Student", style: GoogleFonts.inter(fontSize: 16, color: AppColors.textPrimary)),
+          const SizedBox(height: AppSpacing.p4),
+          Text("Class 10 · Science Group", style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+        ],
       );
+
+  Widget _buildSectionLabel(String title) => Text(title, style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary));
 
   Widget _buildQuizCTA(BuildContext context) {
     final quizCompleted = context.watch<QuizStateProvider>().quizCompleted;
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: RoadmapColors.accentAmber, borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.all(AppSpacing.p24),
+      decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(AppSpacing.r16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(quizCompleted ? "Quiz completed" : "Take your Aptitude Quiz", style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: RoadmapColors.textOnAmber)),
-          const SizedBox(height: 8),
-          Text(quizCompleted ? "See your results and matched pathways." : "Discover your strengths and best-fit careers.", style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textOnAmber)),
-          const SizedBox(height: 16),
+          Text("Take your Aptitude Quiz", style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          const SizedBox(height: AppSpacing.p8),
+          Text("Find out if Science, Arts or Commerce fits you best — 5 mins", style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary)),
+          const SizedBox(height: AppSpacing.p16),
           ElevatedButton(
             onPressed: () => quizCompleted ? context.go('/quiz/result') : context.go('/quiz'),
-            style: ElevatedButton.styleFrom(backgroundColor: RoadmapColors.textDark, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.textPrimary, foregroundColor: AppColors.surface),
             child: Text(quizCompleted ? "See Results →" : "Start Quiz Now →"),
           ),
         ],
@@ -88,49 +94,59 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRoadmapPreview(BuildContext context) {
-    final steps = context.watch<RoadmapProvider>().nextSteps;
+    final steps = [
+        {"title": "Aptitude test completed", "subtitle": "Result: Pre-Engineering fit", "status": "done"},
+        {"title": "Strengthen Math & Physics", "subtitle": "Recommended resources inside", "status": "locked"},
+        {"title": "Explore Intermediate options", "subtitle": "FSc Pre-Engineering vs ICS", "status": "locked"},
+    ];
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: RoadmapColors.borderLight)),
+      padding: const EdgeInsets.all(AppSpacing.p24),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppSpacing.r16), border: Border.all(color: AppColors.border)),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Your Roadmap", style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: RoadmapColors.textDark)),
-          const SizedBox(height: 12),
-          ...steps.take(2).map((step) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Text("• $step", style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)))),
-          const SizedBox(height: 12),
-          GestureDetector(onTap: () => context.go('/roadmap'), child: Text("View full roadmap →", style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: RoadmapColors.primaryTeal))),
-        ],
+        children: steps.map((step) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.p16),
+          child: Row(
+            children: [
+              Icon(step['status'] == 'done' ? Icons.check_circle : Icons.lock, color: step['status'] == 'done' ? AppColors.success : AppColors.textSecondary),
+              const SizedBox(width: AppSpacing.p12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(step['title'] as String, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                    Text(step['subtitle'] as String, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )).toList(),
       ),
     );
   }
 
   Widget _buildParentCard(BuildContext context) => Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(color: RoadmapColors.lightTeal, borderRadius: BorderRadius.circular(16)),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    padding: const EdgeInsets.all(AppSpacing.p16),
+    decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppSpacing.r12), border: Border.all(color: AppColors.border)),
+    child: Row(
       children: [
-        Text("For Your Parents", style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: RoadmapColors.textDark)),
-        const SizedBox(height: 8),
-        Text("Share your progress and help them stay informed.", style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)),
-        const SizedBox(height: 16),
-        ElevatedButton(onPressed: () => context.go('/profile'), child: const Text("Link Parent Account")),
+        const CircleAvatar(backgroundColor: AppColors.lightTeal, child: Icon(Icons.person, color: AppColors.primary)),
+        const SizedBox(width: AppSpacing.p16),
+        Expanded(child: Text("Share progress report with parents", style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500))),
+        const Icon(Icons.chevron_right, color: AppColors.textSecondary),
       ],
     ),
   );
 
-  Widget _buildScholarshipCTA(BuildContext context) => Container(
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: RoadmapColors.borderLight)),
+  Widget _buildSuccessStoryCard() => Container(
+    padding: const EdgeInsets.all(AppSpacing.p24),
+    decoration: BoxDecoration(color: AppColors.lightTeal, borderRadius: BorderRadius.circular(AppSpacing.r16)),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Scholarship Opportunities", style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: RoadmapColors.textDark)),
-        const SizedBox(height: 8),
-        Text("Browse available scholarships based on your profile.", style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)),
-        const SizedBox(height: 16),
-        ElevatedButton(onPressed: () => context.go('/scholarship-info'), child: const Text("View Scholarships →")),
+        Text("“Matric ke baad confuse thi, ab NUST mein CS kar rahi hoon”", style: GoogleFonts.inter(fontSize: 14, fontStyle: FontStyle.italic, color: AppColors.textPrimary)),
+        const SizedBox(height: AppSpacing.p12),
+        Text("— Zainab, Karachi · BS Computer Science", style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
       ],
     ),
   );

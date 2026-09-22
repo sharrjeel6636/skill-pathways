@@ -3,9 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
 import 'package:go_router/go_router.dart';
+import 'theme/app_colors.dart';
+import 'theme/app_spacing.dart';
+import 'theme/app_text_styles.dart';
 import 'widgets/async_state_view.dart';
 import 'services/api_client.dart';
-import 'constants.dart';
 
 class ParentDashboardData {
   final String childName;
@@ -28,7 +30,7 @@ class ParentDashboardData {
     return ParentDashboardData(
       childName: "Child",
       fieldOfInterest: json['pathway_title'] ?? 'N/A',
-      summaryText: "Progress analysis",
+      summaryText: "Progress analysis text goes here.",
       roadmapProgressPercent: (json['progress_percent'] ?? 0).toInt(),
       quizCompleted: (json['steps_done'] ?? 0) > 0,
       nextMilestoneLabel: json['next_step'] ?? 'N/A',
@@ -75,7 +77,11 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: RoadmapColors.bgLight,
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        title: Text("Parent Dashboard", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.surface)),
+      ),
       body: AsyncStateView(
         state: _state,
         onRetry: _fetchData,
@@ -84,106 +90,54 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
     );
   }
 
-  Widget _buildContent() => Column(
-    children: [
-      _buildHeader(),
-      Expanded(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSummaryCard(),
-              const SizedBox(height: 18),
-              _buildStatsCard(),
-              const SizedBox(height: 18),
-              Text("Ask a Question",
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: RoadmapColors.textDark
-                )
-              ),
-              const SizedBox(height: 12),
-              _buildChatbotCard(context),
-              const SizedBox(height: 18),
-              _buildScholarshipCard(context),
-            ],
-          ),
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildHeader() => Container(
-    height: 110,
-    width: double.infinity,
-    padding: const EdgeInsets.fromLTRB(24, 56, 24, 20),
-    decoration: const BoxDecoration(color: RoadmapColors.primaryTeal),
+  Widget _buildContent() => SingleChildScrollView(
+    padding: const EdgeInsets.all(AppSpacing.p24),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Parent Dashboard",
-          style: GoogleFonts.inter(
-            fontSize: 13,
-            color: const Color(0xFFD9EDEA)
-          )
-        ),
-        const SizedBox(height: 4),
-        Text("${_data!.childName}'s Progress",
-          style: GoogleFonts.inter(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: RoadmapColors.surfaceWhite
-          )
-        ),
+        Text("${_data!.childName}'s Progress", style: AppTextStyles.titleLarge),
+        const SizedBox(height: AppSpacing.p24),
+        _buildSummaryCard(),
+        const SizedBox(height: AppSpacing.p16),
+        _buildStatsCard(),
+        const SizedBox(height: AppSpacing.p24),
+        Text("Ask a Question", style: AppTextStyles.titleSmall),
+        const SizedBox(height: AppSpacing.p12),
+        _buildChatbotCard(context),
       ],
     ),
   );
 
   Widget _buildSummaryCard() => Container(
-    padding: const EdgeInsets.all(20),
+    padding: const EdgeInsets.all(AppSpacing.p24),
     decoration: BoxDecoration(
-      color: RoadmapColors.surfaceWhite,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: RoadmapColors.borderLight),
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(AppSpacing.r16),
+      border: Border.all(color: AppColors.border),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Field of Interest: ${_data!.fieldOfInterest}",
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: RoadmapColors.textDark
-          )
-        ),
-        const SizedBox(height: 8),
-        Text(_data!.summaryText,
-          style: GoogleFonts.inter(
-            fontSize: 13,
-            color: RoadmapColors.textMuted,
-            height: 1.5
-          )
-        ),
+        Text("Field of Interest: ${_data!.fieldOfInterest}", style: AppTextStyles.titleSmall),
+        const SizedBox(height: AppSpacing.p8),
+        Text(_data!.summaryText, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
       ],
     ),
   );
 
   Widget _buildStatsCard() => Container(
-    padding: const EdgeInsets.all(18),
+    padding: const EdgeInsets.all(AppSpacing.p24),
     decoration: BoxDecoration(
-      color: RoadmapColors.surfaceWhite,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: RoadmapColors.borderLight),
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(AppSpacing.r16),
+      border: Border.all(color: AppColors.border),
     ),
     child: Column(
       children: [
         _buildStatRow("Roadmap progress", "${_data!.roadmapProgressPercent}%"),
-        const SizedBox(height: 14),
+        const SizedBox(height: AppSpacing.p16),
         _buildStatRow("Quiz completed", _data!.quizCompleted ? "Yes" : "Not yet"),
-        const SizedBox(height: 14),
+        const SizedBox(height: AppSpacing.p16),
         _buildStatRow("Next milestone", _data!.nextMilestoneLabel),
       ],
     ),
@@ -192,52 +146,27 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   Widget _buildStatRow(String label, String value) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(label, style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)),
-      Text(value, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: RoadmapColors.textDark)),
+      Text(label, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
+      Text(value, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
     ],
   );
 
   Widget _buildChatbotCard(BuildContext context) => GestureDetector(
     onTap: () => context.push('/chatbot', extra: {'isParentMode': true}),
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(color: RoadmapColors.lightTeal, borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.all(AppSpacing.p16),
+      decoration: BoxDecoration(color: AppColors.lightTeal, borderRadius: BorderRadius.circular(AppSpacing.r16)),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: const BoxDecoration(color: RoadmapColors.primaryTeal, shape: BoxShape.circle),
-            child: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 18),
-          ),
-          const SizedBox(width: 12),
+          const CircleAvatar(backgroundColor: AppColors.primary, child: Icon(Icons.chat_bubble_outline, color: AppColors.surface, size: 20)),
+          const SizedBox(width: AppSpacing.p16),
           Expanded(
             child: Text(
-              "Confused about entry tests? Ask our Guidance Chatbot — simple answers, no jargon",
-              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: RoadmapColors.textDark),
+              "Ask our Guidance Chatbot for simple answers",
+              style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
-        ],
-      ),
-    ),
-  );
-
-  Widget _buildScholarshipCard(BuildContext context) => GestureDetector(
-    onTap: () => context.push('/scholarship-info'),
-    child: Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: RoadmapColors.surfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: RoadmapColors.borderLight),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.school, color: RoadmapColors.primaryTeal),
-          const SizedBox(width: 12),
-          Text("Scholarship Info", style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: RoadmapColors.textDark)),
-          const Spacer(),
-          const Icon(Icons.chevron_right, color: RoadmapColors.textMuted),
+          const Icon(Icons.chevron_right, color: AppColors.textSecondary),
         ],
       ),
     ),
