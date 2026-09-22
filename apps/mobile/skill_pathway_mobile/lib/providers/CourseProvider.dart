@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../shared_data.dart';
+import '../models/course_model.dart';
 
 class CourseProvider extends ChangeNotifier {
-  List<CourseListing> _courses = List.from(allCourses);
+  List<dynamic> _courses = []; // TODO: Migrate CourseListing logic here
 
-  List<CourseListing> get courses => _courses;
+  List<dynamic> get courses => _courses;
 
-  void addCourse(CourseListing course) {
+  void addCourse(dynamic course) {
     _courses.add(course);
     notifyListeners();
   }
   
-  void updateCourses(List<CourseListing> courses) {
+  void updateCourses(List<dynamic> courses) {
     _courses = courses;
     notifyListeners();
   }

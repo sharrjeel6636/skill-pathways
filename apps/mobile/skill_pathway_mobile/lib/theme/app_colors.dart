@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Brand Colors
-  static const Color primary = Color(0xFF1B6F63); // Deep Teal
-  static const Color secondary = Color(0xFF0F766E); // Teal
+  static const Color primary = Color(0xFF0F766E); // Teal — the established brand primary
+  static const Color secondary = Color(0xFF1B6F63); // Deep Teal — secondary accent
   static const Color accent = Color(0xFFF59E0B); // Amber
   
   // Semantic Colors
