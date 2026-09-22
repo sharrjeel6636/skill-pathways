@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'notifications_screen.dart';
+import 'package:go_router/go_router.dart';
 
 enum AppLanguage { english, urdu }
 
@@ -56,8 +56,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildMenuItem("Link school counselor"),
                   ]),
                   _buildMenuGroup("Preferences", [
-                    _buildMenuItem("Notifications", onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreen()))),
+                    _buildMenuItem("Notifications", onTap: () => context.push('/notifications')),
                     _buildMenuItem("City & budget settings"),
+                    _buildMenuItem("View Career Growth Roadmap", onTap: () => context.push('/career-growth-roadmap')),
                   ]),
                   _buildMenuGroup("Support", [
                     _buildMenuItem("Help & FAQ"),

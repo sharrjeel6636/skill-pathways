@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'constants.dart';
-import 'roadmap_screen.dart';
 
 class VocationalTrade {
   final String name;
@@ -137,10 +137,7 @@ class VocationalPathScreen extends StatelessWidget {
   );
 
   Widget _buildCTA(BuildContext context) => GestureDetector(
-    onTap: () {
-      // In a real app, this would route to a specific roadmap
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const RoadmapScreen()));
-    },
+    onTap: () => context.push('/roadmap'),
     child: Container(
       width: double.infinity, height: 52,
       decoration: BoxDecoration(color: RoadmapColors.primaryTeal, borderRadius: BorderRadius.circular(14)),

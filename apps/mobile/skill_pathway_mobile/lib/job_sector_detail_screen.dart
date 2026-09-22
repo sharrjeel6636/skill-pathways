@@ -106,6 +106,12 @@ class JobSectorDetailScreen extends StatelessWidget {
             _buildInfoRow("Starting salary", job.detail.startingSalary),
             const SizedBox(height: 14),
             _buildInfoRow("Job security", job.detail.jobSecurityLevel),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => context.push('/career-growth-roadmap'),
+              style: ElevatedButton.styleFrom(backgroundColor: RoadmapColors.primaryTeal, foregroundColor: Colors.white),
+              child: const Text("View Career Growth Roadmap →"),
+            ),
           ],
         ),
       );

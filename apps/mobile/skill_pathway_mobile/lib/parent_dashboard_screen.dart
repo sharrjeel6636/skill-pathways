@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
-import 'chatbot_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'widgets/async_state_view.dart';
 import 'services/api_client.dart';
 import 'constants.dart';
@@ -106,6 +106,8 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
               ),
               const SizedBox(height: 12),
               _buildChatbotCard(context),
+              const SizedBox(height: 18),
+              _buildScholarshipCard(context),
             ],
           ),
         ),
@@ -196,9 +198,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   );
 
   Widget _buildChatbotCard(BuildContext context) => GestureDetector(
-    onTap: () {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatbotScreen(isParentMode: true)));
-    },
+    onTap: () => context.push('/chatbot', extra: {'isParentMode': true}),
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(color: RoadmapColors.lightTeal, borderRadius: BorderRadius.circular(16)),
@@ -217,6 +217,27 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
               style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: RoadmapColors.textDark),
             ),
           ),
+        ],
+      ),
+    ),
+  );
+
+  Widget _buildScholarshipCard(BuildContext context) => GestureDetector(
+    onTap: () => context.push('/scholarship-info'),
+    child: Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: RoadmapColors.surfaceWhite,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: RoadmapColors.borderLight),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.school, color: RoadmapColors.primaryTeal),
+          const SizedBox(width: 12),
+          Text("Scholarship Info", style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: RoadmapColors.textDark)),
+          const Spacer(),
+          const Icon(Icons.chevron_right, color: RoadmapColors.textMuted),
         ],
       ),
     ),

@@ -12,7 +12,7 @@ import 'models/roadmap_model.dart';
 class CareerGrowthRoadmapScreen extends StatelessWidget {
   final String role;
   
-  const CareerGrowthRoadmapScreen({super.key, required this.role});
+  const CareerGrowthRoadmapScreen({super.key, this.role = 'student'});
 
   @override
   Widget build(BuildContext context) {

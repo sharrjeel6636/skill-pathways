@@ -25,6 +25,8 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 24),
               _buildRoadmapPreview(context),
               const SizedBox(height: 24),
+              _buildScholarshipCTA(context),
+              const SizedBox(height: 24),
               _buildParentCard(context),
             ],
           ),
@@ -114,6 +116,21 @@ class HomeScreen extends StatelessWidget {
         Text("Share your progress and help them stay informed.", style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)),
         const SizedBox(height: 16),
         ElevatedButton(onPressed: () => context.go('/profile'), child: const Text("Link Parent Account")),
+      ],
+    ),
+  );
+
+  Widget _buildScholarshipCTA(BuildContext context) => Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: RoadmapColors.borderLight)),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Scholarship Opportunities", style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: RoadmapColors.textDark)),
+        const SizedBox(height: 8),
+        Text("Browse available scholarships based on your profile.", style: GoogleFonts.inter(fontSize: 13, color: RoadmapColors.textMuted)),
+        const SizedBox(height: 16),
+        ElevatedButton(onPressed: () => context.go('/scholarship-info'), child: const Text("View Scholarships →")),
       ],
     ),
   );

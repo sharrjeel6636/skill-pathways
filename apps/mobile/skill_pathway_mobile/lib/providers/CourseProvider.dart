@@ -1,18 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/course_model.dart';
 
 class CourseProvider extends ChangeNotifier {
-  List<dynamic> _courses = []; // TODO: Migrate CourseListing logic here
+  List<CourseListing> _courses = [];
+  bool _isLoading = false;
+  String? _error;
 
-  List<dynamic> get courses => _courses;
+  List<CourseListing> get courses => _courses;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
-  void addCourse(dynamic course) {
-    _courses.add(course);
+  final _supabase = Supabase.instance.client;
+
+  Future<void> fetchCourses() async {
+    _isLoading = true;
+    _error = null;
     notifyListeners();
-  }
-  
-  void updateCourses(List<dynamic> courses) {
-    _courses = courses;
-    notifyListeners();
+
+    try {
+      final response = await _supabase.from('learning_materials').select('*');
+      
+      // Map Supabase data to CourseListing model
+      _courses = (response as List).map((item) {
+        return CourseListing(
+          platform: 'Unknown', // Not in DB yet
+          title: item['title'] ?? '',
+          level: 'Beginner', // Not in DB yet
+          durationLabel: item['duration'] ?? '',
+          isFree: true, // Not in DB yet
+          tags: [item['pathway_tag'] ?? ''],
+          detail: CourseDetail(
+            title: item['title'] ?? '',
+            platform: 'Unknown',
+            description: '', // Not in DB yet
+            learningPoints: [], // Not in DB yet
+            externalUrl: item['content_url'] ?? '',
+          ),
+        );
+      }).toList();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

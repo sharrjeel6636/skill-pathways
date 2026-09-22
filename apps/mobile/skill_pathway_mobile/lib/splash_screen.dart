@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'auth_screen.dart';
-import 'parent_dashboard_screen.dart';
-import 'main.dart'; // To access HomeScreen
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -26,26 +24,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Simulate session check results
     final bool isLoggedIn = false; 
-    final UserRole? userRole = null; 
+    final String? userRole = null; 
 
     if (!isLoggedIn) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AuthScreen()));
-    } else if (userRole == UserRole.parent) {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ParentDashboardScreen(
-                    data: ParentDashboardData(
-                      childName: "Sharjeel",
-                      fieldOfInterest: "Computer Science",
-                      summaryText: "Based on aptitude quiz results...",
-                      roadmapProgressPercent: 45,
-                      quizCompleted: true,
-                      nextMilestoneLabel: "Explore Intermediate options",
-                    ),
-                  )));
+      context.go('/auth');
+    } else if (userRole == 'parent') {
+      context.go('/parent-dashboard');
     } else {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+      context.go('/home');
     }
   }
 

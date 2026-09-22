@@ -13,6 +13,23 @@ import '../roadmap_screen.dart';
 import '../onboarding_screen.dart';
 import '../counselor_onboarding_screen.dart';
 import '../counselor_dashboard_screen.dart';
+import '../career_explorer_screen.dart';
+import '../certifications_tracker_screen.dart';
+import '../career_growth_roadmap_screen.dart';
+import '../course_detail_screen.dart';
+import '../course_listing_screen.dart';
+import '../degree_comparison_screen.dart';
+import '../field_selection_screen.dart';
+import '../inter_guidance_screen.dart';
+import '../job_sector_detail_screen.dart';
+import '../matric_guidance_screen.dart';
+import '../notifications_screen.dart';
+import '../parent_chatbot_faq_screen.dart';
+import '../resume_interview_prep_screen.dart';
+import '../scholarship_info_screen.dart';
+import '../university_detail_screen.dart';
+import '../university_shortlist_screen.dart';
+import '../vocational_path_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -40,5 +57,22 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/quiz', builder: (context, state) => const QuizScreen()),
     GoRoute(path: '/quiz/result', builder: (context, state) => const QuizResultScreen()),
     GoRoute(path: '/roadmap', builder: (context, state) => const RoadmapScreen()),
+    GoRoute(path: '/career-explorer', builder: (context, state) => const CareerExplorerScreen()),
+    GoRoute(path: '/certifications-tracker', builder: (context, state) => const CertificationsTrackerScreen()),
+    GoRoute(path: '/career-growth-roadmap', builder: (context, state) => const CareerGrowthRoadmapScreen()),
+    GoRoute(path: '/course-detail', builder: (context, state) => const CourseDetailScreen()),
+    GoRoute(path: '/course-listing', builder: (context, state) => const CourseListingScreen()),
+    GoRoute(path: '/degree-comparison', builder: (context, state) => const DegreeComparisonScreen()),
+    GoRoute(path: '/field-selection', builder: (context, state) => const FieldSelectionScreen()),
+    GoRoute(path: '/inter-guidance', builder: (context, state) => const InterGuidanceScreen()),
+    GoRoute(path: '/job-sector-detail', builder: (context, state) => const JobSectorDetailScreen()),
+    GoRoute(path: '/matric-guidance', builder: (context, state) => const MatricGuidanceScreen()),
+    GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
+    GoRoute(path: '/parent-chatbot-faq', builder: (context, state) => const ParentChatbotFaqScreen()),
+    GoRoute(path: '/resume-interview-prep', builder: (context, state) => const ResumeInterviewPrepScreen()),
+    GoRoute(path: '/scholarship-info', builder: (context, state) => const ScholarshipInfoScreen()),
+    GoRoute(path: '/university-detail', builder: (context, state) => const UniversityDetailScreen()),
+    GoRoute(path: '/university-shortlist', builder: (context, state) => const UniversityShortlistScreen()),
+    GoRoute(path: '/vocational-path', builder: (context, state) => const VocationalPathScreen()),
   ],
 );
