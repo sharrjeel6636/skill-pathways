@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'constants.dart';
+import 'theme/app_colors.dart';
+import 'theme/app_spacing.dart';
+import 'theme/app_text_styles.dart';
 import 'quiz_model.dart';
 import 'matric_guidance_screen.dart';
 import 'widgets/async_state_view.dart';
@@ -47,7 +49,7 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: RoadmapColors.bgLight,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -59,7 +61,7 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
                 emptyMessage: "No roadmap stages found.",
                 errorMessage: "Couldn't load your roadmap.",
                 child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  padding: AppSpacing.horizontalP16.copyWith(top: AppSpacing.p24, bottom: AppSpacing.p24),
                   itemCount: _stages.length,
                   separatorBuilder: (ctx, index) => const SizedBox(height: 0),
                   itemBuilder: (ctx, index) => _buildStageNode(ctx, _stages[index], index == _stages.length - 1),
@@ -75,8 +77,8 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
   Widget _buildHeader() => Container(
     height: 110,
     width: double.infinity,
-    padding: const EdgeInsets.fromLTRB(24, 56, 24, 18),
-    color: RoadmapColors.surfaceWhite,
+    padding: const EdgeInsets.fromLTRB(AppSpacing.p24, AppSpacing.p32, AppSpacing.p24, AppSpacing.p16),
+    color: AppColors.surface,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -85,15 +87,15 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: RoadmapColors.textDark,
+            color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.p4),
         Text(
           "Matric to Career — track every stage",
           style: GoogleFonts.inter(
             fontSize: 12,
-            color: RoadmapColors.textMuted,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -125,11 +127,11 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
               Container(
                 width: 3,
                 height: 48,
-                color: stage.status == StageStatus.done ? RoadmapColors.primaryTeal : RoadmapColors.borderLight,
+                color: stage.status == StageStatus.done ? AppColors.primary : AppColors.border,
               ),
           ],
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.p16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,18 +141,18 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: stage.status == StageStatus.locked ? FontWeight.w500 : FontWeight.w600,
-                  color: stage.status == StageStatus.locked ? RoadmapColors.textMuted : RoadmapColors.textDark,
+                  color: stage.status == StageStatus.locked ? AppColors.textSecondary : AppColors.textPrimary,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppSpacing.p4),
               Text(
                 stage.subtitle,
                 style: GoogleFonts.inter(
                   fontSize: 12,
-                  color: RoadmapColors.textMuted,
+                  color: AppColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 24), // Bottom padding for rhythm
+              const SizedBox(height: AppSpacing.p24), // Bottom padding for rhythm
             ],
           ),
         ),
@@ -164,15 +166,15 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
 
     switch (status) {
       case StageStatus.done:
-        bgColor = RoadmapColors.primaryTeal;
+        bgColor = AppColors.primary;
         icon = Icons.check;
         break;
       case StageStatus.active:
-        bgColor = RoadmapColors.accentAmber;
+        bgColor = AppColors.accent;
         icon = null; // empty circle
         break;
       case StageStatus.locked:
-        bgColor = RoadmapColors.lockedGray;
+        bgColor = AppColors.lockedGray;
         icon = Icons.lock_outline;
         break;
     }
@@ -185,7 +187,7 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
         shape: BoxShape.circle,
       ),
       child: icon != null
-          ? Icon(icon, size: 16, color: status == StageStatus.locked ? const Color(0xFF999999) : Colors.white)
+          ? Icon(icon, size: 16, color: AppColors.surface)
           : null,
     );
   }
