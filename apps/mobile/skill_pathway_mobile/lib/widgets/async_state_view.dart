@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../constants.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
 
 enum AsyncViewState { loading, error, empty, data }
 
@@ -26,7 +26,7 @@ class AsyncStateView extends StatelessWidget {
       case AsyncViewState.loading:
         return const Center(
           child: CircularProgressIndicator(
-            color: RoadmapColors.primaryTeal,
+            color: AppColors.primary,
             strokeWidth: 3,
           ),
         );
@@ -37,21 +37,15 @@ class AsyncStateView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 48, color: RoadmapColors.errorRed),
+                const Icon(Icons.error_outline, size: 48, color: AppColors.error),
                 const SizedBox(height: 16),
                 Text(errorMessage,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(fontSize: 14, color: RoadmapColors.textDark)),
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: onRetry,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: RoadmapColors.primaryTeal,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(150, 44),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: Text("Try Again", style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                  child: Text("Try Again", style: AppTextStyles.button),
                 ),
               ],
             ),
@@ -67,15 +61,15 @@ class AsyncStateView extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: const BoxDecoration(
-                    color: RoadmapColors.lightTeal,
+                    color: AppColors.background, // Should probably be a lighter variant
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.search_off, size: 32, color: RoadmapColors.primaryTeal),
+                  child: const Icon(Icons.search_off, size: 32, color: AppColors.primary),
                 ),
                 const SizedBox(height: 16),
                 Text(emptyMessage,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(fontSize: 14, color: RoadmapColors.textMuted)),
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
               ],
             ),
           ),

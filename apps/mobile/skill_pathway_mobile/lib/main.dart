@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'router/app_router.dart';
+// Provider imports to be refactored eventually
 import 'providers/UserSessionProvider.dart';
 import 'providers/QuizStateProvider.dart';
 import 'providers/RoadmapProvider.dart';
 import 'providers/CourseProvider.dart';
 import 'providers/JobProvider.dart';
 import 'providers/CertificationProvider.dart';
+
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,32 +22,23 @@ Future<void> main() async {
   );
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserSessionProvider()),
-        ChangeNotifierProvider(create: (_) => QuizStateProvider()),
-        ChangeNotifierProvider(create: (_) => RoadmapProvider()),
-        ChangeNotifierProvider(create: (_) => CourseProvider()),
-        ChangeNotifierProvider(create: (_) => JobProvider()),
-        ChangeNotifierProvider(create: (_) => CertificationProvider()),
-      ],
-      child: const SkillPathwayApp(),
+    const ProviderScope(
+      child: SkillPathwayApp(),
     ),
   );
 }
 
-class SkillPathwayApp extends StatelessWidget {
+class SkillPathwayApp extends ConsumerWidget {
   const SkillPathwayApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       title: 'Skill Pathway',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFF1E2022),
-      ),
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.light, // Force light for now as requested for consistency
       routerConfig: appRouter,
     );
   }
