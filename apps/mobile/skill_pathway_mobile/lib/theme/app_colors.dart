@@ -19,6 +19,12 @@ class AppColors {
   static const Color border = Color(0xFFE5E7EB);
   static const Color divider = Color(0xFFE5E7EB);
   
+  // Quiz/Roadmap Specific Colors
+  static const Color selectedBackground = Color(0xFFE8F5E9);
+  static const Color lockedGray = Color(0xFFD9D9D6);
+  static const Color lightTeal = Color(0xFFE9F5F3);
+  static const Color textOnAmber = Color(0xFF1C1917);
+
   // Dark Mode / Specialized
   static const Color scaffoldDark = Color(0xFF1E2022);
   static const Color cardDark = Color(0xFF2C2E30);
