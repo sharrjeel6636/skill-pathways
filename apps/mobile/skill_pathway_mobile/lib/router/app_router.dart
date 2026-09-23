@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../models/shared_models.dart';
 import '../quiz_model.dart';
+import '../roadmap_model.dart';
 import '../splash_screen.dart';
 import '../home_screen.dart';
 import '../auth_screen.dart';
@@ -38,13 +39,13 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-    GoRoute(path: '/auth', builder: (context, state) => AuthScreen(onSuccess: () => context.go('/role-selection'))),
+    GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
     GoRoute(path: '/role-selection', builder: (context, state) => RoleSelectionScreen(onContinue: (role) {
       if (role == UserRole.student) context.go('/discovery');
       else if (role == UserRole.parent) context.go('/parent-dashboard');
       else context.go('/counselor-onboarding');
     })),
-    GoRoute(path: '/discovery', builder: (context, state) => const OnboardingScreen()),
+    GoRoute(path: '/discovery', builder: (context, state) => OnboardingScreen(onLanguageConfirmed: () => context.go('/auth'))),
     GoRoute(path: '/counselor-onboarding', builder: (context, state) => const CounselorOnboardingScreen()),
     GoRoute(path: '/counselor-dashboard', builder: (context, state) => CounselorDashboardScreen(
       profile: state.extra as CounselorProfile? ?? CounselorProfile(name: 'Counselor', institutionName: 'Institute', linkedStudentIds: []),
