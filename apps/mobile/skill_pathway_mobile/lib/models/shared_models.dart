@@ -275,6 +275,20 @@ class CareerGrowthLevel {
   });
 }
 
+enum StageStatus { done, active, locked }
+
+class RoadmapStage {
+  final String title;
+  final String subtitle;
+  final StageStatus status;
+
+  RoadmapStage({
+    required this.title,
+    required this.subtitle,
+    required this.status,
+  });
+}
+
 final Map<String, List<CareerGrowthLevel>> roleToGrowthMap = {
   "Software Engineer": [
     CareerGrowthLevel(title: "Software Engineer", subtitle: "You are here · 0-2 yrs", status: GrowthLevelStatus.active),
