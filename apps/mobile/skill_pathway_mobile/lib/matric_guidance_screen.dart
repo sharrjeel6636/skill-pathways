@@ -10,7 +10,7 @@ class MatricGuideEntry {
   final List<String> bulletPoints;
   final bool isVocational;
 
-  MatricGuideEntry({
+  const MatricGuideEntry({
     required this.groupName,
     required this.accentColor,
     required this.bulletPoints,

@@ -24,7 +24,7 @@ class TrainingInstitute {
   final String feeLabel;
   final String durationLabel;
 
-  TrainingInstitute({
+  const TrainingInstitute({
     required this.name,
     required this.cityOrCoverage,
     required this.feeLabel,

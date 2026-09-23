@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'theme/app_colors.dart';
 import 'constants.dart';
 import 'models/shared_models.dart';
 import 'providers/CertificationProvider.dart';

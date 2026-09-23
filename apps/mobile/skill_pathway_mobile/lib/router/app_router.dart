@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import '../models/shared_models.dart';
+import '../quiz_model.dart';
 import '../splash_screen.dart';
 import '../home_screen.dart';
 import '../auth_screen.dart';

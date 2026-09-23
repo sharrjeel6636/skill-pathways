@@ -25,6 +25,15 @@ class QuizResult {
     required this.totalQuestions,
   });
 
+  factory QuizResult.mock() {
+    return QuizResult(
+      recommendedPathway: "Computer Science",
+      description: "You have an inclination towards technology.",
+      scores: {"Science": 5, "Commerce": 2, "Arts": 1},
+      totalQuestions: 8,
+    );
+  }
+
   String get topField => recommendedPathway;
 }
 
