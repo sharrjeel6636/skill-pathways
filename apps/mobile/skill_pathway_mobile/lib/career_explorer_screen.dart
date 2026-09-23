@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'theme/app_colors.dart';
 import 'constants.dart';
 import 'providers/JobProvider.dart';
 import 'models/job_model.dart';
@@ -74,7 +75,7 @@ class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
   Widget _buildHeader() => Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(24, 56, 24, 16),
-        decoration: const BoxDecoration(color: RoadmapColors.surfaceWhite),
+        decoration: BoxDecoration(color: RoadmapColors.surfaceWhite),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

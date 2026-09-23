@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'theme/app_colors.dart';
 import 'constants.dart';
 import 'roadmap_screen.dart';
 
@@ -73,7 +74,7 @@ class CounselorDashboardScreen extends StatelessWidget {
   Widget _buildHeader() => Container(
     width: double.infinity,
     padding: const EdgeInsets.fromLTRB(24, 56, 24, 20),
-    decoration: const BoxDecoration(color: RoadmapColors.primaryTeal),
+    decoration: BoxDecoration(color: RoadmapColors.primaryTeal),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -31,12 +31,13 @@ class AppColors {
 }
 
 class RoadmapColors {
-  static const Color bgLight = AppColors.background;
-  static const Color surfaceWhite = AppColors.surface;
-  static const Color textDark = AppColors.textPrimary;
-  static const Color textMuted = AppColors.textSecondary;
-  static const Color primaryTeal = AppColors.primary;
-  static const Color lightTeal = AppColors.lightTeal;
-  static const Color borderLight = AppColors.border;
-  static const Color accentAmber = AppColors.warning;
+  static const Color bgLight = Color(0xFFF8FAF9);
+  static const Color surfaceWhite = Color(0xFFFFFFFF);
+  static const Color textDark = Color(0xFF1E293B);
+  static const Color textMuted = Color(0xFF64748B);
+  static const Color primaryTeal = Color(0xFF0F766E);
+  static const Color lightTeal = Color(0xFFCCFBF1);
+  static const Color borderLight = Color(0xFFE2E8F0);
+  static const Color accentAmber = Color(0xFFF59E0B);
+  static const Color lockedGray = Color(0xFF94A3B8);
 }

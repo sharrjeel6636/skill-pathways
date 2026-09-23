@@ -53,22 +53,22 @@ class CourseDetailScreen extends StatelessWidget {
                   ...course.learningPoints.map((point) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
-                      children: [
-                        Container(width: 5, height: 5, decoration: const BoxDecoration(color: RoadmapColors.primaryTeal, shape: BoxShape.circle)),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(point, style: GoogleFonts.inter(fontSize: 12, color: RoadmapColors.textMuted))),
-                      ],
+                    children: [
+                    Container(width: 5, height: 5, decoration: BoxDecoration(color: RoadmapColors.primaryTeal, shape: BoxShape.circle)),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(point, style: GoogleFonts.inter(fontSize: 12, color: RoadmapColors.textMuted))),
+                    ],
                     ),
-                  )),
-                ],
-              ),
-            ),
-          ),
-          // Pinned CTA
-          Container(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-            decoration: const BoxDecoration(color: RoadmapColors.surfaceWhite),
-            child: SizedBox(
+                    )),
+                    ],
+                    ),
+                    ),
+                    ),
+                    // Pinned CTA
+                    Container(
+                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                    decoration: BoxDecoration(color: RoadmapColors.surfaceWhite),
+                    child: SizedBox(
               width: double.infinity,
               height: 52,
               child: ElevatedButton(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'theme/app_colors.dart';
 import 'constants.dart';
 import 'models/shared_models.dart';
 import 'course_detail_screen.dart';
@@ -72,7 +73,7 @@ class _CertificationsTrackerScreenState extends State<CertificationsTrackerScree
   Widget _buildHeader() => Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(24, 56, 24, 16),
-        decoration: const BoxDecoration(color: RoadmapColors.surfaceWhite),
+        decoration: BoxDecoration(color: RoadmapColors.surfaceWhite),
         child: Text("My Certifications",
             style: GoogleFonts.inter(
                 fontSize: 19, fontWeight: FontWeight.bold, color: RoadmapColors.textDark)),

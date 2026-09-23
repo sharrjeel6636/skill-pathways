@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'theme/app_colors.dart';
 import 'constants.dart';
 import 'models/roadmap_model.dart';
 import 'providers/RoadmapProvider.dart';
@@ -49,7 +50,7 @@ class CareerGrowthRoadmapScreen extends StatelessWidget {
 
   Widget _buildHeader(String subtitle) => Container(
         padding: const EdgeInsets.fromLTRB(24, 56, 24, 18),
-        decoration: const BoxDecoration(color: RoadmapColors.surfaceWhite),
+        decoration: BoxDecoration(color: RoadmapColors.surfaceWhite),
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'constants.dart';
 import 'quiz_model.dart';
 import 'university_detail_screen.dart';
 import 'models/shared_models.dart';
@@ -138,12 +138,12 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
     ),
   );
 
-  Widget _buildUniversityCard(UniversityListing uni) => GestureDetector(
+  Widget _buildUniversityCard(UniversityDetail uni) => GestureDetector(
     onTap: () {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => UniversityDetailScreen(university: uni.detail),
+          builder: (context) => UniversityDetailScreen(university: uni),
         ),
       );
     },
@@ -158,7 +158,7 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "${uni.name} — ${uni.city}",
+            uni.name,
             style: GoogleFonts.inter(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -166,13 +166,6 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            "${uni.city} · Fee: ${uni.feePerSemester}/sem · Merit: ${uni.meritPercent}%",
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              color: RoadmapColors.textMuted,
-            ),
-          ),
         ],
       ),
     ),

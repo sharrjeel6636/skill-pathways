@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'constants.dart';
+import 'theme/app_colors.dart';
 import 'field_selection_screen.dart';
 import 'vocational_path_screen.dart';
 

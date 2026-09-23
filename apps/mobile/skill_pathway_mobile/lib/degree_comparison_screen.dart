@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'constants.dart';
+import 'theme/app_colors.dart';
 import 'quiz_model.dart';
 import 'models/shared_models.dart';
 import 'university_detail_screen.dart';

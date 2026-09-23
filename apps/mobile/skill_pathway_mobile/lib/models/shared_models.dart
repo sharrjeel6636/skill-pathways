@@ -92,6 +92,7 @@ class CourseDetail {
   final bool isFree;
   final String description;
   final List<String> learningPoints;
+  final String externalUrl;
   const CourseDetail({
     required this.id,
     required this.title,
@@ -101,6 +102,7 @@ class CourseDetail {
     this.isFree = true,
     this.description = '',
     this.learningPoints = const [],
+    this.externalUrl = '',
   });
 }
 

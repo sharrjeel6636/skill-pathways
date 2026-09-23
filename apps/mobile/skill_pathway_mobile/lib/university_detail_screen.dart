@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'university_shortlist_screen.dart';
+import 'models/shared_models.dart';
 
 class UniversityDetailScreen extends StatelessWidget {
   final UniversityDetail university;
@@ -24,8 +26,7 @@ class UniversityDetailScreen extends StatelessWidget {
                   children: [
                     Text(university.name, style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold, color: RoadmapColors.textDark)),
                     const SizedBox(height: 8),
-                    Text("${university.city} · Fee: ${university.feePerSemester}/sem · Merit: ${university.meritPercent}%",
-                      style: GoogleFonts.inter(fontSize: 14, color: RoadmapColors.textMuted)),
+                    // Removed city, feePerSemester, meritPercent access as it's not in the new UniversityDetail class
                     const SizedBox(height: 24),
                     Text("Overview", style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: RoadmapColors.textDark)),
                     const SizedBox(height: 8),
