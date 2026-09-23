@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'constants.dart';
+import 'models/shared_models.dart';
+import 'counselor_dashboard_screen.dart';
 
 class CounselorOnboardingScreen extends StatefulWidget {
   const CounselorOnboardingScreen({super.key});
@@ -40,7 +43,7 @@ class _CounselorOnboardingScreenState extends State<CounselorOnboardingScreen> {
               const Spacer(),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CounselorDashboardScreen(profile: CounselorProfile(name: "Test Counselor", institutionName: _controller.text, linkedStudentIds: []))));
+                  context.pushReplacement('/counselor-dashboard', extra: CounselorProfile(name: "Test Counselor", institutionName: _controller.text, linkedStudentIds: []));
                 },
                 child: Container(
                   width: double.infinity, height: 52,

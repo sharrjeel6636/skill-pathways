@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'theme/app_colors.dart';
@@ -54,7 +55,7 @@ class _CertificationsTrackerScreenState extends State<CertificationsTrackerScree
                           const SizedBox(height: 16),
                           if (totalCount == 0)
                             ElevatedButton(
-                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CourseListingScreen())),
+                              onPressed: () => context.push('/course-listing'),
                               child: const Text("Browse Courses"),
                             ),
                         ],
@@ -110,20 +111,23 @@ class _CertificationsTrackerScreenState extends State<CertificationsTrackerScree
         ),
       );
 
-  Widget _buildCertificationRow(BuildContext context, String courseName, CertStatus status, List<CourseListing> allCourses) {
+  Widget _buildCertificationRow(BuildContext context, String courseId, CertStatus status, List<CourseListing> allCourses) {
     final isCompleted = status == CertStatus.completed;
     final isInProgress = status == CertStatus.inProgress;
+    
+    // Find course by ID
+    final course = allCourses.firstWhere(
+      (c) => c.detail.id == courseId, 
+      orElse: () => allCourses.first // Fallback if not found (shouldn't happen with correct IDs)
+    );
+    final courseName = course.title;
     
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
         onTap: () {
           if (!isCompleted) {
-            final course = allCourses.firstWhere((c) => c.title == courseName);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CourseDetailScreen(course: course.detail)),
-            );
+            context.push('/course-detail', extra: course.detail);
           }
         },
         child: Container(

@@ -36,6 +36,10 @@ class HomeScreen extends StatelessWidget {
               _buildSectionLabel("Success Stories"),
               const SizedBox(height: AppSpacing.p12),
               _buildSuccessStoryCard(),
+              const SizedBox(height: AppSpacing.p24),
+              _buildSectionLabel("Scholarships"),
+              const SizedBox(height: AppSpacing.p12),
+              _buildScholarshipCard(context),
             ],
           ),
         ),
@@ -148,6 +152,22 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: AppSpacing.p12),
         Text("— Zainab, Karachi · BS Computer Science", style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
       ],
+    ),
+  );
+
+  Widget _buildScholarshipCard(BuildContext context) => GestureDetector(
+    onTap: () => context.push('/scholarship-info'),
+    child: Container(
+      padding: const EdgeInsets.all(AppSpacing.p16),
+      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppSpacing.r12), border: Border.all(color: AppColors.border)),
+      child: Row(
+        children: [
+          const CircleAvatar(backgroundColor: AppColors.accent, child: Icon(Icons.school, color: AppColors.textPrimary)),
+          const SizedBox(width: AppSpacing.p16),
+          Expanded(child: Text("Explore Scholarship Opportunities", style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500))),
+          const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+        ],
+      ),
     ),
   );
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/course_model.dart';
+import '../models/shared_models.dart';
 
 class CourseProvider extends ChangeNotifier {
   List<CourseListing> _courses = [];

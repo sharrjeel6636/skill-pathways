@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'constants.dart';
 import 'models/shared_models.dart';
@@ -111,12 +112,7 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
   Widget _buildCourseCard(BuildContext context, CourseListing course) =>
       GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CourseDetailScreen(course: course.detail),
-            ),
-          );
+          context.push('/course-detail', extra: course.detail);
         },
         child: Container(
           padding: const EdgeInsets.all(16),

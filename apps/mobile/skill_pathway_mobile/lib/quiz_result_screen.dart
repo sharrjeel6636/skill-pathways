@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'quiz_model.dart';
 import 'roadmap_screen.dart';
 import 'field_selection_screen.dart';
@@ -228,14 +229,7 @@ class QuizResultScreen extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FieldSelectionScreen(
-                  recommendedField: result.topField,
-                ),
-              ),
-            );
+            context.push('/field-selection', extra: result.topField);
           },
           child: Container(
             width: double.infinity,

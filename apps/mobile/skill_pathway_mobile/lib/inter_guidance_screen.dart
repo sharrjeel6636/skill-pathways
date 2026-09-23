@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'quiz_model.dart';
 import 'field_selection_screen.dart';
@@ -172,14 +173,7 @@ class InterGuidanceScreen extends StatelessWidget {
       );
 
   Widget _buildUniversityBanner(BuildContext context) => GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => UniversityShortlistScreen(initialFilterField: QuizState.fieldOfInterest),
-            ),
-          );
-        },
+        onTap: () => context.push('/university-shortlist'),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(

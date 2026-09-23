@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'models/shared_models.dart';
 
@@ -112,9 +113,7 @@ class JobSectorDetailScreen extends StatelessWidget {
             _buildInfoRow("Job security", job.detail.jobSecurityLevel),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/career-growth-roadmap');
-              },
+              onPressed: () => context.push('/career-growth-roadmap'),
               style: ElevatedButton.styleFrom(backgroundColor: RoadmapColors.primaryTeal, foregroundColor: Colors.white),
               child: const Text("View Career Growth Roadmap →"),
             ),

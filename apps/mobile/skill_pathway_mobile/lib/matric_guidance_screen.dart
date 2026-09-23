@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'field_selection_screen.dart';
 import 'vocational_path_screen.dart';
@@ -113,14 +114,9 @@ class MatricGuidanceScreen extends StatelessWidget {
     child: GestureDetector(
       onTap: () {
         if (entry.isVocational) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const VocationalPathScreen()));
+          context.push('/vocational-path');
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FieldSelectionScreen(recommendedField: entry.groupName.replaceAll("If you choose ", "")),
-            ),
-          );
+          context.push('/field-selection', extra: entry.groupName.replaceAll("If you choose ", ""));
         }
       },
       child: Container(

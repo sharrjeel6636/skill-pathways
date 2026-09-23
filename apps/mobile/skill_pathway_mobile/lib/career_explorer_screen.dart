@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'constants.dart';
 import 'providers/JobProvider.dart';
-import 'models/job_model.dart';
+import 'models/shared_models.dart';
 import 'job_sector_detail_screen.dart';
 import 'widgets/async_state_view.dart';
 
@@ -158,10 +159,7 @@ class _CareerExplorerScreenState extends State<CareerExplorerScreen> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => JobSectorDetailScreen(job: job)),
-        );
+        context.push('/job-sector-detail', extra: job);
       },
       child: Container(
         padding: const EdgeInsets.all(18),

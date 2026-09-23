@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
@@ -31,6 +32,22 @@ class UniversityDetailScreen extends StatelessWidget {
                     Text("Overview", style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: RoadmapColors.textDark)),
                     const SizedBox(height: 8),
                     Text(university.overview, style: GoogleFonts.inter(fontSize: 14, color: RoadmapColors.textMuted, height: 1.5)),
+                    const SizedBox(height: 24),
+                    GestureDetector(
+                      onTap: () => context.push('/scholarship-info'),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(color: RoadmapColors.lightTeal, borderRadius: BorderRadius.circular(12)),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.school, color: RoadmapColors.primaryTeal),
+                            const SizedBox(width: 12),
+                            Expanded(child: Text("Scholarship Available: Yes — Need-based", style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600, color: RoadmapColors.textDark))),
+                            const Icon(Icons.chevron_right, color: RoadmapColors.textMuted),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

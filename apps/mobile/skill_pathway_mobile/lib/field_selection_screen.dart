@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'quiz_model.dart';
 import 'inter_guidance_screen.dart';
@@ -195,15 +196,9 @@ class _FieldSelectionScreenState extends State<FieldSelectionScreen> {
         
         // Route to correct screen
         if (_options[_selectedFieldIndex].name == "Vocational / Technical Training") {
-          Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(builder: (context) => VocationalPathScreen())
-          );
+          context.pushReplacement('/vocational-path');
         } else {
-          Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(builder: (context) => const InterGuidanceScreen())
-          );
+          context.pushReplacement('/inter-guidance');
         }
       },
       child: Container(

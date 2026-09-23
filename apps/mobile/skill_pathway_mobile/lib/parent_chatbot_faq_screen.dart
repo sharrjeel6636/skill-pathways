@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'constants.dart';
 import 'chatbot_screen.dart';
 
@@ -22,15 +23,7 @@ class _ParentChatbotFaqScreenState extends State<ParentChatbotFaqScreen> {
   ];
 
   void _navigateToChat(String initialMessage) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ChatbotScreen(isParentMode: true),
-      ),
-    ).then((_) {
-      // In a real implementation, we would send the initial message to the chatbot controller here
-      // to pre-populate the chat if needed, though this is secondary for v1.
-    });
+    context.push('/chatbot', extra: {'isParentMode': true});
   }
 
   @override

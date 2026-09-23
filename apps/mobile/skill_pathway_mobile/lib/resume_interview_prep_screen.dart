@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
@@ -139,12 +140,7 @@ class ResumeInterviewPrepScreen extends StatelessWidget {
         // TODO: Navigate to Questions List
         break;
       case PrepToolType.mockInterview:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ChatbotScreen(isMockInterview: true),
-          ),
-        );
+        context.push('/chatbot', extra: {'isMockInterview': true});
         break;
     }
   }

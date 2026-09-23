@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'quiz_model.dart';
@@ -140,12 +141,7 @@ class _UniversityShortlistScreenState extends State<UniversityShortlistScreen> {
 
   Widget _buildUniversityCard(UniversityDetail uni) => GestureDetector(
     onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UniversityDetailScreen(university: uni),
-        ),
-      );
+      context.push('/university-detail', extra: uni);
     },
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

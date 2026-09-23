@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'theme/app_colors.dart';
 import 'theme/app_spacing.dart';
@@ -106,10 +107,7 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
     onTap: () {
       if (stage.status != StageStatus.locked) {
         if (stage.title.contains("Matric")) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MatricGuidanceScreen()),
-          );
+          context.push('/matric-guidance');
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

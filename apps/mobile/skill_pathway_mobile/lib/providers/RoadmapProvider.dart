@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/shared_models.dart';
-import '../quiz_model.dart';
-import '../roadmap_model.dart';
 
 class RoadmapProvider extends ChangeNotifier {
   late Map<String, List<CareerGrowthLevel>> _roleToGrowthMap;

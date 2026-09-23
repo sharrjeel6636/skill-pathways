@@ -3,12 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'theme/app_colors.dart';
 import 'constants.dart';
-import 'models/roadmap_model.dart';
+import 'models/shared_models.dart';
 import 'providers/RoadmapProvider.dart';
-import 'models/roadmap_model.dart';
-import 'models/roadmap_model.dart';
-import 'models/roadmap_model.dart';
-import 'models/roadmap_model.dart';
 
 class CareerGrowthRoadmapScreen extends StatelessWidget {
   final String role;

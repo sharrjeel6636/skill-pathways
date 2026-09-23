@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'theme/app_colors.dart';
@@ -202,12 +203,7 @@ class _QuizScreenState extends State<QuizScreen> implements QuizView {
 
   @override
   void onQuizCompleted(QuizResult result) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => QuizResultScreen(result: result),
-      ),
-    );
+    context.pushReplacement('/quiz/result', extra: result);
   }
 
   @override
