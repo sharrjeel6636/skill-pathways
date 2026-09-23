@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'theme/app_colors.dart';
 import 'quiz_model.dart';
 import 'inter_guidance_screen.dart';
+import 'vocational_path_screen.dart';
 
 class FieldOption {
   final String name;

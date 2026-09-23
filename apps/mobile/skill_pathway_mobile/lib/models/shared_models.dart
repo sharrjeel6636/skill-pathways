@@ -6,11 +6,17 @@ class UniversityDetail {
   final String name;
   final String overview;
   final List<String> matchedFields;
+  final String city;
+  final String feePerSemester;
+  final int meritPercent;
   const UniversityDetail({
     required this.id,
     required this.name,
     required this.overview,
     this.matchedFields = const [],
+    required this.city,
+    required this.feePerSemester,
+    required this.meritPercent,
   });
 }
 
@@ -22,12 +28,18 @@ const List<UniversityDetail> allUniversities = [
     name: 'National University of Sciences & Technology (NUST)',
     overview: 'Premier science & technology institution offering world-class engineering and computing degrees.',
     matchedFields: ['Engineering', 'Computer Science'],
+    city: 'Islamabad',
+    feePerSemester: 'PKR 150k',
+    meritPercent: 85,
   ),
   UniversityDetail(
     id: 'fast',
     name: 'FAST-NUCES',
     overview: 'Known for excellence in computer science and software engineering programs.',
     matchedFields: ['Computer Science', 'Software Engineering'],
+    city: 'Lahore',
+    feePerSemester: 'PKR 180k',
+    meritPercent: 80,
   ),
 ];
 

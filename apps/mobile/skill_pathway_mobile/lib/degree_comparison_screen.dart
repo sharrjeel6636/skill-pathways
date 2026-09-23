@@ -120,7 +120,7 @@ class DegreeComparisonScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => UniversityDetailScreen(university: uni.detail),
+              builder: (context) => UniversityDetailScreen(university: uni),
             ),
           );
         },
@@ -134,14 +134,16 @@ class DegreeComparisonScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${uni.name} — ${uni.city}",
+              Text("${uni.name} — ${uni.matchedFields.join(', ')}",
                   style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: RoadmapColors.textDark)),
               const SizedBox(height: 4),
-              Text("${uni.city} · Fee: ${uni.feePerSemester}/sem · Merit: ${uni.meritPercent}%",
-                  style: GoogleFonts.inter(fontSize: 11, color: RoadmapColors.textMuted)),
+              Text(uni.overview,
+                  style: GoogleFonts.inter(fontSize: 11, color: RoadmapColors.textMuted),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis),
             ],
           ),
         ),
