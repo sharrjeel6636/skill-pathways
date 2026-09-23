@@ -31,22 +31,6 @@ const List<UniversityDetail> allUniversities = [
   ),
 ];
 
-// ... (existing Degree Comparison Models)
-
-class MatricGuideEntry {
-  final String title;
-  final String desc;
-  const MatricGuideEntry({required this.title, required this.desc});
-}
-
-class TrainingInstitute {
-  final String name;
-  final String cityOrCoverage;
-  final String feeLabel;
-  final String durationLabel;
-  const TrainingInstitute({required this.name, required this.cityOrCoverage, required this.feeLabel, required this.durationLabel});
-}
-
 // --- Degree Comparison Models ---
 class DegreeComparisonEntry {
   final String name;
@@ -126,69 +110,6 @@ class CourseListing {
   });
 }
 
-final List<CourseListing> allCourses = [
-  CourseListing(
-    platform: "freeCodeCamp",
-    title: "Python for Everybody",
-    level: "Beginner",
-    durationLabel: "4 weeks",
-    isFree: true,
-    tags: ["Programming"],
-    detail: CourseDetail(
-      title: "Python for Everybody",
-      platform: "freeCodeCamp",
-      description: "Learn Python from scratch.",
-      learningPoints: ["Variables", "Loops", "Functions"],
-      externalUrl: "https://www.freecodecamp.org",
-    ),
-  ),
-  CourseListing(
-    platform: "Coursera",
-    title: "Intro to Data Science",
-    level: "Intermediate",
-    durationLabel: "6 weeks",
-    isFree: false,
-    tags: ["Programming"],
-    detail: CourseDetail(
-      title: "Intro to Data Science",
-      platform: "Coursera",
-      description: "Deep dive into Data Science.",
-      learningPoints: ["Statistics", "Machine Learning", "Data Analysis"],
-      externalUrl: "https://www.coursera.org",
-    ),
-  ),
-  CourseListing(
-    platform: "Local Bootcamp",
-    title: "Web Development Basics",
-    level: "Beginner",
-    durationLabel: "8 weeks",
-    isFree: true,
-    tags: ["Programming"],
-    detail: CourseDetail(
-      title: "Web Development Basics",
-      platform: "Local Bootcamp",
-      description: "Master web fundamentals.",
-      learningPoints: ["HTML", "CSS", "JS"],
-      externalUrl: "https://example.com",
-    ),
-  ),
-  CourseListing(
-    platform: "LinkedIn Learning",
-    title: "Business Communication",
-    level: "All levels",
-    durationLabel: "2 weeks",
-    isFree: false,
-    tags: ["Business"],
-    detail: CourseDetail(
-      title: "Business Communication",
-      platform: "LinkedIn Learning",
-      description: "Improve your professional skills.",
-      learningPoints: ["Email writing", "Meetings", "Presentation"],
-      externalUrl: "https://www.linkedin.com/learning",
-    ),
-  ),
-];
-
 // --- Certification Models ---
 enum CertStatus { completed, inProgress, notStarted }
 
@@ -219,6 +140,20 @@ class PrepTool {
     required this.type,
     required this.icon,
   });
+}
+
+class MatricGuideEntry {
+  final String title;
+  final String desc;
+  const MatricGuideEntry({required this.title, required this.desc});
+}
+
+class TrainingInstitute {
+  final String name;
+  final String cityOrCoverage;
+  final String feeLabel;
+  final String durationLabel;
+  const TrainingInstitute({required this.name, required this.cityOrCoverage, required this.feeLabel, required this.durationLabel});
 }
 
 // --- Job Models ---
