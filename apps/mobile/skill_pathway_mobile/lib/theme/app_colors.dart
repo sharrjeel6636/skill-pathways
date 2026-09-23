@@ -29,3 +29,14 @@ class AppColors {
   static const Color scaffoldDark = Color(0xFF1E2022);
   static const Color cardDark = Color(0xFF2C2E30);
 }
+
+class RoadmapColors {
+  static const Color bgLight = AppColors.background;
+  static const Color surfaceWhite = AppColors.surface;
+  static const Color textDark = AppColors.textPrimary;
+  static const Color textMuted = AppColors.textSecondary;
+  static const Color primaryTeal = AppColors.primary;
+  static const Color lightTeal = AppColors.lightTeal;
+  static const Color borderLight = AppColors.border;
+  static const Color accentAmber = AppColors.warning;
+}

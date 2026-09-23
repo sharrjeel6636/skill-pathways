@@ -2,22 +2,49 @@ import 'package:flutter/material.dart';
 
 // --- University Models ---
 class UniversityDetail {
+  final String id;
   final String name;
-  final String city;
   final String overview;
+  final List<String> matchedFields;
+  final String city;
   final String feePerSemester;
   final int meritPercent;
   final DateTime applicationDeadline;
 
-  UniversityDetail({
+  const UniversityDetail({
+    required this.id,
     required this.name,
-    required this.city,
     required this.overview,
+    this.matchedFields = const [],
+    required this.city,
     required this.feePerSemester,
     required this.meritPercent,
     required this.applicationDeadline,
   });
 }
+
+const List<UniversityDetail> allUniversities = [
+  UniversityDetail(
+    id: "u1",
+    name: "NUST",
+    overview: "Top ranked engineering university.",
+    city: "Islamabad",
+    feePerSemester: "PKR 150k",
+    meritPercent: 85,
+    applicationDeadline: DateTime(2026, 12, 31),
+    matchedFields: ["Pre-Engineering", "ICS (Computer Science)"],
+  ),
+  UniversityDetail(
+    id: "u2",
+    name: "FAST-NUCES",
+    overview: "Leader in Computer Science education.",
+    city: "Lahore",
+    feePerSemester: "PKR 180k",
+    meritPercent: 80,
+    applicationDeadline: DateTime(2026, 11, 30),
+    matchedFields: ["Pre-Engineering", "ICS (Computer Science)"],
+  ),
+];
 
 class UniversityListing {
   final String name;

@@ -30,6 +30,10 @@ class JobSectorDetailScreen extends StatelessWidget {
         headerColor = RoadmapColors.primaryTeal;
         sectorLabel = "CORPORATE";
         break;
+      case JobSector.trade:
+        headerColor = RoadmapColors.primaryTeal;
+        sectorLabel = "TRADE";
+        break;
     }
 
     return Scaffold(
@@ -43,7 +47,7 @@ class JobSectorDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoCard(),
+                  _buildInfoCard(context),
                   const SizedBox(height: 16),
                   Text("How to Prepare",
                       style: GoogleFonts.inter(
@@ -91,7 +95,7 @@ class JobSectorDetailScreen extends StatelessWidget {
         ),
       );
 
-  Widget _buildInfoCard() => Container(
+  Widget _buildInfoCard(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         decoration: BoxDecoration(
             color: RoadmapColors.surfaceWhite,
@@ -108,7 +112,9 @@ class JobSectorDetailScreen extends StatelessWidget {
             _buildInfoRow("Job security", job.detail.jobSecurityLevel),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => context.push('/career-growth-roadmap'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/career-growth-roadmap');
+              },
               style: ElevatedButton.styleFrom(backgroundColor: RoadmapColors.primaryTeal, foregroundColor: Colors.white),
               child: const Text("View Career Growth Roadmap →"),
             ),
