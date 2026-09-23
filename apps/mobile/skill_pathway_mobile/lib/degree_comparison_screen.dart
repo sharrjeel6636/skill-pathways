@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'quiz_model.dart';
-import 'shared_data.dart';
+import 'models/shared_models.dart';
 import 'university_detail_screen.dart';
 
 class DegreeComparisonScreen extends StatelessWidget {

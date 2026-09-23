@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../shared_data.dart';
+import '../models/shared_models.dart';
 import '../quiz_model.dart';
 
 class RoadmapProvider extends ChangeNotifier {

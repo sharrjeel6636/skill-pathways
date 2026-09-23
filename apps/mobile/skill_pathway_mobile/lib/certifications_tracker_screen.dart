@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
-import 'shared_data.dart';
+import 'models/shared_models.dart';
 import 'course_detail_screen.dart';
 import 'course_listing_screen.dart';
 import 'widgets/async_state_view.dart';

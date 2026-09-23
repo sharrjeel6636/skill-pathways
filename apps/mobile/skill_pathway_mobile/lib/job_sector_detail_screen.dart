@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
-import 'shared_data.dart';
+import 'models/shared_models.dart';
 
 class JobSectorDetailScreen extends StatelessWidget {
   final JobListing job;

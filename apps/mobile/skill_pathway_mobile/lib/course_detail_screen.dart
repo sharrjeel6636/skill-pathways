@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'constants.dart';
-import 'shared_data.dart';
+import 'models/shared_models.dart';
 import 'providers/CertificationProvider.dart';
 
 class CourseDetailScreen extends StatelessWidget {

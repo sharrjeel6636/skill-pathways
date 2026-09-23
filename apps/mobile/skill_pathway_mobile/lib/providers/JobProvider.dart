@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../shared_data.dart';
+import '../models/shared_models.dart';
 
 class JobProvider extends ChangeNotifier {
   List<JobListing> _jobs = List.from(allJobs);

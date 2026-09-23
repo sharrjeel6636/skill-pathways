@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 import 'quiz_model.dart';
 import 'university_detail_screen.dart';
-import 'shared_data.dart';
+import 'models/shared_models.dart';
 import 'widgets/async_state_view.dart';
 
 class UniversityShortlistScreen extends StatefulWidget {

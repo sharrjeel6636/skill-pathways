@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../shared_data.dart';
+import '../models/shared_models.dart';
 
 class CourseProvider extends ChangeNotifier {
   List<CourseListing> _allCourses = allCourses;
