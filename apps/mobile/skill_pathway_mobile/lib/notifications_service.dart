@@ -7,6 +7,8 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 Future<void> initNotifications() async {
+  // Commented out to avoid compile errors until properly implemented.
+  /*
   tz.initializeTimeZones();
   
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -18,5 +20,11 @@ Future<void> initNotifications() async {
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin);
       
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings: initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse details) {
+      // Handle notification response
+    },
+  );
+  */
 }

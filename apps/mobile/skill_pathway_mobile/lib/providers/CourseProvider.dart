@@ -31,6 +31,7 @@ class CourseProvider extends ChangeNotifier {
           isFree: true, // Not in DB yet
           tags: [item['pathway_tag'] ?? ''],
           detail: CourseDetail(
+            id: item['id']?.toString() ?? '',
             title: item['title'] ?? '',
             platform: 'Unknown',
             description: '', // Not in DB yet

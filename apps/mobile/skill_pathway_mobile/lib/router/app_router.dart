@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import '../models/shared_models.dart';
+import '../quiz_model.dart';
 import '../splash_screen.dart';
 import '../home_screen.dart';
 import '../auth_screen.dart';
@@ -43,7 +44,7 @@ final GoRouter appRouter = GoRouter(
       else if (role == UserRole.parent) context.go('/parent-dashboard');
       else context.go('/counselor-onboarding');
     })),
-    GoRoute(path: '/discovery', builder: (context, state) => OnboardingScreen(onLanguageConfirmed: () => context.go('/auth'))),
+    GoRoute(path: '/discovery', builder: (context, state) => OnboardingScreen(onLanguageConfirmed: (lang) => context.go('/auth'))),
     GoRoute(path: '/counselor-onboarding', builder: (context, state) => const CounselorOnboardingScreen()),
     GoRoute(path: '/counselor-dashboard', builder: (context, state) => CounselorDashboardScreen(
       profile: state.extra as CounselorProfile? ?? CounselorProfile(name: 'Counselor', institutionName: 'Institute', linkedStudentIds: []),

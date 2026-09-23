@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'quiz_model.dart';
 import 'providers/QuizStateProvider.dart';
+import 'services/api_client.dart';
 
 enum MessageSender { bot, user }
 

@@ -76,7 +76,8 @@ class HomeScreen extends StatelessWidget {
   Widget _buildSectionLabel(String title) => Text(title, style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary));
 
   Widget _buildQuizCTA(BuildContext context) {
-    final quizCompleted = context.watch<QuizStateProvider>().quizCompleted;
+    final quizResult = context.watch<QuizStateProvider>().completedResult;
+    final quizCompleted = quizResult != null;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.p24),
       decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(AppSpacing.r16)),

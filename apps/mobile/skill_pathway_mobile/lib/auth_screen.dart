@@ -23,6 +23,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   AuthFormState _formState = AuthFormState();
   bool _obscurePassword = true;
+  bool _loading = false;
   Map<String, String> _errors = {};
 
   void _toggleMode() {
@@ -34,12 +35,18 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _validateAndSubmit() async {
     setState(() {
+      _loading = true;
       _errors.clear();
-      if (_formState.identifier.isEmpty) _errors['identifier'] = 'Required';
+      if (_formState.identifier.isEmpty || !_formState.identifier.contains('@')) {
+        _errors['identifier'] = 'Valid Email Required';
+      }
       if (_formState.password.length < 6) _errors['password'] = 'Min 6 characters';
     });
 
-    if (_errors.isNotEmpty) return;
+    if (_errors.isNotEmpty) {
+      setState(() => _loading = false);
+      return;
+    }
 
     try {
       final client = Supabase.instance.client;
@@ -55,40 +62,92 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
       if (mounted) context.go('/role-selection');
+    } on AuthException catch (e) {
+      setState(() {
+        _errors['global'] = e.message;
+        _loading = false;
+      });
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message), backgroundColor: Colors.red));
     } catch (e) {
-      setState(() => _errors['global'] = e.toString());
+      setState(() {
+        _errors['global'] = 'An unexpected error occurred';
+        _loading = false;
+      });
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('An unexpected error occurred'), backgroundColor: Colors.red));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
-            children: [
-              const SizedBox(height: 72),
-              _buildTitle(),
-              const SizedBox(height: 28),
-              Expanded(
-                child: Column(
-                  children: [
-                    if (_formState.mode == AuthMode.signup) _buildField("Full Name", "Full Name", onChanged: (v) => _formState.fullName = v, error: _errors['fullName']),
-                    _buildField("Phone or Email", "03xx-xxxxxxx", onChanged: (v) => _formState.identifier = v, error: _errors['identifier']),
-                    _buildField("Password", "••••••••", isPassword: true, onChanged: (v) => _formState.password = v, error: _errors['password']),
-                    if (_formState.mode == AuthMode.signup) _buildField("Confirm Password", "••••••••", isPassword: true, onChanged: (v) => _formState.confirmPassword = v, error: _errors['confirmPassword']),
-                  ],
-                ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 430),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 16),
+                  _buildTitle(),
+                  const SizedBox(height: 28),
+                  if (_errors['global'] != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        _errors['global']!,
+                        style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: const Color(0xFFDC2626),
+                            fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  if (_formState.mode == AuthMode.signup)
+                    _buildField(
+                      "Full Name",
+                      "Full Name",
+                      onChanged: (v) => _formState.fullName = v,
+                      error: _errors['fullName'],
+                    ),
+                  _buildField(
+                    "Email",
+                    "name@example.com",
+                    onChanged: (v) => _formState.identifier = v,
+                    error: _errors['identifier'],
+                  ),
+                  _buildField(
+                    "Password",
+                    "••••••••",
+                    isPassword: true,
+                    onChanged: (v) => _formState.password = v,
+                    error: _errors['password'],
+                  ),
+                  if (_formState.mode == AuthMode.signup)
+                    _buildField(
+                      "Confirm Password",
+                      "••••••••",
+                      isPassword: true,
+                      onChanged: (v) => _formState.confirmPassword = v,
+                      error: _errors['confirmPassword'],
+                    ),
+                  const SizedBox(height: 12),
+                  _buildPrimaryButton(),
+                  const SizedBox(height: 20),
+                  _buildDivider(),
+                  const SizedBox(height: 20),
+                  _buildSecondaryButton(),
+                  const SizedBox(height: 20),
+                  TextButton(
+                      onPressed: () => context.go('/role-selection'),
+                      child: Text("Continue as Guest",
+                          style: GoogleFonts.inter(
+                              fontSize: 14, color: const Color(0xFF6B7280)))),
+                ],
               ),
-              _buildPrimaryButton(),
-              const SizedBox(height: 28),
-              _buildDivider(),
-              const SizedBox(height: 28),
-              _buildSecondaryButton(),
-              const SizedBox(height: 40),
-            ],
+            ),
           ),
         ),
       ),
@@ -111,10 +170,11 @@ class _AuthScreenState extends State<AuthScreen> {
       const SizedBox(height: 8),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(color: const Color(0xFFF7F7F6), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFE7E5E4))),
+        decoration: BoxDecoration(color: const Color(0xFFF7F7F6), borderRadius: BorderRadius.circular(12), border: Border.all(color: error != null ? const Color(0xFFDC2626) : const Color(0xFFE7E5E4))),
         child: TextField(
           obscureText: isPassword && _obscurePassword,
           onChanged: onChanged,
+          enabled: !_loading,
           style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF1C1917)),
           decoration: InputDecoration(
             hintText: hint,
@@ -132,11 +192,11 @@ class _AuthScreenState extends State<AuthScreen> {
   );
 
   Widget _buildPrimaryButton() => GestureDetector(
-    onTap: _validateAndSubmit,
+    onTap: _loading ? null : _validateAndSubmit,
     child: Container(
       width: double.infinity, height: 52,
-      decoration: BoxDecoration(color: const Color(0xFF0F766E), borderRadius: BorderRadius.circular(14)),
-      child: Center(child: Text(_formState.mode == AuthMode.login ? "Log In" : "Sign Up", style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white))),
+      decoration: BoxDecoration(color: _loading ? Colors.grey : const Color(0xFF0F766E), borderRadius: BorderRadius.circular(14)),
+      child: Center(child: _loading ? const CircularProgressIndicator(color: Colors.white) : Text(_formState.mode == AuthMode.login ? "Log In" : "Sign Up", style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white))),
     ),
   );
 
@@ -149,7 +209,7 @@ class _AuthScreenState extends State<AuthScreen> {
   );
 
   Widget _buildSecondaryButton() => GestureDetector(
-    onTap: _toggleMode,
+    onTap: _loading ? null : _toggleMode,
     child: Container(
       width: double.infinity, height: 52,
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: const Color(0xFFE7E5E4))),
