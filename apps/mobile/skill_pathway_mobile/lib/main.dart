@@ -14,10 +14,16 @@ import 'theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Supabase
+  // Initialize Supabase with project credentials
   await Supabase.initialize(
-    url: const String.fromEnvironment('SUPABASE_URL', defaultValue: ''),
-    anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: ''),
+    url: const String.fromEnvironment(
+      'SUPABASE_URL',
+      defaultValue: 'https://lrjlggmrkjiljmiiinrp.supabase.co',
+    ),
+    anonKey: const String.fromEnvironment(
+      'SUPABASE_ANON_KEY',
+      defaultValue: 'sb_publishable_b6RfTyh4jFPgRTTxkrT3IQ_jIQJLi-o',
+    ),
   );
 
   runApp(
