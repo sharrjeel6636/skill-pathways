@@ -6,62 +6,45 @@ class UniversityDetail {
   final String name;
   final String overview;
   final List<String> matchedFields;
-  final String city;
-  final String feePerSemester;
-  final int meritPercent;
-  final DateTime applicationDeadline;
-
   const UniversityDetail({
     required this.id,
     required this.name,
     required this.overview,
     this.matchedFields = const [],
-    required this.city,
-    required this.feePerSemester,
-    required this.meritPercent,
-    required this.applicationDeadline,
   });
 }
 
+typedef UniversityListing = UniversityDetail;
+
 const List<UniversityDetail> allUniversities = [
   UniversityDetail(
-    id: "u1",
-    name: "NUST",
-    overview: "Top ranked engineering university.",
-    city: "Islamabad",
-    feePerSemester: "PKR 150k",
-    meritPercent: 85,
-    applicationDeadline: DateTime(2026, 12, 31),
-    matchedFields: ["Pre-Engineering", "ICS (Computer Science)"],
+    id: 'nust',
+    name: 'National University of Sciences & Technology (NUST)',
+    overview: 'Premier science & technology institution offering world-class engineering and computing degrees.',
+    matchedFields: ['Engineering', 'Computer Science'],
   ),
   UniversityDetail(
-    id: "u2",
-    name: "FAST-NUCES",
-    overview: "Leader in Computer Science education.",
-    city: "Lahore",
-    feePerSemester: "PKR 180k",
-    meritPercent: 80,
-    applicationDeadline: DateTime(2026, 11, 30),
-    matchedFields: ["Pre-Engineering", "ICS (Computer Science)"],
+    id: 'fast',
+    name: 'FAST-NUCES',
+    overview: 'Known for excellence in computer science and software engineering programs.',
+    matchedFields: ['Computer Science', 'Software Engineering'],
   ),
 ];
 
-class UniversityListing {
-  final String name;
-  final String city;
-  final String feePerSemester;
-  final int meritPercent;
-  final List<String> matchedFields; // e.g. ["Pre-Engineering", "ICS"]
-  final UniversityDetail detail; // full record for the detail screen
+// ... (existing Degree Comparison Models)
 
-  UniversityListing({
-    required this.name,
-    required this.city,
-    required this.feePerSemester,
-    required this.meritPercent,
-    required this.matchedFields,
-    required this.detail,
-  });
+class MatricGuideEntry {
+  final String title;
+  final String desc;
+  const MatricGuideEntry({required this.title, required this.desc});
+}
+
+class TrainingInstitute {
+  final String name;
+  final String cityOrCoverage;
+  final String feeLabel;
+  final String durationLabel;
+  const TrainingInstitute({required this.name, required this.cityOrCoverage, required this.feeLabel, required this.durationLabel});
 }
 
 // --- Degree Comparison Models ---
@@ -101,20 +84,23 @@ final Map<String, List<DegreeComparisonEntry>> fieldToDegreesMap = {
 
 // --- Course Models ---
 class CourseDetail {
+  final String id;
   final String title;
   final String platform;
+  final String level;
+  final String durationLabel;
+  final bool isFree;
   final String description;
   final List<String> learningPoints;
-  final String externalUrl;
-  final String? imageUrl;
-
-  CourseDetail({
+  const CourseDetail({
+    required this.id,
     required this.title,
     required this.platform,
-    required this.description,
-    required this.learningPoints,
-    required this.externalUrl,
-    this.imageUrl,
+    this.level = 'Beginner',
+    this.durationLabel = '4 Weeks',
+    this.isFree = true,
+    this.description = '',
+    this.learningPoints = const [],
   });
 }
 
