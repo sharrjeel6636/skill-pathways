@@ -62,7 +62,24 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/quiz/result', builder: (context, state) => QuizResultScreen(
       result: state.extra as QuizResult? ?? QuizResult.mock(),
     )),
+import '../screens/skill_gap_analyzer_screen.dart';
+import '../providers/skill_gap_provider.dart';
+import '../providers/CertificationProvider.dart';
+import '../providers/RoadmapProvider.dart';
+import '../services/skill_requirement_service.dart';
+import 'package:provider/provider.dart';
+
+// ... (rest of imports)
+
     GoRoute(path: '/roadmap', builder: (context, state) => const RoadmapScreen()),
+    GoRoute(path: '/skill-gap-analyzer', builder: (context, state) => ChangeNotifierProvider(
+      create: (context) => SkillGapProvider(
+        Provider.of<CertificationProvider>(context, listen: false),
+        Provider.of<RoadmapProvider>(context, listen: false),
+        SkillRequirementService(),
+      ),
+      child: SkillGapAnalyzerScreen(targetRole: state.extra as String? ?? 'Software Engineer'),
+    )),
     GoRoute(path: '/career-explorer', builder: (context, state) => const CareerExplorerScreen()),
     GoRoute(path: '/certifications-tracker', builder: (context, state) => const CertificationsTrackerScreen()),
     GoRoute(path: '/career-growth-roadmap', builder: (context, state) => const CareerGrowthRoadmapScreen()),

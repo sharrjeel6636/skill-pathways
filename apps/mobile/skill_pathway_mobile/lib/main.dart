@@ -34,7 +34,19 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => RoadmapProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => JobProvider()),
+import 'providers/skill_gap_provider.dart';
+import 'services/skill_requirement_service.dart';
+// ...
         ChangeNotifierProvider(create: (_) => CertificationProvider()),
+        ProxyProvider3<CertificationProvider, RoadmapProvider, SkillRequirementService, SkillGapProvider>(
+          update: (context, cert, road, skillReq, previous) =>
+              SkillGapProvider(cert, road, skillReq),
+          create: (context) => SkillGapProvider(
+            Provider.of<CertificationProvider>(context, listen: false),
+            Provider.of<RoadmapProvider>(context, listen: false),
+            SkillRequirementService(),
+          ),
+        ),
       ],
       child: const SkillPathwayApp(),
     ),

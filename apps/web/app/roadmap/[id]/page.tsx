@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import SkillGapAnalyzer from '@/components/SkillGapAnalyzer';
 
 export default function RoadmapPage({ params }: { params: { id: string } }) {
   const [steps, setSteps] = useState<any[]>([]);
@@ -21,6 +22,10 @@ export default function RoadmapPage({ params }: { params: { id: string } }) {
       <div className="pt-8 px-[22px] pb-[14px]">
         <div className="text-[11px] font-extrabold uppercase tracking-widest text-rust">Your pathway</div>
         <h3 className="font-serif font-semibold text-[21px] mt-1.5 text-ink">Full Stack Development</h3>
+      </div>
+
+      <div className="px-[22px] mb-4">
+        <SkillGapAnalyzer userId="mock-user-123" />
       </div>
 
       {/* Pathway Canvas (The Trail) */}

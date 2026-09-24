@@ -43,6 +43,7 @@ Skill Pathway is an educational guidance platform designed to empower Pakistani 
 - Pathway Selection & Progress Tracking
 - AI-powered Career Guidance Chatbot (Gemini)
 - Parent Dashboard
+- AI Skill Gap Analyzer
 
 ### Planned
 - Advanced Counselor Analytics
