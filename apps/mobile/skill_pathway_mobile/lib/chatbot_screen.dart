@@ -13,13 +13,21 @@ class ChatMessage {
   final MessageSender sender;
   final DateTime timestamp;
 
-  ChatMessage({required this.text, required this.sender, required this.timestamp});
+  ChatMessage({
+    required this.text,
+    required this.sender,
+    required this.timestamp,
+  });
 }
 
 class ChatbotScreen extends StatefulWidget {
   final bool isParentMode;
   final bool isMockInterview;
-  const ChatbotScreen({super.key, this.isParentMode = false, this.isMockInterview = false});
+  const ChatbotScreen({
+    super.key,
+    this.isParentMode = false,
+    this.isMockInterview = false,
+  });
 
   @override
   State<ChatbotScreen> createState() => _ChatbotScreenState();
@@ -30,12 +38,19 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isTyping = false;
-  bool _isUrdu = false; 
+  bool _isUrdu = false;
 
   @override
   void initState() {
     super.initState();
     _seedGreeting();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _seedGreeting() {
@@ -45,7 +60,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ? "السلام علیکم! میں آپ کے بچے کی رہنمائی میں آپ کی مدد کے لیے حاضر ہوں۔ کوئی سوال ہو تو پوچھیں۔"
           : "Assalam-o-Alaikum! I'm here to support you in guiding your child. Feel free to ask any questions.";
     } else if (widget.isMockInterview) {
-      greeting = "Assalam-o-Alaikum! I'm your mock interviewer. Let's start! Please tell me about yourself.";
+      greeting =
+          "Assalam-o-Alaikum! I'm your mock interviewer. Let's start! Please tell me about yourself.";
     } else {
       greeting = _isUrdu
           ? "السلام علیکم! میں آپ کی رہنمائی کے لیے حاضر ہوں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟"
@@ -56,7 +72,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   void _addMessage(String text, MessageSender sender) {
     setState(() {
-      _messages.add(ChatMessage(text: text, sender: sender, timestamp: DateTime.now()));
+      _messages.add(
+        ChatMessage(text: text, sender: sender, timestamp: DateTime.now()),
+      );
     });
     _scrollToBottom();
   }
@@ -74,19 +92,21 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   void _handleSend() {
-    if (_textController.text.isEmpty) return;
-    
-    final text = _textController.text;
+    if (_textController.text.trim().isEmpty) return;
+
+    final text = _textController.text.trim();
     _addMessage(text, MessageSender.user);
     _textController.clear();
-    
+
     _simulateBotResponse(text);
   }
 
   Future<void> _sendMessageToApi(String text) async {
     final quizProvider = Provider.of<QuizStateProvider>(context, listen: false);
     final Map<String, dynamic> contextData = {
-      "mode": widget.isParentMode ? "parent" : (widget.isMockInterview ? "mock_interview" : "student"),
+      "mode": widget.isParentMode
+          ? "parent"
+          : (widget.isMockInterview ? "mock_interview" : "student"),
       "student_name": "Sharjeel",
       "field_of_interest": quizProvider.fieldOfInterest,
       "quiz_top_field": quizProvider.completedResult?.topField,
@@ -95,7 +115,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     try {
       final response = await ApiClient.post('/chatbot/message', {
         'text': text,
-        'context': contextData
+        'context': contextData,
       });
 
       if (response.statusCode == 200) {
@@ -104,7 +124,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         throw Exception('Failed to get response');
       }
     } catch (e) {
-      _addMessage("Sorry, I couldn't process that — please try again", MessageSender.bot);
+      _addMessage(
+        "Sorry, I couldn't process that — please try again",
+        MessageSender.bot,
+      );
     }
   }
 
@@ -144,38 +167,70 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   Widget _buildHeader() => Container(
-    height: 110,
-    padding: const EdgeInsets.fromLTRB(24, 56, 24, 18),
-    decoration: const BoxDecoration(color: Color(0xFF0F766E)),
-    child: Row(
-      children: [
-        Container(
-          width: 38,
-          height: 38,
-          decoration: const BoxDecoration(color: Color(0xFFF59E0B), shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+        height: 110,
+        padding: const EdgeInsets.fromLTRB(24, 56, 24, 18),
+        decoration: const BoxDecoration(color: Color(0xFF0F766E)),
+        child: Row(
           children: [
-            Text("Guidance Assistant", style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-            Text("Online · Answers in EN or Urdu", style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFFD9EDEA))),
+            Container(
+              width: 38,
+              height: 38,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF59E0B),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.support_agent_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Guidance Assistant",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "Online · Answers in EN or Urdu",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: const Color(0xFFD9EDEA),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-      ],
-    ),
-  );
+      );
 
   Widget _buildMessageBubble(ChatMessage message) {
     final isBot = message.sender == MessageSender.bot;
-    final alignment = _isUrdu ? (isBot ? Alignment.centerRight : Alignment.centerLeft) 
-                              : (isBot ? Alignment.centerLeft : Alignment.centerRight);
-    
+    final alignment = _isUrdu
+        ? (isBot ? Alignment.centerRight : Alignment.centerLeft)
+        : (isBot ? Alignment.centerLeft : Alignment.centerRight);
+
     return Align(
       alignment: alignment,
       child: Container(
-        constraints: BoxConstraints(maxWidth: isBot ? 230 : 220),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isBot ? const Color(0xFFFFFFFF) : const Color(0xFF0F766E),
@@ -184,67 +239,100 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         ),
         child: Text(
           message.text,
-          style: _isUrdu 
-            ? GoogleFonts.notoNastaliqUrdu(fontSize: 13, color: isBot ? const Color(0xFF1C1917) : Colors.white)
-            : GoogleFonts.inter(fontSize: 13, color: isBot ? const Color(0xFF1C1917) : Colors.white),
+          style: _isUrdu
+              ? GoogleFonts.notoNastaliqUrdu(
+                  fontSize: 13,
+                  color: isBot ? const Color(0xFF1C1917) : Colors.white,
+                )
+              : GoogleFonts.inter(
+                  fontSize: 13,
+                  color: isBot ? const Color(0xFF1C1917) : Colors.white,
+                ),
         ),
       ),
     );
   }
 
   Widget _buildTypingIndicator() => Align(
-    alignment: _isUrdu ? Alignment.centerRight : Alignment.centerLeft,
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE7E5E4)),
-      ),
-      child: const Text("..."), 
-    ),
-  );
+        alignment: _isUrdu ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE7E5E4)),
+          ),
+          child: const Text(
+            "...",
+            style: TextStyle(
+              color: Color(0xFF6B7280),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2.0,
+            ),
+          ),
+        ),
+      );
 
   Widget _buildInputBar() => Container(
-    height: 80,
-    padding: const EdgeInsets.fromLTRB(16, 14, 16, 26),
-    decoration: const BoxDecoration(
-      color: Colors.white,
-      border: Border(top: BorderSide(color: Color(0xFFE7E5E4))),
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(color: const Color(0xFFF5F5F3), borderRadius: BorderRadius.circular(20)),
-            child: TextField(
-              controller: _textController,
-              onChanged: (_) => setState(() {}),
-              style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF1C1917)),
-              decoration: InputDecoration(
-                hintText: "Type your question...",
-                hintStyle: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF6B7280)),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
+        height: 80,
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 26),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Color(0xFFE7E5E4))),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: TextField(
+                  controller: _textController,
+                  onChanged: (_) => setState(() {}),
+                  onSubmitted: (_) => _handleSend(),
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: const Color(0xFF1C1917),
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Type your question...",
+                    hintStyle: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: const Color(0xFF6B7280),
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        GestureDetector(
-          onTap: _textController.text.isEmpty ? null : _handleSend,
-          child: Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(
-              color: _textController.text.isEmpty ? const Color(0xFFE7E5E4) : const Color(0xFF0F766E),
-              shape: BoxShape.circle,
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: _textController.text.trim().isEmpty ? null : _handleSend,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: _textController.text.trim().isEmpty
+                      ? const Color(0xFFE7E5E4)
+                      : const Color(0xFF0F766E),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.send_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
             ),
-            child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
-          ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
