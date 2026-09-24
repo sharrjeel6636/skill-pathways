@@ -3,12 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'router/app_router.dart';
 import 'providers/UserSessionProvider.dart';
+import 'providers/ProfileProvider.dart';
 import 'providers/QuizStateProvider.dart';
 import 'providers/RoadmapProvider.dart';
 import 'providers/CourseProvider.dart';
 import 'providers/JobProvider.dart';
 import 'providers/CertificationProvider.dart';
-
+import 'providers/skill_gap_provider.dart';
+import 'services/skill_requirement_service.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
@@ -30,13 +32,11 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserSessionProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => QuizStateProvider()),
         ChangeNotifierProvider(create: (_) => RoadmapProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => JobProvider()),
-import 'providers/skill_gap_provider.dart';
-import 'services/skill_requirement_service.dart';
-// ...
         ChangeNotifierProvider(create: (_) => CertificationProvider()),
         ProxyProvider3<CertificationProvider, RoadmapProvider, SkillRequirementService, SkillGapProvider>(
           update: (context, cert, road, skillReq, previous) =>

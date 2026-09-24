@@ -7,6 +7,7 @@ import 'theme/app_spacing.dart';
 import 'theme/app_text_styles.dart';
 import 'providers/QuizStateProvider.dart';
 import 'providers/RoadmapProvider.dart';
+import 'providers/ProfileProvider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,7 +22,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              _buildHeader(context),
               const SizedBox(height: AppSpacing.p24),
               _buildQuizCTA(context),
               const SizedBox(height: AppSpacing.p24),
@@ -37,9 +38,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.p12),
               _buildSuccessStoryCard(),
               const SizedBox(height: AppSpacing.p24),
-              _buildSectionLabel("Scholarships"),
-              const SizedBox(height: AppSpacing.p12),
-              _buildScholarshipCard(context),
+              _buildScholarshipRow(context),
             ],
           ),
         ),
@@ -64,10 +63,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() => Column(
+  Widget _buildHeader(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Assalam-o-Alaikum, Student", style: GoogleFonts.inter(fontSize: 16, color: AppColors.textPrimary)),
+          Text("Assalam-o-Alaikum, ${context.watch<ProfileProvider>().name}", style: GoogleFonts.inter(fontSize: 16, color: AppColors.textPrimary)),
           const SizedBox(height: AppSpacing.p4),
           Text("Class 10 · Science Group", style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
         ],
@@ -156,19 +155,14 @@ class HomeScreen extends StatelessWidget {
     ),
   );
 
-  Widget _buildScholarshipCard(BuildContext context) => GestureDetector(
+  Widget _buildScholarshipRow(BuildContext context) => GestureDetector(
     onTap: () => context.push('/scholarship-info'),
-    child: Container(
-      padding: const EdgeInsets.all(AppSpacing.p16),
-      decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppSpacing.r12), border: Border.all(color: AppColors.border)),
-      child: Row(
-        children: [
-          const CircleAvatar(backgroundColor: AppColors.accent, child: Icon(Icons.school, color: AppColors.textPrimary)),
-          const SizedBox(width: AppSpacing.p16),
-          Expanded(child: Text("Explore Scholarship Opportunities", style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500))),
-          const Icon(Icons.chevron_right, color: AppColors.textSecondary),
-        ],
-      ),
+    child: Row(
+      children: [
+        const Icon(Icons.school, color: AppColors.primary, size: 20),
+        const SizedBox(width: AppSpacing.p8),
+        Text("Explore Scholarship Opportunities", style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.primary)),
+      ],
     ),
   );
 }

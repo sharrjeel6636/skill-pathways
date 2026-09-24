@@ -74,7 +74,7 @@ class _QuizScreenState extends State<QuizScreen> implements QuizView {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
         ),
         Text(
