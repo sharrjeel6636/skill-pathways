@@ -2,23 +2,16 @@ import 'package:flutter/material.dart';
 import '../models/shared_models.dart';
 
 class RoadmapProvider extends ChangeNotifier {
-  late Map<String, List<CareerGrowthLevel>> _roleToGrowthMap;
-  List<RoadmapStage> _stages = [];
+  Map<String, List<CareerGrowthLevel>> _roleToGrowthMap = roleToGrowthMap;
 
-  RoadmapProvider() {
-    _roleToGrowthMap = Map.from(roleToGrowthMap);
-  }
+  RoadmapProvider();
 
   Map<String, List<CareerGrowthLevel>> get roleToGrowthMap => _roleToGrowthMap;
-  List<RoadmapStage> get stages => _stages;
 
-  void updateRoleGrowth(String role, List<CareerGrowthLevel> levels) {
-    _roleToGrowthMap[role] = levels;
-    notifyListeners();
-  }
-
-  void updateStages(List<RoadmapStage> stages) {
-    _stages = stages;
+  void updateGrowthMap(Map<String, List<CareerGrowthLevel>> newMap) {
+    _roleToGrowthMap = newMap;
     notifyListeners();
   }
 }
+
+

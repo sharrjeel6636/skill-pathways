@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/shared_models.dart';
 import '../quiz_model.dart';
 import '../splash_screen.dart';
@@ -32,6 +33,11 @@ import '../scholarship_info_screen.dart';
 import '../university_detail_screen.dart';
 import '../university_shortlist_screen.dart';
 import '../vocational_path_screen.dart';
+import '../screens/skill_gap_analyzer_screen.dart';
+import '../providers/skill_gap_provider.dart';
+import '../providers/CertificationProvider.dart';
+import '../providers/RoadmapProvider.dart';
+import '../services/skill_requirement_service.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -62,15 +68,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/quiz/result', builder: (context, state) => QuizResultScreen(
       result: state.extra as QuizResult? ?? QuizResult.mock(),
     )),
-import '../screens/skill_gap_analyzer_screen.dart';
-import '../providers/skill_gap_provider.dart';
-import '../providers/CertificationProvider.dart';
-import '../providers/RoadmapProvider.dart';
-import '../services/skill_requirement_service.dart';
-import 'package:provider/provider.dart';
-
-// ... (rest of imports)
-
     GoRoute(path: '/roadmap', builder: (context, state) => const RoadmapScreen()),
     GoRoute(path: '/skill-gap-analyzer', builder: (context, state) => ChangeNotifierProvider(
       create: (context) => SkillGapProvider(

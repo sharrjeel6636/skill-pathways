@@ -38,7 +38,9 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.p12),
               _buildSuccessStoryCard(),
               const SizedBox(height: AppSpacing.p24),
-              _buildScholarshipRow(context),
+              _buildSectionLabel("Quick Services"),
+              const SizedBox(height: AppSpacing.p12),
+              _buildServicesGrid(context),
             ],
           ),
         ),
@@ -155,14 +157,59 @@ class HomeScreen extends StatelessWidget {
     ),
   );
 
-  Widget _buildScholarshipRow(BuildContext context) => GestureDetector(
-    onTap: () => context.push('/scholarship-info'),
-    child: Row(
-      children: [
-        const Icon(Icons.school, color: AppColors.primary, size: 20),
-        const SizedBox(width: AppSpacing.p8),
-        Text("Explore Scholarship Opportunities", style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.primary)),
-      ],
-    ),
-  );
+  Widget _buildServicesGrid(BuildContext context) {
+    final List<Map<String, dynamic>> services = [
+      {'title': 'Career Explorer', 'route': '/career-explorer', 'icon': Icons.explore},
+      {'title': 'Scholarships', 'route': '/scholarship-info', 'icon': Icons.school},
+      {'title': 'Certifications', 'route': '/certifications-tracker', 'icon': Icons.assignment_turned_in},
+      {'title': 'Degree Comp', 'route': '/degree-comparison', 'icon': Icons.compare, 'extra': 'Computer Science'},
+      {'title': 'Matric Guide', 'route': '/matric-guidance', 'icon': Icons.menu_book},
+      {'title': 'Inter Guide', 'route': '/inter-guidance', 'icon': Icons.book},
+      {'title': 'Vocational', 'route': '/vocational-path', 'icon': Icons.work},
+      {'title': 'Uni List', 'route': '/university-shortlist', 'icon': Icons.list},
+      {'title': 'Prep', 'route': '/resume-interview-prep', 'icon': Icons.psychology},
+      {'title': 'Skill Gap', 'route': '/skill-gap-analyzer', 'icon': Icons.analytics},
+      {'title': 'Counselor', 'route': '/counselor-dashboard', 'icon': Icons.support_agent},
+      {'title': 'Parents', 'route': '/parent-dashboard', 'icon': Icons.family_restroom},
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: AppSpacing.p12,
+        mainAxisSpacing: AppSpacing.p12,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: services.length,
+      itemBuilder: (context, index) {
+        final service = services[index];
+        return GestureDetector(
+          onTap: () => context.push(service['route'], extra: service['extra']),
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.p8),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppSpacing.r12),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(service['icon'], color: AppColors.primary, size: 28),
+                const SizedBox(height: AppSpacing.p8),
+                Text(service['title'], 
+                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

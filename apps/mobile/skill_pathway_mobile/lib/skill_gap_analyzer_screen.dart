@@ -8,8 +8,8 @@ import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SkillGapAnalyzerScreen extends StatefulWidget {
-  final String? initialRole;
-  const SkillGapAnalyzerScreen({super.key, this.initialRole});
+  final String? targetRole;
+  const SkillGapAnalyzerScreen({super.key, this.targetRole});
 
   @override
   State<SkillGapAnalyzerScreen> createState() => _SkillGapAnalyzerScreenState();
@@ -23,8 +23,8 @@ class _SkillGapAnalyzerScreenState extends State<SkillGapAnalyzerScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialRole != null) {
-      _selectedRole = widget.initialRole;
+    if (widget.targetRole != null) {
+      _selectedRole = widget.targetRole;
     }
   }
 

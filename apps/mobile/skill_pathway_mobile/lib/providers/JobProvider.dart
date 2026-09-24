@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import '../models/shared_models.dart';
 
 class JobProvider extends ChangeNotifier {
-  late List<JobListing> _jobs;
+  List<JobListing> _jobs = allJobs;
 
-  JobProvider() {
-    _jobs = List.from(allJobs);
-  }
+  JobProvider();
 
   List<JobListing> get jobs => _jobs;
   List<JobListing> get allJobs => _jobs;
 
-  void updateJobs(List<JobListing> jobs) {
-    _jobs = jobs;
+  void updateJobs(List<JobListing> newJobs) {
+    _jobs = newJobs;
     notifyListeners();
   }
 }
