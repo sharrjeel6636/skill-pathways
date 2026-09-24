@@ -34,6 +34,9 @@ import '../university_detail_screen.dart';
 import '../university_shortlist_screen.dart';
 import '../vocational_path_screen.dart';
 import '../screens/skill_gap_analyzer_screen.dart';
+import '../screens/template_picker_screen.dart';
+import '../screens/linkedin_guide_screen.dart';
+import '../screens/questions_list_screen.dart';
 import '../providers/skill_gap_provider.dart';
 import '../providers/CertificationProvider.dart';
 import '../providers/RoadmapProvider.dart';
@@ -193,6 +196,18 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/resume-interview-prep',
       builder: (context, state) => ResumeInterviewPrepScreen(),
+    ),
+    GoRoute(
+      path: '/resume-templates',
+      builder: (context, state) => const TemplatePickerScreen(),
+    ),
+    GoRoute(
+      path: '/linkedin-guide',
+      builder: (context, state) => const LinkedInGuideScreen(),
+    ),
+    GoRoute(
+      path: '/interview-questions',
+      builder: (context, state) => const QuestionsListScreen(),
     ),
     GoRoute(
       path: '/scholarship-info',

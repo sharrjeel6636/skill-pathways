@@ -13,10 +13,11 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
 app = FastAPI(title="Skill Pathways API")
 
-# --- CORS (Tamam localhost ports allow kar diye hain) ---
+# --- CORS ---
+allowed_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -62,15 +63,10 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-async def verify_user_access(user_id: str, authorization: Optional[str] = Header(None)):
-    # Demo & local development fallback
-    if not authorization:
-        return user_id
-    try:
-        current_user = await get_current_user(authorization)
-        return current_user
-    except Exception:
-        return user_id
+async def verify_user_access(user_id: str, authenticated_user_id: str = Depends(get_current_user)):
+    if user_id != authenticated_user_id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return authenticated_user_id
 
 # --- ENDPOINTS ---
 
@@ -124,7 +120,7 @@ async def submit_quiz(submission: QuizSubmit):
     recommended_pathway_id = max(scores, key=scores.get) if scores else None
     return {"pathway_id": recommended_pathway_id}
 
-@app.get("/dashboard/{user_id}")
+@app.get("/dashboard/{user_id}", dependencies=[Depends(verify_user_access)])
 async def get_dashboard(user_id: str):
     try:
         up = supabase.table("user_pathways").select("*, pathways(title)").eq("user_id", user_id).execute().data
@@ -170,12 +166,12 @@ async def get_dashboard(user_id: str):
             "next_step": "Entry test prep"
         }
 
-@app.post("/user/{user_id}/skills")
+@app.post("/user/{user_id}/skills", dependencies=[Depends(verify_user_access)])
 async def update_user_skills(user_id: str, skills: List[str]):
     supabase.table("user_skills").upsert({"user_id": user_id, "skills": skills}).execute()
     return {"message": "Skills updated"}
 
-@app.get("/skill-gap-analysis/{user_id}")
+@app.get("/skill-gap-analysis/{user_id}", dependencies=[Depends(verify_user_access)])
 async def get_skill_gap_analysis(user_id: str, target_role: str):
     role_data = supabase.table("role_skills").select("*").eq("role_name", target_role).single().execute().data
     if not role_data:
@@ -202,7 +198,7 @@ async def get_skill_gap_analysis(user_id: str, target_role: str):
         "suggested_courses": suggested_courses
     }
 
-@app.get("/user/{user_id}/skill-gap")
+@app.get("/user/{user_id}/skill-gap", dependencies=[Depends(verify_user_access)])
 async def get_skill_gap(user_id: str):
     user_pathway = supabase.table("user_pathways").select("pathway_id, pathways(title)").eq("user_id", user_id).execute().data
     if not user_pathway:

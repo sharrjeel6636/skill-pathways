@@ -131,13 +131,13 @@ class ResumeInterviewPrepScreen extends StatelessWidget {
   void _handleTap(BuildContext context, PrepTool tool) {
     switch (tool.type) {
       case PrepToolType.resumeTemplates:
-        // TODO: Navigate to Template Picker
+        context.push('/resume-templates');
         break;
       case PrepToolType.linkedinGuide:
-        // TODO: Navigate to LinkedIn Guide
+        context.push('/linkedin-guide');
         break;
       case PrepToolType.interviewQuestions:
-        // TODO: Navigate to Questions List
+        context.push('/interview-questions');
         break;
       case PrepToolType.mockInterview:
         context.push('/chatbot', extra: {'isMockInterview': true});

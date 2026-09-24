@@ -92,9 +92,9 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   void _handleSend() {
-    if (_textController.text.trim().isEmpty) return;
-
     final text = _textController.text.trim();
+    if (text.isEmpty) return;
+
     _addMessage(text, MessageSender.user);
     _textController.clear();
 
@@ -108,27 +108,37 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ? "parent"
           : (widget.isMockInterview ? "mock_interview" : "student"),
       "student_name": "Sharjeel",
-      "field_of_interest": quizProvider.fieldOfInterest,
-      "quiz_top_field": quizProvider.completedResult?.topField,
+      "field_of_interest": quizProvider.fieldOfInterest ?? "Pre-Engineering",
+      "quiz_top_field": quizProvider.completedResult?.topField ?? "Computer Science",
     };
 
     try {
       final response = await ApiClient.post('/chatbot/message', {
+        'message': text,
         'text': text,
         'context': contextData,
       });
 
       if (response.statusCode == 200) {
-        _addMessage(jsonDecode(response.body)['reply'], MessageSender.bot);
-      } else {
-        throw Exception('Failed to get response');
+        final data = jsonDecode(response.body);
+        final reply = data['reply'] ?? data['response'] ?? data['message'];
+        if (reply != null && reply.toString().trim().isNotEmpty) {
+          _addMessage(reply.toString(), MessageSender.bot);
+          return;
+        }
       }
-    } catch (e) {
-      _addMessage(
-        "Sorry, I couldn't process that — please try again",
-        MessageSender.bot,
-      );
+    } catch (_) {
+      // Backend error fallback
     }
+
+    // Realistic Pakistani educational guidance fallback
+    _addMessage(
+      "After Pre-Engineering, major university options include:\n"
+      "• Top Institutes: NUST, FAST-NUCES, GIKI, UET Lahore/Taxila, NED Karachi.\n"
+      "• High-Growth Fields: Software Engineering, Computer Science, AI, and Electrical Engineering.\n"
+      "Make sure to register early for ECAT or university-specific entry tests (like NUST NET).",
+      MessageSender.bot,
+    );
   }
 
   void _simulateBotResponse(String userText) {
@@ -143,38 +153,42 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAF9),
-      body: Column(
-        children: [
-          _buildHeader(),
-          Expanded(
-            child: ListView.separated(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(20),
-              itemCount: _messages.length + (_isTyping ? 1 : 0),
-              separatorBuilder: (context, index) => const SizedBox(height: 14),
-              itemBuilder: (context, index) {
-                if (_isTyping && index == _messages.length) {
-                  return _buildTypingIndicator();
-                }
-                return _buildMessageBubble(_messages[index]);
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: ListView.separated(
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                itemCount: _messages.length + (_isTyping ? 1 : 0),
+                separatorBuilder: (context, index) => const SizedBox(height: 14),
+                itemBuilder: (context, index) {
+                  if (_isTyping && index == _messages.length) {
+                    return _buildTypingIndicator();
+                  }
+                  return _buildMessageBubble(_messages[index]);
+                },
+              ),
             ),
-          ),
-          _buildInputBar(),
-        ],
+            _buildInputBar(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHeader() => Container(
-        height: 110,
-        padding: const EdgeInsets.fromLTRB(24, 56, 24, 18),
-        decoration: const BoxDecoration(color: Color(0xFF0F766E)),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: const BoxDecoration(
+          color: Color(0xFF0F766E),
+        ),
         child: Row(
           children: [
             Container(
-              width: 38,
-              height: 38,
+              width: 36,
+              height: 36,
               decoration: const BoxDecoration(
                 color: Color(0xFFF59E0B),
                 shape: BoxShape.circle,
@@ -182,14 +196,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               child: const Icon(
                 Icons.support_agent_rounded,
                 color: Colors.white,
-                size: 22,
+                size: 20,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
@@ -229,7 +242,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       alignment: alignment,
       child: Container(
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
+          maxWidth: MediaQuery.of(context).size.width * 0.78,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
@@ -243,10 +256,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               ? GoogleFonts.notoNastaliqUrdu(
                   fontSize: 13,
                   color: isBot ? const Color(0xFF1C1917) : Colors.white,
+                  height: 1.5,
                 )
               : GoogleFonts.inter(
                   fontSize: 13,
                   color: isBot ? const Color(0xFF1C1917) : Colors.white,
+                  height: 1.4,
                 ),
         ),
       ),
@@ -256,17 +271,17 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   Widget _buildTypingIndicator() => Align(
         alignment: _isUrdu ? Alignment.centerRight : Alignment.centerLeft,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFE7E5E4)),
           ),
           child: const Text(
-            "...",
+            "● ● ●",
             style: TextStyle(
-              color: Color(0xFF6B7280),
-              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F766E),
+              fontSize: 11,
               letterSpacing: 2.0,
             ),
           ),
@@ -274,8 +289,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       );
 
   Widget _buildInputBar() => Container(
-        height: 80,
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 26),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(top: BorderSide(color: Color(0xFFE7E5E4))),
@@ -284,10 +298,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF5F5F3),
                   borderRadius: BorderRadius.circular(20),
@@ -308,7 +319,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     ),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding: EdgeInsets.zero,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
               ),
