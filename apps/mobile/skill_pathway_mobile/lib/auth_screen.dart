@@ -63,11 +63,21 @@ class _AuthScreenState extends State<AuthScreen> {
       }
       if (mounted) context.go('/role-selection');
     } on AuthException catch (e) {
+      String friendlyMessage;
+      if (e.message.contains('Invalid login credentials')) {
+        friendlyMessage = "Email or password is incorrect";
+      } else if (e.message.contains('Email not confirmed')) {
+        friendlyMessage = "Please confirm your email";
+      } else if (e.message.contains('User already registered')) {
+        friendlyMessage = "Account already exists — try Log In";
+      } else {
+        friendlyMessage = e.message;
+      }
       setState(() {
-        _errors['global'] = e.message;
+        _errors['global'] = friendlyMessage;
         _loading = false;
       });
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message), backgroundColor: Colors.red));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(friendlyMessage), backgroundColor: Colors.red));
     } catch (e) {
       setState(() {
         _errors['global'] = 'An unexpected error occurred';

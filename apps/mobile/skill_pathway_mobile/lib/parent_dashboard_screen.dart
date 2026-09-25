@@ -185,7 +185,9 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   );
 
   Widget _buildChatbotCard(BuildContext context) => GestureDetector(
-    onTap: () => context.push('/chatbot', extra: {'isParentMode': true}),
+    // NOTE: Production requires real parent-child linking UI/table.
+    // Demo mode currently uses fixed fallback data.
+    onTap: () => context.push('/chatbot?isParentMode=true'),
     child: Container(
       padding: const EdgeInsets.all(AppSpacing.p16),
       decoration: BoxDecoration(
