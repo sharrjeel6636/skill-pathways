@@ -20,3 +20,7 @@ dependencies:
 
 flutter:
   uses-material-design: true
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.8.1

@@ -38,7 +38,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isTyping = false;
-  bool _isUrdu = false;
+  final bool _isUrdu = false;
 
   @override
   void initState() {
@@ -71,6 +71,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   void _addMessage(String text, MessageSender sender) {
+    if (!mounted) return;
     setState(() {
       _messages.add(
         ChatMessage(text: text, sender: sender, timestamp: DateTime.now()),
@@ -92,11 +93,13 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   void _handleSend() {
+    if (_isTyping) return; // Prevent double trigger
     final text = _textController.text.trim();
     if (text.isEmpty) return;
 
     _addMessage(text, MessageSender.user);
     _textController.clear();
+    setState(() {}); // Re-disable send button immediately
 
     _simulateBotResponse(text);
   }
@@ -128,17 +131,24 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         }
       }
     } catch (_) {
-      // Backend error fallback
+      // API call failure handled below
     }
 
-    // Realistic Pakistani educational guidance fallback
-    _addMessage(
-      "After Pre-Engineering, major university options include:\n"
-      "• Top Institutes: NUST, FAST-NUCES, GIKI, UET Lahore/Taxila, NED Karachi.\n"
-      "• High-Growth Fields: Software Engineering, Computer Science, AI, and Electrical Engineering.\n"
-      "Make sure to register early for ECAT or university-specific entry tests (like NUST NET).",
-      MessageSender.bot,
-    );
+    // Contextual fallback response so conversation always progresses
+    final lower = text.toLowerCase();
+    String fallbackReply;
+
+    if (lower.contains("universit") || lower.contains("uni") || lower.contains("college")) {
+      fallbackReply = "For engineering and computing in Pakistan, top-ranked institutions include NUST (Islamabad), FAST-NUCES, GIKI, UET Lahore, and NED Karachi. Check their specific eligibility criteria and entry test deadlines.";
+    } else if (lower.contains("fee") || lower.contains("cost") || lower.contains("scholarship")) {
+      fallbackReply = "Tuition varies by institution. Public universities like NED and UET are cost-effective, while private institutions offer need-based and merit scholarships (such as HEC Ehsaas and internal university grants).";
+    } else if (lower.contains("merit") || lower.contains("ecat") || lower.contains("test")) {
+      fallbackReply = "Most engineering and computing universities weigh entry test scores (ECAT, NET, or university-specific tests) at 50% or more, combined with intermediate/matriculation marks.";
+    } else {
+      fallbackReply = "Based on your academic profile, focusing on strong preparation in Mathematics and Physics along with early entry test registration will keep your career pathways flexible across Software Engineering, CS, and core Engineering.";
+    }
+
+    _addMessage(fallbackReply, MessageSender.bot);
   }
 
   void _simulateBotResponse(String userText) {
@@ -234,9 +244,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   Widget _buildMessageBubble(ChatMessage message) {
     final isBot = message.sender == MessageSender.bot;
-    final alignment = _isUrdu
-        ? (isBot ? Alignment.centerRight : Alignment.centerLeft)
-        : (isBot ? Alignment.centerLeft : Alignment.centerRight);
+    final alignment = isBot ? Alignment.centerLeft : Alignment.centerRight;
 
     return Align(
       alignment: alignment,
@@ -252,24 +260,18 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         ),
         child: Text(
           message.text,
-          style: _isUrdu
-              ? GoogleFonts.notoNastaliqUrdu(
-                  fontSize: 13,
-                  color: isBot ? const Color(0xFF1C1917) : Colors.white,
-                  height: 1.5,
-                )
-              : GoogleFonts.inter(
-                  fontSize: 13,
-                  color: isBot ? const Color(0xFF1C1917) : Colors.white,
-                  height: 1.4,
-                ),
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            color: isBot ? const Color(0xFF1C1917) : Colors.white,
+            height: 1.4,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildTypingIndicator() => Align(
-        alignment: _isUrdu ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: Alignment.centerLeft,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
@@ -326,12 +328,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ),
             const SizedBox(width: 10),
             GestureDetector(
-              onTap: _textController.text.trim().isEmpty ? null : _handleSend,
+              onTap: (_textController.text.trim().isEmpty || _isTyping)
+                  ? null
+                  : _handleSend,
               child: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _textController.text.trim().isEmpty
+                  color: (_textController.text.trim().isEmpty || _isTyping)
                       ? const Color(0xFFE7E5E4)
                       : const Color(0xFF0F766E),
                   shape: BoxShape.circle,
