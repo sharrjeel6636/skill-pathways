@@ -1,5 +1,6 @@
 import './globals.css';
 import { Fraunces, Manrope, Noto_Nastaliq_Urdu } from 'next/font/google';
+import { LanguageProvider } from '../lib/LanguageContext';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -23,7 +24,11 @@ const notoUrdu = Noto_Nastaliq_Urdu({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${manrope.variable} ${notoUrdu.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
+      </body>
     </html>
   );
 }

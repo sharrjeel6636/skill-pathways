@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
@@ -43,20 +44,28 @@ export default function DashboardPage() {
 
         {/* Quick Action Grid */}
         <div className="grid grid-cols-2 gap-3 mb-[18px]">
-          <div className="mini-card">
+          <Link href="/chatbot" className="mini-card block">
             <div className="w-8 h-8 rounded-[9px] bg-sage-soft flex items-center justify-center mb-2.5 text-[15px]">💬</div>
             <div className="text-[13px] font-extrabold">Ask a mentor</div>
             <div className="text-[11px] text-ink/50 mt-0.5">Reply in ~2 hrs</div>
-          </div>
-          <div className="mini-card">
+          </Link>
+          <Link href="/scholarship-info" className="mini-card block">
             <div className="w-8 h-8 rounded-[9px] bg-sage-soft flex items-center justify-center mb-2.5 text-[15px]">🎓</div>
             <div className="text-[13px] font-extrabold">Scholarships</div>
             <div className="text-[11px] text-ink/50 mt-0.5">3 closing soon</div>
-          </div>
+          </Link>
         </div>
 
         {/* List Rows */}
         <div className="space-y-[10px]">
+          <Link href="/career-growth-roadmap" className="list-row block">
+            <div className="w-[34px] h-[34px] rounded-[10px] bg-amber flex items-center justify-center text-[15px] flex-shrink-0">🚀</div>
+            <div className="flex-1">
+              <div className="text-[13px] font-bold">Career Growth Roadmap</div>
+              <div className="text-[11px] text-ink/50">View your next steps</div>
+            </div>
+            <div className="text-ink/30 text-[18px]">›</div>
+          </Link>
           {data.list_items?.map((item: any) => (
             <div key={item.id} className="list-row">
               <div className="w-[34px] h-[34px] rounded-[10px] bg-amber flex items-center justify-center text-[15px] flex-shrink-0">📘</div>
