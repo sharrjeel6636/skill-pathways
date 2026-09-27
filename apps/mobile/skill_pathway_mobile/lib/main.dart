@@ -13,7 +13,7 @@ import 'providers/skill_gap_provider.dart';
 import 'services/skill_requirement_service.dart';
 import 'theme/app_theme.dart';
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   const supabaseUrl = String.fromEnvironment(
@@ -42,13 +42,13 @@ Future main() async {
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => JobProvider()),
         ChangeNotifierProvider(create: (_) => CertificationProvider()),
-        ProxyProvider3(
+        ProxyProvider3<CertificationProvider, RoadmapProvider, SkillRequirementService, SkillGapProvider>(
           update: (context, cert, road, skillReq, previous) =>
               SkillGapProvider(cert, road, skillReq),
           create: (context) => SkillGapProvider(
-            Provider.of(context, listen: false),
-            Provider.of(context, listen: false),
-            SkillRequirementService(),
+            Provider.of<CertificationProvider>(context, listen: false),
+            Provider.of<RoadmapProvider>(context, listen: false),
+            Provider.of<SkillRequirementService>(context, listen: false),
           ),
         ),
       ],

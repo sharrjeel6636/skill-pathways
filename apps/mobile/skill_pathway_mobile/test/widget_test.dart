@@ -14,5 +14,7 @@ void main() {
   testWidgets('App smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const SkillPathwayApp());
+    // Allow the splash screen timer (2s) to complete
+    await tester.pumpAndSettle(const Duration(seconds: 3));
   });
 }

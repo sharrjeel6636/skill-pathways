@@ -23,6 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     // Simulate session check results
+    // In a real app, use Supabase.instance.client.auth.currentSession
     final bool isLoggedIn = false; 
     final String? userRole = null; 
 
