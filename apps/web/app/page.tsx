@@ -1,53 +1,46 @@
 'use client';
 import React from 'react';
-import Link from 'next/link';
-import { useLanguage } from '../lib/LanguageContext';
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useRouter } from 'next/navigation';
+import { useLanguage } from '../../lib/LanguageContext';
 
+export default function LanguageSelectionPage() {
+  const router = useRouter();
+  const { setLanguage } = useLanguage();
 
-export default function Page() {
-  const { language } = useLanguage();
+  const handleSelection = (lang: 'en' | 'ur') => {
+    setLanguage(lang);
+    router.push('/login');
+  };
 
   return (
-    <div className="min-h-screen bg-paper text-ink font-sans flex items-center">
-      <LanguageSwitcher />
-      <div className="max-w-[1400px] mx-auto px-8 w-full">
+    <div className="min-h-screen bg-paper flex flex-col items-center justify-center p-6 text-ink">
+      <div className="flex flex-col items-center text-center mb-12">
+        <div className="w-20 h-20 rounded-full bg-amber flex items-center justify-center mb-6">
+          <span className="text-3xl text-teal">SP</span>
+        </div>
+        <h1 className="font-serif text-4xl font-bold mb-2">Skill Pathway</h1>
+        <p className="text-lg font-medium text-teal italic">Every path should be clearly visible</p>
+        <p className="font-urdu text-lg font-medium text-teal mt-1" dir="rtl">ہر راستہ صاف دکھائی دینا چاہیے</p>
+      </div>
+
+      <div className="w-full max-w-[360px]">
+        <p className="text-center font-bold text-ink/60 mb-4 uppercase tracking-wider text-sm">Choose your language</p>
         
-        <header className="flex flex-col gap-6">
-          
-          <div className="flex items-center gap-3 text-[13px] tracking-[0.14em] uppercase text-teal font-bold">
-            <span className="w-[7px] h-[7px] rounded-full bg-amber"></span>
-            {language === 'en' ? 'SkillPathways — Design Direction · Alkhidmat Skill Pathways Initiative' : 'اسکل پاتھ ویز - ڈیزائن ڈائریکشن · الخدمت اسکل پاتھ ویز اقدام'}
-          </div>
-
-          <h1 className="font-serif font-semibold text-[clamp(40px,6vw,84px)] leading-[0.98] tracking-[-0.01em] max-w-[15ch] m-0 text-ink">
-            {language === 'en' ? (
-              <>
-                Every path<br />
-                <em className="italic font-medium text-teal">should be visible.</em>
-              </>
-            ) : (
-              <>
-                ہر راستہ<br />
-                <em className="italic font-medium text-teal">صاف نظر آنا چاہیے۔</em>
-              </>
-            )}
-          </h1>
-
-          <p className="text-[18px] leading-[1.6] max-w-[640px] text-ink/75 mt-2">
-            {language === 'en' ? 'A career-guidance companion for students who feel lost between too much advice and not enough proof. The design\'s one job: turn "I don\'t know what path to take" into a path you can see, trust, and walk — one unlocked step at a time.' : 'طلباء کے لیے ایک کیریئر گائیڈنس ساتھی جو بہت زیادہ مشورے اور کم ثبوتوں کے درمیان کھوئے ہوئے محسوس کرتے ہیں۔ ڈیزائن کا ایک ہی کام ہے: "مجھے نہیں معلوم کہ کون سا راستہ اختیار کرنا ہے" کو ایک ایسے راستے میں تبدیل کریں جسے آپ دیکھ سکیں، بھروسہ کر سکیں، اور چل سکیں — ہر قدم کے ساتھ ایک نیا موقع۔'}
-          </p>
-
-          <div className="flex items-center gap-5 mt-6">
-            <Link href="/onboarding" className="bg-amber text-teal-2 px-8 py-4 rounded-full font-extrabold text-[15px] flex items-center gap-2 transition-transform active:scale-[0.98] shadow-sm">
-              {language === 'en' ? 'Start your path' : 'اپنا راستہ شروع کریں'} <span>→</span>
-            </Link>
-            <Link href="/login" className="text-teal font-bold text-[15px] hover:underline underline-offset-4 cursor-pointer">
-              {language === 'en' ? 'Log in to account' : 'اکاؤنٹ میں لاگ ان کریں'}
-            </Link>
-          </div>
-
-        </header>
+        <div className="flex flex-col gap-4">
+          <button
+            onClick={() => handleSelection('en')}
+            className="w-full p-5 rounded-2xl bg-white border border-ink/10 shadow-sm hover:border-teal transition-all text-left font-bold text-lg"
+          >
+            English
+          </button>
+          <button
+            onClick={() => handleSelection('ur')}
+            className="w-full p-5 rounded-2xl bg-white border border-ink/10 shadow-sm hover:border-teal transition-all text-right font-urdu text-lg"
+            dir="rtl"
+          >
+            اردو
+          </button>
+        </div>
       </div>
     </div>
   );

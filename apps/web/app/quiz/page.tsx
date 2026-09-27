@@ -1,93 +1,61 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const QUESTIONS = [
+  { id: 1, text: "Which subjects do you enjoy the most?", options: ["Math/Physics", "Biology/Chemistry", "Arts/Design", "Business/Economics"] },
+  { id: 2, text: "What do you like doing in your free time?", options: ["Coding/Gaming", "Volunteering/Help", "Drawing/Creating", "Planning/Organizing"] },
+  { id: 3, text: "What kind of problems do you like solving?", options: ["Logical/Technical", "Human/Health", "Creative/Visual", "Strategic/Financial"] },
+];
+
 export default function QuizPage() {
-  const [questions, setQuestions] = useState<any[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [selected, setSelected] = useState<number | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    fetch('http://localhost:8000/quiz/questions')
-      .then(res => res.json())
-      .then(data => setQuestions(data))
-      .catch(err => console.error('Error fetching questions:', err));
-  }, []);
+  const progress = ((currentIdx + 1) / QUESTIONS.length) * 100;
 
-  const handleSubmit = async () => {
-    const res = await fetch('http://localhost:8000/quiz/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: 'mock-user-123', answers })
-    });
-    const data = await res.json();
-    if (data.recommended_pathway_id) {
-      router.push(`/roadmap/${data.recommended_pathway_id}`);
+  const handleNext = () => {
+    if (currentIdx < QUESTIONS.length - 1) {
+      setCurrentIdx(currentIdx + 1);
+      setSelected(null);
+    } else {
+      router.push('/quiz/result');
     }
   };
 
-  if (questions.length === 0) return <div className="p-12 text-ink">Loading...</div>;
-
-  const progress = ((currentIdx + 1) / questions.length) * 100;
-  const currentQuestion = questions[currentIdx];
-
   return (
-    <div className="max-w-[480px] mx-auto px-[22px] py-12">
-      {/* Top Header */}
-      <div className="flex items-center gap-3 mb-4.5">
-        <div className="w-[34px] h-[34px] rounded-full bg-card flex items-center justify-center text-[16px] shadow-[0_2px_6px_rgba(0,0,0,0.06)] cursor-pointer" onClick={() => currentIdx > 0 && setCurrentIdx(currentIdx - 1)}>
-          ←
+    <div className="min-h-screen bg-paper p-6 max-w-[430px] mx-auto flex flex-col">
+      <div className="mb-6">
+        <div className="text-sm font-bold text-ink/60 mb-2">Question {currentIdx + 1} of {QUESTIONS.length}</div>
+        <div className="h-1 bg-ink/10 rounded-full">
+          <div className="h-1 bg-teal rounded-full transition-all" style={{ width: `${progress}%` }} />
         </div>
-        <div className="flex-1 h-[6px] rounded-[6px] bg-sage-soft overflow-hidden">
-          <div className="h-full bg-teal transition-all duration-300" style={{ width: `${progress}%` }}></div>
-        </div>
-        <div className="text-[12px] font-bold text-ink/50">{currentIdx + 1}/{questions.length}</div>
       </div>
 
-      {/* Content */}
-      <div className="text-[12px] font-extrabold tracking-widest uppercase text-rust mb-2.5">Interest check</div>
-      <h1 className="font-serif font-semibold text-[23px] leading-[1.25] text-ink mb-6.5">
-        {currentQuestion.question_text}
-      </h1>
+      <h1 className="text-2xl font-serif font-bold text-ink mb-8">{QUESTIONS[currentIdx].text}</h1>
 
-      <div className="space-y-3 mb-8">
-        {currentQuestion.options.map((opt: any) => {
-          const isSelected = answers[currentQuestion.id] === opt.id;
-          return (
-            <div
-              key={opt.id}
-              onClick={() => setAnswers({ ...answers, [currentQuestion.id]: opt.id })}
-              className={`group cursor-pointer bg-card border-[1.5px] rounded-[16px] p-[15px_16px] flex items-center gap-3 text-[14.5px] font-semibold transition-all ${
-                isSelected ? 'border-teal bg-sage-soft' : 'border-[rgba(30,42,34,0.12)]'
-              }`}
-            >
-              <span className="text-[20px] w-[30px] text-center">🛠️</span>
-              <span className="flex-1">{opt.option_text}</span>
-              {isSelected && (
-                <div className="w-5 h-5 rounded-full bg-teal text-white flex items-center justify-center text-[12px]">✓</div>
-              )}
-            </div>
-          );
-        })}
+      <div className="flex-1 flex flex-col gap-4">
+        {QUESTIONS[currentIdx].options.map((option, idx) => (
+          <button
+            key={idx}
+            onClick={() => setSelected(idx)}
+            className={`w-full p-4 rounded-2xl border-2 text-left font-bold transition-all ${
+              selected === idx ? 'border-teal bg-teal/5' : 'border-ink/10 bg-white'
+            }`}
+          >
+            {option}
+          </button>
+        ))}
       </div>
 
-      {/* Next Button */}
-      <div className="mt-auto">
-        <button
-          onClick={() => {
-            if (currentIdx < questions.length - 1) {
-              setCurrentIdx(currentIdx + 1);
-            } else {
-              handleSubmit();
-            }
-          }}
-          className="btn-primary w-full"
-          style={{ background: 'var(--color-teal)', color: '#fff' }}
-        >
-          Next question <span>→</span>
-        </button>
-      </div>
+      <button
+        onClick={handleNext}
+        disabled={selected === null}
+        className="mt-8 w-full bg-teal text-white py-4 rounded-2xl font-bold disabled:opacity-50"
+      >
+        Next Question
+      </button>
     </div>
   );
 }

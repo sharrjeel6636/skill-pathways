@@ -68,10 +68,63 @@ async def verify_user_access(user_id: str, authenticated_user_id: str = Depends(
         raise HTTPException(status_code=403, detail="Forbidden")
     return authenticated_user_id
 
-# --- ENDPOINTS ---
+import random
+import string
+import uuid
+from datetime import datetime, timedelta
 
-@app.get("/")
-async def root():
+# ... (rest of imports)
+
+# --- ENDPOINTS ---
+# ... (existing endpoints)
+
+# --- PARENT LINKING ---
+
+def generate_random_code(length=6):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+
+@app.post("/parent-link/generate", dependencies=[Depends(get_current_user)])
+async def generate_parent_link(user_id: str = Depends(get_current_user)):
+    # Check if a link already exists
+    existing = supabase.table("parent_links").select("invite_code").eq("student_id", user_id).execute().data
+    if existing:
+        return {"code": existing[0]['invite_code']}
+    
+    code = generate_random_code()
+    # Check for collision
+    while supabase.table("parent_links").select("id").eq("invite_code", code).execute().data:
+        code = generate_random_code()
+        
+    data = {
+        "student_id": user_id,
+        "invite_code": code,
+        "expires_at": (datetime.utcnow() + timedelta(hours=24)).isoformat()
+    }
+    supabase.table("parent_links").insert(data).execute()
+    return {"code": code}
+
+class RedeemCode(BaseModel):
+    code: str
+
+@app.post("/parent-link/redeem", dependencies=[Depends(get_current_user)])
+async def redeem_parent_link(payload: RedeemCode, parent_id: str = Depends(get_current_user)):
+    code = payload.code
+    now = datetime.utcnow().isoformat()
+    
+    link = supabase.table("parent_links").select("*").eq("invite_code", code).execute().data
+    if not link:
+        raise HTTPException(status_code=404, detail="Invalid code")
+    
+    link = link[0]
+    if link['expires_at'] < now:
+        raise HTTPException(status_code=400, detail="Code expired")
+    if link['parent_id']:
+        raise HTTPException(status_code=400, detail="Code already used")
+        
+    supabase.table("parent_links").update({"parent_id": parent_id}).eq("id", link['id']).execute()
+    return {"message": "Account linked successfully"}
+
+# ... (existing /dashboard endpoint, updated to check for link)
     return {"status": "online", "message": "Skill Pathways API is running"}
 
 @app.get("/pathways")

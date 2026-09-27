@@ -35,6 +35,17 @@ class HomeScreen extends StatelessWidget {
               _buildSectionLabel("Success Stories"),
               const SizedBox(height: AppSpacing.p12),
               _buildSuccessStoryCard(),
+              const SizedBox(height: AppSpacing.p16),
+              GestureDetector(
+                onTap: () => context.push('/scholarship-info'),
+                child: Row(
+                  children: [
+                    const Icon(Icons.school_outlined, size: 18, color: AppColors.textSecondary),
+                    const SizedBox(width: AppSpacing.p8),
+                    Text("Explore scholarships", style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -65,11 +76,11 @@ class HomeScreen extends StatelessWidget {
         children: [
           Text("Assalam-o-Alaikum", style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.p4),
-          Text(context.watch<ProfileProvider>().name, style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
+          Text(context.watch<ProfileProvider>().name, style: AppTextStyles.h1.copyWith(color: AppColors.textPrimary)),
         ],
       );
 
-  Widget _buildSectionLabel(String title) => Text(title, style: AppTextStyles.titleMedium.copyWith(color: AppColors.textPrimary));
+  Widget _buildSectionLabel(String title) => Text(title, style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary));
 
   Widget _buildQuizCTA(BuildContext context) {
     final quizCompleted = context.watch<QuizStateProvider>().completedResult != null;
@@ -79,14 +90,14 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Find Your Path", style: AppTextStyles.titleLarge.copyWith(color: AppColors.textPrimary)),
+          Text("Take your Aptitude Quiz", style: AppTextStyles.titleLarge.copyWith(color: AppColors.textPrimary)),
           const SizedBox(height: AppSpacing.p8),
-          Text("Take the aptitude quiz to get your personalized roadmap.", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
+          Text("Find out if Science, Arts or Commerce fits you best — 5 mins", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary)),
           const SizedBox(height: AppSpacing.p16),
           ElevatedButton(
             onPressed: () => quizCompleted ? context.go('/quiz/result') : context.go('/quiz'),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: AppColors.surface),
-            child: Text(quizCompleted ? "See Results" : "Start Quiz"),
+            child: Text(quizCompleted ? "See Results" : "Start Quiz Now →"),
           ),
         ],
       ),
@@ -94,10 +105,11 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRoadmapPreview(BuildContext context) {
+    // NOTE: Roadmap preview is currently static example content, not live student data.
     final steps = [
-        {"title": "Interest Assessment", "status": "done"},
-        {"title": "Pathway Selection", "status": "done"},
-        {"title": "University Preparation", "status": "locked"},
+        {"title": "Aptitude test completed", "subtitle": "Result: Pre-Engineering fit", "status": "done"},
+        {"title": "Strengthen Math & Physics", "subtitle": "Recommended resources inside", "status": "locked"},
+        {"title": "Explore Intermediate options", "subtitle": "FSc Pre-Engineering vs ICS", "status": "locked"},
     ];
     return Container(
       padding: const EdgeInsets.all(AppSpacing.p16),
@@ -109,7 +121,15 @@ class HomeScreen extends StatelessWidget {
             children: [
               Icon(step['status'] == 'done' ? Icons.check_circle : Icons.lock_outline, color: step['status'] == 'done' ? AppColors.success : AppColors.textSecondary),
               const SizedBox(width: AppSpacing.p12),
-              Text(step['title'] as String, style: AppTextStyles.bodyMedium),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(step['title'] as String, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                    Text(step['subtitle'] as String, style: AppTextStyles.bodySmall),
+                  ],
+                ),
+              ),
             ],
           ),
         )).toList(),
@@ -122,8 +142,8 @@ class HomeScreen extends StatelessWidget {
     decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppSpacing.r12), border: Border.all(color: AppColors.border)),
     child: ListTile(
       leading: const Icon(Icons.family_restroom, color: AppColors.primary),
-      title: Text("Parent Portal", style: AppTextStyles.titleSmall),
-      subtitle: Text("Share progress and guidance with your parents", style: AppTextStyles.bodySmall),
+      title: Text("For Your Parents", style: AppTextStyles.titleSmall),
+      subtitle: Text("Share progress report with parents", style: AppTextStyles.bodySmall),
       trailing: const Icon(Icons.chevron_right),
       onTap: () => context.go('/parent-dashboard'),
     ),
@@ -132,6 +152,13 @@ class HomeScreen extends StatelessWidget {
   Widget _buildSuccessStoryCard() => Container(
     padding: const EdgeInsets.all(AppSpacing.p16),
     decoration: BoxDecoration(color: AppColors.lightTeal, borderRadius: BorderRadius.circular(AppSpacing.r12)),
-    child: Text("“The roadmap helped me decide my field confidently!” — Student", style: AppTextStyles.bodyMedium.copyWith(fontStyle: FontStyle.italic)),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("“Matric ke baad confuse thi, ab NUST mein CS kar rahi hoon”", style: AppTextStyles.bodyMedium.copyWith(fontStyle: FontStyle.italic)),
+        const SizedBox(height: AppSpacing.p8),
+        Text("— Zainab, Karachi · BS Computer Science", style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.bold)),
+      ],
+    ),
   );
 }

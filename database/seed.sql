@@ -39,7 +39,7 @@ insert into public.quiz_options (question_id, option_text, maps_to_pathway_id, w
 (2, 'Helping people through healthcare', 2, 8),
 (2, 'Building apps, websites, or software', 3, 8);
 insert into public.learning_materials (title, type, duration, is_verified, pathway_tag, content_url) values
-('ECAT Preparation Overview', 'article', '20 min', true, 'engineering', 'https://example.com/ecat-prep'),
-('MDCAT Biology Focus Areas', 'article', '25 min', true, 'medical', 'https://example.com/mdcat-bio'),
-('Intro to Programming (Python)', 'course', '3 hours', true, 'cs', 'https://example.com/python-basics'),
-('Choosing Intermediate Subjects in Pakistan', 'article', '15 min', true, 'general', 'https://example.com/intermediate-guidance');
+('ECAT Preparation Overview', 'article', '20 min', true, 'engineering', 'https://www.nust.edu.pk/admissions/undergraduate/entry-test/'),
+('MDCAT Biology Focus Areas', 'article', '25 min', true, 'medical', 'https://www.pmc.gov.pk/'),
+('Intro to Programming (Python)', 'course', '3 hours', true, 'cs', 'https://www.freecodecamp.org/learn/scientific-computing-with-python/python-for-everybody/'),
+('Choosing Intermediate Subjects in Pakistan', 'article', '15 min', true, 'general', 'https://www.bisefsd.edu.pk/');

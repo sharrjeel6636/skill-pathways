@@ -13,13 +13,23 @@ import 'providers/skill_gap_provider.dart';
 import 'services/skill_requirement_service.dart';
 import 'theme/app_theme.dart';
 
-Future<void> main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Supabase with project credentials
+  const supabaseUrl = String.fromEnvironment(
+    'SUPABASE_URL',
+    defaultValue: 'https://lrjlggmrkjiljmiiinrp.supabase.co',
+  );
+
+  const supabaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+    defaultValue:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyamxnZ21ya2ppbGptaWlpbnJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMjAyMjcsImV4cCI6MjEwMzU5NjIyN30.m8xnAejzbkVtDPKD9ywdfx9DYJwkRVISu9Q0QpejgLo',
+  );
+
   await Supabase.initialize(
-    url: const String.fromEnvironment('SUPABASE_URL'),
-    anonKey: const String.fromEnvironment('SUPABASE_ANON_KEY'),
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
   runApp(
@@ -32,12 +42,12 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => JobProvider()),
         ChangeNotifierProvider(create: (_) => CertificationProvider()),
-        ProxyProvider3<CertificationProvider, RoadmapProvider, SkillRequirementService, SkillGapProvider>(
+        ProxyProvider3(
           update: (context, cert, road, skillReq, previous) =>
               SkillGapProvider(cert, road, skillReq),
           create: (context) => SkillGapProvider(
-            Provider.of<CertificationProvider>(context, listen: false),
-            Provider.of<RoadmapProvider>(context, listen: false),
+            Provider.of(context, listen: false),
+            Provider.of(context, listen: false),
             SkillRequirementService(),
           ),
         ),

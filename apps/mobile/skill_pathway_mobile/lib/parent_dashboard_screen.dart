@@ -49,11 +49,34 @@ class ParentDashboardScreen extends StatefulWidget {
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   AsyncViewState _state = AsyncViewState.loading;
   ParentDashboardData? _data;
+  bool _isLinked = false;
+  final TextEditingController _codeController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _checkLinkStatus();
+  }
+
+  Future<void> _checkLinkStatus() async {
+    // For demo/simplicity, we check dashboard data directly. If it fails or returns empty/demo, assume unlinked.
     _fetchData();
+  }
+
+  Future<void> _redeemCode() async {
+    try {
+      final response = await ApiClient.post('/parent-link/redeem', {'code': _codeController.text});
+      if (response.statusCode == 200) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Account linked!")));
+          _fetchData();
+        }
+      } else {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Invalid or expired code")));
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Error linking account")));
+    }
   }
 
   Future<void> _fetchData() async {
@@ -64,34 +87,23 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
         final response = await ApiClient.get('/dashboard/$userId');
         if (response.statusCode == 200) {
           final decoded = jsonDecode(response.body);
-          if (mounted) {
+          // Simple check if real data is returned (not demo)
+          if (decoded['child_name'] != "Ayesha" || decoded['pathway_title'] != "Pre-Engineering") {
             setState(() {
               _data = ParentDashboardData.fromJson(decoded);
+              _isLinked = true;
               _state = AsyncViewState.data;
             });
+            return;
           }
-          return;
         }
       }
-    } catch (_) {
-      // Backend unavailable ya network error hone par fallback data show karega
-    }
+    } catch (_) {}
 
-    // Demo & Offline fallback — Error screen dikhane ke bajaye structured data
-    if (mounted) {
-      setState(() {
-        _data = ParentDashboardData(
-          childName: 'Ayesha',
-          fieldOfInterest: 'Pre-Engineering',
-          summaryText:
-              'Based on aptitude quiz results, your child shows strong interest in Math, Physics and problem-solving. Recommended path: FSc Pre-Engineering leading to Engineering or CS degrees.',
-          roadmapProgressPercent: 35,
-          quizCompleted: true,
-          nextMilestoneLabel: 'Entry test prep',
-        );
-        _state = AsyncViewState.data;
-      });
-    }
+    setState(() {
+      _isLinked = false;
+      _state = AsyncViewState.data;
+    });
   }
 
   @override
@@ -101,21 +113,34 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        title: Text(
-          "Parent Dashboard",
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.surface,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: Text("Parent Dashboard", style: AppTextStyles.bodyMedium.copyWith(color: AppColors.surface, fontWeight: FontWeight.w600)),
       ),
       body: AsyncStateView(
         state: _state,
         onRetry: _fetchData,
-        child: _data == null ? const SizedBox() : _buildContent(),
+        child: _isLinked ? _buildContent() : _buildLinkUI(),
       ),
     );
   }
+
+  Widget _buildLinkUI() => Padding(
+    padding: const EdgeInsets.all(AppSpacing.p24),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.link, size: 64, color: AppColors.primary),
+        const SizedBox(height: AppSpacing.p24),
+        Text("Link your child's account", style: AppTextStyles.titleLarge),
+        const SizedBox(height: AppSpacing.p16),
+        TextField(
+          controller: _codeController,
+          decoration: const InputDecoration(hintText: "Enter 6-digit invite code", border: OutlineInputBorder()),
+        ),
+        const SizedBox(height: AppSpacing.p16),
+        ElevatedButton(onPressed: _redeemCode, child: const Text("Link Account")),
+      ],
+    ),
+  );
 
   Widget _buildContent() => SingleChildScrollView(
     padding: const EdgeInsets.all(AppSpacing.p24),
@@ -185,8 +210,6 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   );
 
   Widget _buildChatbotCard(BuildContext context) => GestureDetector(
-    // NOTE: Production requires real parent-child linking UI/table.
-    // Demo mode currently uses fixed fallback data.
     onTap: () => context.push('/chatbot?isParentMode=true'),
     child: Container(
       padding: const EdgeInsets.all(AppSpacing.p16),

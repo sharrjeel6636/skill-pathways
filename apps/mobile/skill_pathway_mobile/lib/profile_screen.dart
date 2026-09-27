@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
+import 'services/api_client.dart';
+import 'dart:convert';
 
 enum AppLanguage { english, urdu }
 
@@ -36,6 +39,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     language: AppLanguage.english,
   );
 
+  Future<void> _generateParentCode() async {
+    try {
+      final response = await ApiClient.post('/parent-link/generate', {});
+      if (response.statusCode == 200) {
+        final code = jsonDecode(response.body)['code'];
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text("Share this code"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(code, style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: code));
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Copied!")));
+                    },
+                    icon: const Icon(Icons.copy),
+                    label: const Text("Copy Code"),
+                  )
+                ],
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Failed to generate code")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildMenuGroup("Account", [
                     _buildMenuItem("Edit profile"),
                     _buildMenuItem("Change language (${_profile.language == AppLanguage.english ? 'English' : 'Urdu'})"),
-                    _buildMenuItem("Link parent account"),
+                    _buildMenuItem("Link parent account", onTap: _generateParentCode),
                     _buildMenuItem("Link school counselor"),
                   ]),
                   _buildMenuGroup("Preferences", [
