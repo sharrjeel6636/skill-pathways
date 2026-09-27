@@ -3,7 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:convert';
 
 class ApiClient {
-  static const String baseUrl = 'http://127.0.0.1:8000';
+  // Use --dart-define=API_BASE_URL=...
+  static const String baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://127.0.0.1:8000');
 
   static Future<Map<String, String>> _getHeaders() async {
     final token = Supabase.instance.client.auth.currentSession?.accessToken;

@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 export default function BottomNav() {
   const pathname = usePathname();
   const items = [
-    { name: 'Home', path: '/home', icon: '⌂' },
+    { name: 'Dashboard', path: '/dashboard', icon: '⌂' },
     { name: 'Roadmap', path: '/roadmap', icon: '🧭' },
     { name: 'Chat', path: '/chatbot', icon: '💬' },
     { name: 'Profile', path: '/profile', icon: '👤' },

@@ -1,13 +1,23 @@
 from fastapi import FastAPI, Depends, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 import os
 import time
+import logging
 from collections import deque
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from google import genai
+import random
+import string
+import uuid
+from datetime import datetime, timedelta
+
+# --- LOGGING ---
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("api")
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
@@ -23,25 +33,52 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- LOGGING MIDDLEWARE ---
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    
+    # Log requests with status code >= 400
+    if response.status_code >= 400:
+        logger.warning(f"{request.method} {request.url.path} {response.status_code} {process_time:.2f}s")
+    else:
+        logger.info(f"{request.method} {request.url.path} {response.status_code} {process_time:.2f}s")
+    return response
+
+# --- HEALTH ---
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 supabase_url = os.environ.get("SUPABASE_URL") or "https://your-project.supabase.co"
 supabase_key = os.environ.get("SUPABASE_KEY") or "your-anon-key"
 supabase: Client = create_client(supabase_url, supabase_key)
 
 # --- RATE LIMITING ---
+# In-memory store: {identifier: deque([timestamps])}
 rate_limit_store = {}
 RATE_LIMIT_WINDOW = 60 # seconds
-RATE_LIMIT_MAX = 30    # demo ke liye relax kar diya hai
+RATE_LIMIT_MAX = 30
 
 def check_rate_limit(request: Request):
-    client_ip = request.client.host if request.client else "127.0.0.1"
+    # Use User ID if available, otherwise IP
+    auth_header = request.headers.get("Authorization")
+    identifier = auth_header if auth_header else request.client.host if request.client else "unknown"
+    
     now = time.time()
-    if client_ip not in rate_limit_store:
-        rate_limit_store[client_ip] = deque()
-    while rate_limit_store[client_ip] and rate_limit_store[client_ip][0] < now - RATE_LIMIT_WINDOW:
-        rate_limit_store[client_ip].popleft()
-    if len(rate_limit_store[client_ip]) >= RATE_LIMIT_MAX:
+    if identifier not in rate_limit_store:
+        rate_limit_store[identifier] = deque()
+    
+    while rate_limit_store[identifier] and rate_limit_store[identifier][0] < now - RATE_LIMIT_WINDOW:
+        rate_limit_store[identifier].popleft()
+        
+    if len(rate_limit_store[identifier]) >= RATE_LIMIT_MAX:
+        logger.warning(f"Rate limit exceeded for {identifier}")
         raise HTTPException(status_code=429, detail="Too many requests")
-    rate_limit_store[client_ip].append(now)
+    
+    rate_limit_store[identifier].append(now)
 
 # --- GEMINI CLIENT ---
 gemini_api_key = os.environ.get("GEMINI_API_KEY")
@@ -50,7 +87,7 @@ if gemini_api_key:
     try:
         gemini_client = genai.Client(api_key=gemini_api_key)
     except Exception as e:
-        print(f"Gemini client init error: {e}")
+        logger.error(f"Gemini client init error: {e}")
 
 # --- AUTH DEPS ---
 async def get_current_user(authorization: Optional[str] = Header(None)):
@@ -61,22 +98,14 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
         user = supabase.auth.get_user(token)
         return user.user.id
     except Exception:
+        logger.warning("Invalid token presented")
         raise HTTPException(status_code=401, detail="Invalid token")
 
 async def verify_user_access(user_id: str, authenticated_user_id: str = Depends(get_current_user)):
     if user_id != authenticated_user_id:
+        logger.warning(f"Forbidden access attempt by {authenticated_user_id} on {user_id}")
         raise HTTPException(status_code=403, detail="Forbidden")
     return authenticated_user_id
-
-import random
-import string
-import uuid
-from datetime import datetime, timedelta
-
-# ... (rest of imports)
-
-# --- ENDPOINTS ---
-# ... (existing endpoints)
 
 # --- PARENT LINKING ---
 
@@ -85,13 +114,11 @@ def generate_random_code(length=6):
 
 @app.post("/parent-link/generate", dependencies=[Depends(get_current_user)])
 async def generate_parent_link(user_id: str = Depends(get_current_user)):
-    # Check if a link already exists
     existing = supabase.table("parent_links").select("invite_code").eq("student_id", user_id).execute().data
     if existing:
         return {"code": existing[0]['invite_code']}
     
     code = generate_random_code()
-    # Check for collision
     while supabase.table("parent_links").select("id").eq("invite_code", code).execute().data:
         code = generate_random_code()
         
@@ -124,7 +151,9 @@ async def redeem_parent_link(payload: RedeemCode, parent_id: str = Depends(get_c
     supabase.table("parent_links").update({"parent_id": parent_id}).eq("id", link['id']).execute()
     return {"message": "Account linked successfully"}
 
-# ... (existing /dashboard endpoint, updated to check for link)
+# --- OTHER ENDPOINTS ---
+@app.get("/")
+async def root():
     return {"status": "online", "message": "Skill Pathways API is running"}
 
 @app.get("/pathways")
@@ -209,7 +238,8 @@ async def get_dashboard(user_id: str):
             "total_steps": total,
             "next_step": next_step_title
         }
-    except Exception:
+    except Exception as e:
+        logger.error(f"Error in dashboard: {e}")
         return {
             "child_name": "Ayesha",
             "pathway_title": "Pre-Engineering",
@@ -218,67 +248,6 @@ async def get_dashboard(user_id: str):
             "total_steps": 4,
             "next_step": "Entry test prep"
         }
-
-@app.post("/user/{user_id}/skills", dependencies=[Depends(verify_user_access)])
-async def update_user_skills(user_id: str, skills: List[str]):
-    supabase.table("user_skills").upsert({"user_id": user_id, "skills": skills}).execute()
-    return {"message": "Skills updated"}
-
-@app.get("/skill-gap-analysis/{user_id}", dependencies=[Depends(verify_user_access)])
-async def get_skill_gap_analysis(user_id: str, target_role: str):
-    role_data = supabase.table("role_skills").select("*").eq("role_name", target_role).single().execute().data
-    if not role_data:
-        raise HTTPException(status_code=404, detail="Role not found")
-    
-    required = set(role_data['required_skills'])
-    user_skills_data = supabase.table("user_skills").select("skills").eq("user_id", user_id).maybe_single().execute().data
-    current_skills = set(user_skills_data['skills']) if user_skills_data else set()
-    
-    have_skills = list(required.intersection(current_skills))
-    missing_skills = list(required.difference(current_skills))
-    recommended_order = [s for s in role_data.get('recommended_order', []) if s in missing_skills]
-    
-    suggested_courses = {}
-    for skill in missing_skills:
-        courses = supabase.table("learning_materials").select("id, title").ilike("pathway_tag", f"%{skill}%").execute().data
-        suggested_courses[skill] = courses
-        
-    return {
-        "target_role": target_role,
-        "have_skills": have_skills,
-        "missing_skills": missing_skills,
-        "recommended_order": recommended_order,
-        "suggested_courses": suggested_courses
-    }
-
-@app.get("/user/{user_id}/skill-gap", dependencies=[Depends(verify_user_access)])
-async def get_skill_gap(user_id: str):
-    user_pathway = supabase.table("user_pathways").select("pathway_id, pathways(title)").eq("user_id", user_id).execute().data
-    if not user_pathway:
-        return {"error": "No active pathway found"}
-    
-    pathway_id = user_pathway[0]['pathway_id']
-    pathway_title = user_pathway[0]['pathways']['title']
-    
-    steps = supabase.table("pathway_steps").select("*").eq("pathway_id", pathway_id).order("step_order").execute().data
-    progress = supabase.table("user_progress").select("step_id, status").eq("user_id", user_id).execute().data
-    progress_map = {p['step_id']: p['status'] for p in progress}
-    
-    mastered = []
-    gaps = []
-    
-    for step in steps:
-        if progress_map.get(step['id']) == 'mastered':
-            mastered.append(step['title'])
-        else:
-            gaps.append({"step_id": step['id'], "title": step['title'], "difficulty": step.get('difficulty', 'medium')})
-    
-    return {
-        "target_role": pathway_title,
-        "current_skills": mastered,
-        "skill_gaps": gaps,
-        "recommended_steps": gaps
-    }
 
 @app.get("/learning-material")
 async def get_learning_material(pathway_tag: Optional[str] = None):
@@ -326,11 +295,8 @@ async def chatbot_message(payload: ChatMessage):
             )
             return {"reply": response.text}
         except Exception as e:
-            print(f"Gemini API error: {e}")
-            # Fallback if API key fails or throttles
-            return {
-                "reply": f"For {ctx.get('field_of_interest', 'Pre-Engineering')}, popular tracks in Pakistan include Software Engineering, Data Science, and Electrical Engineering. Focusing on university entry tests like ECAT or NET is key."
-            }
+            logger.error(f"Gemini API error: {e}")
+            return {"reply": "Sorry, I am unable to process your request at the moment."}
     
     return {
         "reply": "Assalam-o-Alaikum! Entry test preparation (ECAT/NET) and exploring accredited BS programs in Computer Science or Engineering are great next steps."

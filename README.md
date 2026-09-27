@@ -75,15 +75,25 @@ Both the mobile and web clients talk to the same FastAPI backend over HTTP, auth
 ### Mobile (`apps/mobile/skill_pathway_mobile`)
 
 1. Flutter SDK `>=3.0.0` installed.
-2. Provide Supabase config at run time (not hardcoded in source):
-   ```
-   flutter run --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
-   ```
-3. Install packages and run:
+2. Install dependencies:
    ```
    flutter pub get
-   flutter run
    ```
+3. Run the app, providing environment variables at runtime:
+   
+   - **Android Emulator:**
+     ```
+     flutter run -d emulator-5554 --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=... --dart-define=API_BASE_URL=http://10.0.2.2:8000
+     ```
+   - **iOS Simulator:**
+     ```
+     flutter run -d <device-id> --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=... --dart-define=API_BASE_URL=http://127.0.0.1:8000
+     ```
+   - **Physical Device (on same LAN):**
+     Replace `YOUR_LAN_IP` with your machine's IP (e.g., `192.168.1.5`):
+     ```
+     flutter run -d <device-id> --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=... --dart-define=API_BASE_URL=http://YOUR_LAN_IP:8000
+     ```
 
 ### Web (`apps/web`)
 
@@ -102,7 +112,28 @@ Both the mobile and web clients talk to the same FastAPI backend over HTTP, auth
 
 ### Database
 
-Migrations live in `database/migrations/`, applied in numeric order. Seed data for local development is in `database/seed.sql` and `database/seed_skills.sql`. See `database/SCHEMA_NOTES.md` for table-by-table documentation.
+Migrations live in `database/migrations/`, applied in numeric order. 
+
+To re-seed the database locally:
+1. Ensure the database is running.
+2. Apply migrations (if not already applied):
+   ```
+   # Using Supabase CLI (if configured)
+   supabase db push
+   
+   # Or manually apply scripts in numeric order
+   psql -d <db_name> -f database/migrations/000001_initial_schema.sql
+   psql -d <db_name> -f database/migrations/000002_rls_indexes_and_improvements.sql
+   psql -d <db_name> -f database/migrations/000003_add_skill_tables.sql
+   psql -d <db_name> -f database/migrations/000004_add_parent_links.sql
+   psql -d <db_name> -f database/migrations/000005_add_edu_tables.sql
+   ```
+3. Run seed scripts:
+   ```
+   psql -d <db_name> -f database/seed.sql
+   psql -d <db_name> -f database/seed_skills.sql
+   ```
+See `database/SCHEMA_NOTES.md` for table-by-table documentation.
 
 ---
 
@@ -136,7 +167,15 @@ The Flutter app has 27+ screens covering the full student and parent journey:
 
 ### Web App Status
 
-The Next.js web app is functional but noticeably earlier-stage than the mobile app: it covers login, onboarding, quiz, dashboard, a roadmap view, chatbot, and an opportunities/mentor area, but has not yet had the same depth of feature-completeness, design-system consolidation, or testing applied as the mobile app. Treat mobile as the primary product surface for now; web is actively catching up.
+The Next.js web app is now functional as an MVP, covering all required routes:
+- `/`: Language Selection
+- `/login`: Supabase Authentication
+- `/dashboard`: Student Dashboard (API-backed)
+- `/quiz`: Aptitude Quiz
+- `/roadmap`: Personalized Pathway Steps
+- `/chatbot`: AI Guidance Assistant (API-backed)
+
+The web app is now aligned with the mobile core flows for these features, using shared design tokens and authenticated API communication.
 
 ### Known Limitations
 

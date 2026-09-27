@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/shared_models.dart';
+import '../services/api_client.dart';
+import 'dart:convert';
 
 class CourseProvider extends ChangeNotifier {
   List<CourseListing> _courses = [];
@@ -11,35 +12,37 @@ class CourseProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  final _supabase = Supabase.instance.client;
-
   Future<void> fetchCourses() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final response = await _supabase.from('learning_materials').select('*');
+      final response = await ApiClient.get('/learning-material');
       
-      // Map Supabase data to CourseListing model
-      _courses = (response as List).map((item) {
-        return CourseListing(
-          platform: 'Unknown', // Not in DB yet
-          title: item['title'] ?? '',
-          level: 'Beginner', // Not in DB yet
-          durationLabel: item['duration'] ?? '',
-          isFree: true, // Not in DB yet
-          tags: [item['pathway_tag'] ?? ''],
-          detail: CourseDetail(
-            id: item['id']?.toString() ?? '',
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        _courses = data.map((item) {
+          return CourseListing(
+            platform: 'Online',
             title: item['title'] ?? '',
-            platform: 'Unknown',
-            description: '', // Not in DB yet
-            learningPoints: [], // Not in DB yet
-            externalUrl: item['content_url'] ?? '',
-          ),
-        );
-      }).toList();
+            level: 'Beginner',
+            durationLabel: item['duration'] ?? '',
+            isFree: true,
+            tags: [item['pathway_tag'] ?? ''],
+            detail: CourseDetail(
+              id: item['id']?.toString() ?? '',
+              title: item['title'] ?? '',
+              platform: 'Online',
+              description: '',
+              learningPoints: [],
+              externalUrl: item['content_url'] ?? '',
+            ),
+          );
+        }).toList();
+      } else {
+        _error = 'Failed to load courses';
+      }
     } catch (e) {
       _error = e.toString();
     } finally {

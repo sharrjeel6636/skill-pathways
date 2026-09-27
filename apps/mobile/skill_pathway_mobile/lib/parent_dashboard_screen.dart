@@ -55,11 +55,6 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLinkStatus();
-  }
-
-  Future<void> _checkLinkStatus() async {
-    // For demo/simplicity, we check dashboard data directly. If it fails or returns empty/demo, assume unlinked.
     _fetchData();
   }
 
@@ -98,7 +93,9 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           }
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint("Error fetching parent dashboard: $e");
+    }
 
     setState(() {
       _isLinked = false;
@@ -210,7 +207,11 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
   );
 
   Widget _buildChatbotCard(BuildContext context) => GestureDetector(
-    onTap: () => context.push('/chatbot?isParentMode=true'),
+    onTap: () {
+      final studentName = _data?.childName ?? 'your child';
+      final field = _data?.fieldOfInterest ?? 'Interest';
+      context.push('/chatbot?isParentMode=true&student_name=$studentName&field=$field');
+    },
     child: Container(
       padding: const EdgeInsets.all(AppSpacing.p16),
       decoration: BoxDecoration(
