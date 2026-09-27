@@ -1,4 +1,4 @@
-# Skill Pathway
+# Skill Pathway - v1.0.0
 
 Skill Pathway is a career and education guidance platform for Pakistani students — from Matric through Intermediate, university selection, skill-building, and into their first job — with dedicated views for parents and school counselors who support them along the way.
 
