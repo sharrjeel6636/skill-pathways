@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+export const dynamic = 'force-dynamic';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { fetchWithAuth } from '@/lib/api';
@@ -7,7 +8,7 @@ import BottomNav from '@/components/BottomNav';
 
 type Message = { text: string; sender: 'bot' | 'user' };
 
-export default function ChatbotPage() {
+function ChatbotContent() {
   const searchParams = useSearchParams();
   const isParentMode = searchParams.get('mode') === 'parent';
   const [messages, setMessages] = useState<Message[]>([]);
@@ -84,5 +85,13 @@ export default function ChatbotPage() {
       </div>
       <BottomNav />
     </div>
+  );
+}
+
+export default function ChatbotPage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center">Loading chatbot...</div>}>
+      <ChatbotContent />
+    </Suspense>
   );
 }
