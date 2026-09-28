@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useLanguage } from '../../lib/LanguageContext';
+import { useLanguage } from '../lib/LanguageContext';
 
 export default function LanguageSelectionPage() {
   const router = useRouter();

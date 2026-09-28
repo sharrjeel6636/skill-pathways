@@ -262,10 +262,10 @@ class ChatMessage(BaseModel):
     context: Optional[dict] = None
 
 @app.post("/chatbot/message", dependencies=[Depends(check_rate_limit)])
-async def chatbot_message(payload: ChatMessage):
+async def chatbot_message(payload: ChatMessage, user_id: str = Depends(get_current_user)):
     user_text = payload.text or payload.message or ""
     if not user_text.strip():
-        return {"reply": "Please provide a question."}
+        raise HTTPException(status_code=400, detail="Please provide a question.")
 
     ctx = payload.context or {}
     mode = ctx.get("mode", "student")
@@ -295,9 +295,8 @@ async def chatbot_message(payload: ChatMessage):
             )
             return {"reply": response.text}
         except Exception as e:
-            logger.error(f"Gemini API error: {e}")
-            return {"reply": "Sorry, I am unable to process your request at the moment."}
-    
-    return {
-        "reply": "Assalam-o-Alaikum! Entry test preparation (ECAT/NET) and exploring accredited BS programs in Computer Science or Engineering are great next steps."
-    }
+            logger.error(f"Gemini API request failed: {e}")
+            raise HTTPException(status_code=502, detail="AI assistant is temporarily unavailable. Please check the AI configuration.")
+    else:
+        logger.error("Gemini client is not configured.")
+        raise HTTPException(status_code=503, detail="AI assistant is temporarily unavailable. Please check the AI configuration.")

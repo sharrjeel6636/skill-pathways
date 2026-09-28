@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import SkillGapAnalyzer from '@/components/SkillGapAnalyzer';
+import SkillGapAnalyzer from '../../../components/SkillGapAnalyzer';
 
 export default function RoadmapPage({ params }: { params: { id: string } }) {
   const [steps, setSteps] = useState<any[]>([]);

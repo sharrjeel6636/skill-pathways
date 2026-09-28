@@ -42,13 +42,12 @@ export default function ChatbotPage() {
           message: userText,
           context: {
             mode: isParentMode ? 'parent' : 'student',
-            field_of_interest: 'Pre-Engineering', // Placeholder
           },
         }),
       });
       setMessages(prev => [...prev, { text: data.reply || data.response || "No response.", sender: 'bot' }]);
-    } catch (e) {
-      setMessages(prev => [...prev, { text: "Sorry, I'm having trouble connecting.", sender: 'bot' }]);
+    } catch (e: any) {
+      setMessages(prev => [...prev, { text: `Error: ${e.message}`, sender: 'bot' }]);
     } finally {
       setLoading(false);
     }
