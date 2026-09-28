@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
-import BottomNav from '../../components/BottomNav';
+import { supabase } from '@/lib/supabase';
+import BottomNav from '@/components/BottomNav';
 import Link from 'next/link';
 import { Session } from '@supabase/supabase-js';
 

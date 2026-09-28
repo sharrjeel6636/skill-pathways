@@ -1,6 +1,6 @@
 import './globals.css';
 import { Fraunces, Manrope, Noto_Nastaliq_Urdu } from 'next/font/google';
-import { LanguageProvider } from '../lib/LanguageContext';
+import { LanguageProvider } from '@/lib/LanguageContext';
 
 const fraunces = Fraunces({
   subsets: ['latin'],

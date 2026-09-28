@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { fetchWithAuth } from '../../lib/api';
-import BottomNav from '../../components/BottomNav';
+import { fetchWithAuth } from '@/lib/api';
+import BottomNav from '@/components/BottomNav';
 
 export default function RoadmapPage() {
   const [steps, setSteps] = useState<any[]>([]);

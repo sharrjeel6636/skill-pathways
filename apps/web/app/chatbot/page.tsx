@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
-import { fetchWithAuth } from '../../lib/api';
-import BottomNav from '../../components/BottomNav';
+import { supabase } from '@/lib/supabase';
+import { fetchWithAuth } from '@/lib/api';
+import BottomNav from '@/components/BottomNav';
 
 type Message = { text: string; sender: 'bot' | 'user' };
 

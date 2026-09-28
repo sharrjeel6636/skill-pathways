@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { useLanguage } from '../lib/LanguageContext';
+import { useLanguage } from '@/lib/LanguageContext';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function OnboardingScreen() {
