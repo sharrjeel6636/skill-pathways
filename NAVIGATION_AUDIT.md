@@ -8,6 +8,8 @@
 | CareerExplorerScreen | CareerGrowthRoadmapScreen |
 | CertificationsTrackerScreen | |
 | ChatbotScreen | |
+| CounselorDashboardScreen | |
+| CounselorOnboardingScreen | |
 | CourseDetailScreen | |
 | CourseListingScreen | |
 | DegreeComparisonScreen | |
@@ -33,19 +35,20 @@
 ### Findings & Fixes
 - **ScholarshipInfoScreen**: Orphaned. Needs entry point from HomeScreen or ParentDashboardScreen.
 - **CareerGrowthRoadmapScreen**: Orphaned. Needs entry point from JobSectorDetailScreen or ProfileScreen.
+- **CounselorDashboardScreen & CounselorOnboardingScreen**: Fully reachable via RoleSelectionScreen and counselor role routing.
 
 ## PART 2: Backend Auth Audit
 
 ### Routes Classification
-- **Public**: `/pathways`, `/quiz/questions`
-- **User-Auth Required**: `/dashboard/{user_id}`, `/quiz/submit`, `/learning-material`
+- **Public**: `/pathways`, `/quiz/questions`, `/learning-material`
+- **User-Auth Required**: `/dashboard/{user_id}`, `/quiz/submit`, `/parent-link/*`, `/counselor-link/*`, `/counselor/analytics`, `/chatbot/message`
 - **Admin-Only**: `/admin/analytics`
 
 ### Backend Audit Summary
-- All 15+ routes were previously unsecured.
-- **Fix**: Implemented JWT validation middleware (using `Depends(get_current_user)`) and per-route user_id ownership verification.
+- JWT validation middleware implemented (`Depends(get_current_user)`).
+- Counselor analytics and linking endpoints securely authenticated and validated.
 
 ## PART 3: Summary Report
 - **Screens Orphaned Before Fix**: 2 (ScholarshipInfoScreen, CareerGrowthRoadmapScreen)
-- **Backend Routes Unsecured Before Fix**: ~15 (all)
-- **Status**: Navigation graph consolidated. Backend secured.
+- **Backend Routes Secured**: All critical student, parent, and counselor endpoints protected.
+- **Status**: Navigation graph consolidated. Backend analytics & linking operational.

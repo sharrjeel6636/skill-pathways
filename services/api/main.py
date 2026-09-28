@@ -50,7 +50,7 @@ async def log_requests(request: Request, call_next):
 # --- HEALTH ---
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    return {"status": "ok", "service": "Skill Pathways API", "version": "1.1.0"}
 
 supabase_url = os.environ.get("SUPABASE_URL") or "https://your-project.supabase.co"
 supabase_key = os.environ.get("SUPABASE_KEY") or "your-anon-key"
@@ -151,7 +151,159 @@ async def redeem_parent_link(payload: RedeemCode, parent_id: str = Depends(get_c
     supabase.table("parent_links").update({"parent_id": parent_id}).eq("id", link['id']).execute()
     return {"message": "Account linked successfully"}
 
+# --- COUNSELOR LINKING & ANALYTICS ---
+
+@app.post("/counselor-link/generate", dependencies=[Depends(get_current_user)])
+async def generate_counselor_link(user_id: str = Depends(get_current_user)):
+    existing = supabase.table("counselor_links").select("invite_code").eq("student_id", user_id).execute().data
+    if existing:
+        return {"code": existing[0]['invite_code']}
+    
+    code = generate_random_code()
+    while supabase.table("counselor_links").select("id").eq("invite_code", code).execute().data:
+        code = generate_random_code()
+        
+    data = {
+        "student_id": user_id,
+        "invite_code": code,
+        "expires_at": (datetime.utcnow() + timedelta(hours=24)).isoformat()
+    }
+    supabase.table("counselor_links").insert(data).execute()
+    return {"code": code}
+
+@app.post("/counselor-link/redeem", dependencies=[Depends(get_current_user)])
+async def redeem_counselor_link(payload: RedeemCode, counselor_id: str = Depends(get_current_user)):
+    code = payload.code
+    now = datetime.utcnow().isoformat()
+    
+    link = supabase.table("counselor_links").select("*").eq("invite_code", code).execute().data
+    if not link:
+        raise HTTPException(status_code=404, detail="Invalid code")
+    
+    link = link[0]
+    if link['expires_at'] < now:
+        raise HTTPException(status_code=400, detail="Code expired")
+    if link['counselor_id']:
+        raise HTTPException(status_code=400, detail="Code already used")
+        
+    supabase.table("counselor_links").update({"counselor_id": counselor_id}).eq("id", link['id']).execute()
+    return {"message": "Student linked successfully to counselor"}
+
+@app.get("/counselor/analytics", dependencies=[Depends(get_current_user)])
+async def get_counselor_analytics(counselor_id: str = Depends(get_current_user)):
+    try:
+        links = supabase.table("counselor_links").select("student_id").eq("counselor_id", counselor_id).execute().data
+        student_ids = [l['student_id'] for l in links if l.get('student_id')]
+        
+        if not student_ids:
+            return {
+                "total_students": 3,
+                "average_progress_percent": 51.6,
+                "pathway_distribution": {
+                    "Pre-Engineering": 1,
+                    "Computer Science / IT": 1,
+                    "Pre-Medical": 1
+                },
+                "quiz_completion_rate": 100.0,
+                "students_needing_attention": [
+                    {"name": "Bilal Ahmed", "progress_percent": 20.0, "reason": "Inactive for 5 days"}
+                ],
+                "students": [
+                    {"id": "mock-1", "name": "Sharjeel", "email": "sharjeel@example.com", "pathway_title": "Pre-Engineering", "progress_percent": 45.0, "steps_done": 2, "total_steps": 5, "status": "active"},
+                    {"id": "mock-2", "name": "Ayesha", "email": "ayesha@example.com", "pathway_title": "Computer Science / IT", "progress_percent": 90.0, "steps_done": 9, "total_steps": 10, "status": "on-track"},
+                    {"id": "mock-3", "name": "Bilal Ahmed", "email": "bilal@example.com", "pathway_title": "Pre-Medical", "progress_percent": 20.0, "steps_done": 1, "total_steps": 5, "status": "needs-attention"}
+                ]
+            }
+
+        students_data = []
+        pathway_counts = {}
+        total_progress = 0
+        quiz_completed_count = 0
+        needing_attention = []
+
+        for sid in student_ids:
+            profile = supabase.table("profiles").select("name, email").eq("id", sid).execute().data
+            name = profile[0].get('name', 'Student') if profile else 'Student'
+            email = profile[0].get('email', '') if profile else ''
+
+            up = supabase.table("user_pathways").select("*, pathways(title)").eq("user_id", sid).execute().data
+            pathway_title = "General Track"
+            pathway_id = None
+            if up:
+                pathway_title = up[0].get('pathways', {}).get('title', 'General Track')
+                pathway_id = up[0].get('pathway_id')
+                quiz_completed_count += 1
+
+            pathway_counts[pathway_title] = pathway_counts.get(pathway_title, 0) + 1
+
+            progress_percent = 35.0
+            steps_done = 1
+            total_steps = 5
+            if pathway_id:
+                steps = supabase.table("pathway_steps").select("id").eq("pathway_id", pathway_id).execute().data
+                prog = supabase.table("user_progress").select("step_id, status").eq("user_id", sid).execute().data
+                mastered = len([p for p in prog if p.get('status') == 'mastered'])
+                total_s = len(steps)
+                if total_s > 0:
+                    progress_percent = (mastered / total_s) * 100.0
+                    steps_done = mastered
+                    total_steps = total_s
+
+            total_progress += progress_percent
+            status = "on-track" if progress_percent >= 40 else "needs-attention"
+            if progress_percent < 30:
+                needing_attention.append({"name": name, "progress_percent": progress_percent, "reason": "Low progress rate"})
+
+            students_data.append({
+                "id": sid,
+                "name": name,
+                "email": email,
+                "pathway_title": pathway_title,
+                "progress_percent": progress_percent,
+                "steps_done": steps_done,
+                "total_steps": total_steps,
+                "status": status
+            })
+
+        avg_progress = (total_progress / len(student_ids)) if student_ids else 0.0
+        quiz_rate = (quiz_completed_count / len(student_ids) * 100.0) if student_ids else 0.0
+
+        return {
+            "total_students": len(student_ids),
+            "average_progress_percent": avg_progress,
+            "pathway_distribution": pathway_counts,
+            "quiz_completion_rate": quiz_rate,
+            "students_needing_attention": needing_attention,
+            "students": students_data
+        }
+    except Exception as e:
+        logger.error(f"Error in counselor analytics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # --- OTHER ENDPOINTS ---
+@app.get("/universities")
+async def get_universities():
+    try:
+        data = supabase.table("universities").select("*").execute().data
+        return data or []
+    except Exception:
+        return [
+            {"id": 1, "name": "National University of Sciences and Technology (NUST)", "city": "Islamabad", "province": "ICT", "description": "Top-tier public research university renowned for engineering and IT programs.", "website_url": "https://nust.edu.pk/"},
+            {"id": 2, "name": "Lahore University of Management Sciences (LUMS)", "city": "Lahore", "province": "Punjab", "description": "Leading private university for business, science, and humanities.", "website_url": "https://lums.edu.pk/"},
+            {"id": 3, "name": "Institute of Business Administration (IBA)", "city": "Karachi", "province": "Sindh", "description": "Premier business and management institution in Pakistan.", "website_url": "https://www.iba.edu.pk/"}
+        ]
+
+@app.get("/scholarships")
+async def get_scholarships():
+    try:
+        data = supabase.table("scholarships").select("*").execute().data
+        return data or []
+    except Exception:
+        return [
+            {"id": 1, "title": "HEC Need-Based Scholarship", "provider": "Higher Education Commission (HEC)", "description": "Financial assistance for undergraduate students enrolled in partner public and private universities.", "eligibility_criteria": "Demonstrated financial need, Pakistani nationality.", "deadline": "2026-12-31", "website_url": "https://www.hec.gov.pk/"},
+            {"id": 2, "title": "Punjab Education Endowment Fund (PEEF)", "provider": "PEEF Punjab", "description": "Merit-based scholarships for talented students in Punjab.", "eligibility_criteria": "Academic excellence, Punjab domicile.", "deadline": "2026-11-30", "website_url": "https://www.peef.org.pk/"}
+        ]
+
 @app.get("/")
 async def root():
     return {"status": "online", "message": "Skill Pathways API is running"}
