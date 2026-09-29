@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.3.0] - 2026-09-27
+### Added
+- **Expanded Automated Testing:** Expanded FastAPI test suite (`pytest`) covering public endpoints, authentication, quiz submission, and rate limiting. Strengthened Flutter router integrity and quiz logic tests.
+- **Testing Documentation:** Created `TESTING.md` detailing local test execution, test scope, coverage, and known gaps.
+- **Stability & CI:** Confirmed automated CI pipeline (`ci.yml`) runs clean checks for both mobile and backend.
+
 ## [1.2.0] - 2026-09-27
 ### Added
 - **Web App Feature Parity:** Brought the Next.js web app closer to mobile parity by adding the Parent Dashboard (`/parent`), Scholarships listing (`/scholarships`), Universities listing (`/universities`), Career Explorer (`/career-explorer`), and Profile & Settings (`/profile`) pages, along with a consistent role-aware top navigation bar (`TopNav`).
