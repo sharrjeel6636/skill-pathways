@@ -1,20 +1,39 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import SkillGapAnalyzer from '@/components/SkillGapAnalyzer';
 
-export default function RoadmapPage({ params }: { params: { id: string } }) {
-  const [steps, setSteps] = useState<any[]>([]);
+const fallbackSteps = [
+  { id: 1, title: 'Foundations & Setup', status: 'done' },
+  { id: 2, title: 'Core Concepts', status: 'current' },
+  { id: 3, title: 'Advanced Topics', status: 'locked' },
+  { id: 4, title: 'Capstone Project', status: 'locked' },
+];
+
+export default function RoadmapPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const id = resolvedParams.id;
+  const [steps, setSteps] = useState<any[] | null>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/pathways/${params.id}/steps?user_id=mock-user-123`)
+    fetch(`http://localhost:8000/pathways/${id}/steps?user_id=mock-user-123`)
       .then(res => res.json())
-      .then(data => setSteps(data))
-      .catch(err => console.error('Error fetching steps:', err));
-  }, [params.id]);
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setSteps(data);
+        } else {
+          setSteps(fallbackSteps);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching steps:', err);
+        setSteps(fallbackSteps);
+      });
+  }, [id]);
 
-  if (steps.length === 0) return <div className="p-12 text-ink">Loading roadmap...</div>;
+  if (!steps) return <div className="p-12 text-ink">Loading roadmap...</div>;
 
-  const currentStep = steps.find(s => s.status === 'current') || steps[0];
+  const validSteps = Array.isArray(steps) ? steps : fallbackSteps;
+  const currentStep = validSteps.find(s => s.status === 'current') || validSteps[0];
 
   return (
     <div className="min-h-screen bg-paper relative flex flex-col max-w-[480px] mx-auto overflow-hidden">
@@ -49,7 +68,7 @@ export default function RoadmapPage({ params }: { params: { id: string } }) {
         </svg>
 
         {/* Nodes (Step markers) */}
-        {steps.map((step, i) => {
+        {validSteps.map((step, i) => {
           // Absolute positions mapped roughly to the SVG path
           const positions = [
             { top: '14px', left: '16px' },

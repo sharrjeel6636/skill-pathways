@@ -401,6 +401,17 @@ async def get_dashboard(user_id: str):
             "next_step": "Entry test prep"
         }
 
+@app.get("/user/{user_id}/skill-gap")
+async def get_user_skill_gap(user_id: str):
+    return {
+        "target_role": "Full Stack Developer",
+        "current_skills": ["Python", "JavaScript", "HTML/CSS"],
+        "skill_gaps": [
+            {"step_id": 1, "title": "Advanced React & TypeScript", "difficulty": "Medium"},
+            {"step_id": 2, "title": "FastAPI & Microservices", "difficulty": "Hard"}
+        ]
+    }
+
 @app.get("/learning-material")
 async def get_learning_material(pathway_tag: Optional[str] = None):
     query = supabase.table("learning_materials").select("*")

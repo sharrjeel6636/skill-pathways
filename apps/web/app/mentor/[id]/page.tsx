@@ -1,14 +1,16 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
-export default function MentorProfile({ params }: { params: { id: string } }) {
+export default function MentorProfile({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const id = resolvedParams.id;
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/mentors/${params.id}`)
+    fetch(`http://localhost:8000/mentors/${id}`)
       .then(res => res.json())
       .then(setData);
-  }, [params.id]);
+  }, [id]);
 
   if (!data) return <div>Loading...</div>;
 
